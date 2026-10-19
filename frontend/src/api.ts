@@ -1,0 +1,135 @@
+import { ElMessage } from "element-plus";
+export type Row = Record<string, any>;
+export function codeName(value: unknown) {
+  const names: Record<string, string> = {
+    MATCHED: "核对一致",
+    CHANNEL_ONLY: "渠道单边",
+    LOCAL_ONLY: "本地单边",
+    AMOUNT_MISMATCH: "金额不符",
+    BILL_DUPLICATE: "账单重复",
+    KEY_UNRESOLVED: "标识待核实",
+    PENDING_CONFIRMATION: "待确认",
+    EXTRA_SUCCESS: "额外收款",
+    PAYMENT_CONFIRMATION: "支付同步",
+    MISSING_CHANNEL_EVENT: "账单缺失",
+    STATEMENT_INCOMPLETE: "账单未齐",
+    DUPLICATE_PAYMENT: "重复支付",
+    DUPLICATE_INPUT: "重复记录",
+    AMOUNT_DIFFERENCE: "金额差异",
+    MISSING_EVENT_KEY: "标识缺失",
+    CHANNEL_ID_CONFLICT: "标识不符",
+    IDENTICAL: "核对一致",
+    OWNER: "负责人",
+    CASHIER: "收银员",
+    FINANCE: "财务",
+    REVIEWER: "复核员",
+    MEMBER: "普通成员",
+    ADMIN: "管理员",
+    AUDITOR: "审计员",
+    PLATFORM_FINANCE: "平台财务",
+    PAYMENT_QUERY: "支付查询",
+    REFUND_QUERY: "退款查询",
+    REFUND_CALL: "发起退款",
+  };
+  return names[String(value)] || String(value || "—");
+}
+let token = "";
+async function csrf() {
+  const r = await fetch("/api/v1/auth/csrf", { credentials: "same-origin" });
+  if (!r.ok) throw new Error("服务尚未就绪，请确认后端和 SQL Server 已启动");
+  token = (await r.json()).data.token;
+}
+export async function api<T = any>(
+  path: string,
+  options: { method?: string; body?: any; quiet?: boolean } = {},
+): Promise<T> {
+  try {
+    const method = options.method || "GET";
+    if (method !== "GET" && !token) await csrf();
+    const form = options.body instanceof FormData;
+    const r = await fetch("/api/v1" + path, {
+      method,
+      credentials: "same-origin",
+      headers: {
+        ...(options.body && !form
+          ? { "Content-Type": "application/json" }
+          : {}),
+        ...(method !== "GET" ? { "X-XSRF-TOKEN": token } : {}),
+      },
+      body: options.body
+        ? form
+          ? options.body
+          : JSON.stringify(options.body)
+        : undefined,
+    });
+    const raw = await r.text();
+    let result: any;
+    try {
+      result = JSON.parse(raw);
+    } catch {
+      throw new Error("服务连接未完成，请确认后端与数据库已启动");
+    }
+    if (!r.ok) {
+      if (r.status === 403) token = "";
+      throw new Error(result.message || `请求未完成 (${r.status})`);
+    }
+    return result.data as T;
+  } catch (e: any) {
+    if (!options.quiet) {
+      ElMessage.error(e.message || "网络连接失败");
+      e.reported = true;
+    }
+    throw e;
+  }
+}
+export const post = (path: string, body: any = {}) =>
+  api(path, { method: "POST", body });
+export const patch = (path: string, body: any) =>
+  api(path, { method: "PATCH", body });
+export function query(values: Row) {
+  const p = new URLSearchParams();
+  Object.entries(values).forEach(([k, v]) => {
+    if (v !== "" && v != null) p.set(k, String(v));
+  });
+  return p.toString();
+}
+export function money(value: unknown) {
+  const n = BigInt(String(value || "0"));
+  const a = n < 0n ? -n : n;
+  return `${n < 0n ? "-" : ""}${(a / 100n).toLocaleString("zh-CN")}.${(a % 100n).toString().padStart(2, "0")}`;
+}
+export function time(value: unknown) {
+  if (!value) return "—";
+  return new Date(String(value)).toLocaleString("zh-CN", {
+    hour12: false,
+    timeZone: "Asia/Shanghai",
+  });
+}
+export function dateDays(n = 0) {
+  const d = new Date(Date.now() + n * 86400000);
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai" }).format(
+    d,
+  );
+}
+export async function exportFile(
+  kind: string,
+  format: string,
+  filters: Row = {},
+) {
+  const file = await post("/exports", { kind, format, filters });
+  window.location.assign(file.url);
+  ElMessage.success("文件已生成，正在下载");
+}
+export function toCent(value: string) {
+  if (!/^\d+(\.\d{1,2})?$/.test(value))
+    throw new Error("金额请保留至多两位小数");
+  const [yuan, fraction = ""] = value.split(".");
+  return (BigInt(yuan!) * 100n + BigInt(fraction.padEnd(2, "0"))).toString();
+}
+export const action = async (fn: () => Promise<any>) => {
+  try {
+    await fn();
+  } catch (e: any) {
+    if (e instanceof Error && !(e as any).reported) ElMessage.error(e.message);
+  }
+};

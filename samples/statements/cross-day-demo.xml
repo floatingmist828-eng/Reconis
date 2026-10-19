@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statement schemaVersion="1" channelEnv="DEMO">
+  <event merchantCode="M001" type="RECEIPT">
+    <outTradeNo>DEMO_CROSS_PAY</outTradeNo>
+    <channelTradeNo>DEMO_CROSS_CHANNEL</channelTradeNo>
+    <amountCent>10000</amountCent>
+    <occurredAt>2026-10-18T10:00:00+08:00</occurredAt>
+  </event>
+  <event merchantCode="M001" type="REFUND">
+    <outTradeNo>DEMO_CROSS_PAY</outTradeNo>
+    <channelTradeNo>DEMO_CROSS_CHANNEL</channelTradeNo>
+    <outRequestNo>DEMO_CROSS_REF</outRequestNo>
+    <amountCent>3000</amountCent>
+    <occurredAt>2026-10-19T10:00:00+08:00</occurredAt>
+  </event>
+</statement>

@@ -1,0 +1,46 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+        secure: ${COOKIE_SECURE:false}
+      timeout: 60m
+spring:
+  application:
+    name: reconis
+  datasource:
+    url: ${DB_URL:jdbc:sqlserver://localhost:1433;databaseName=ReconisDemo;encrypt=true;trustServerCertificate=true}
+    username: ${DB_USER:reconis_app}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 10000
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 22MB
+  jackson:
+    time-zone: UTC
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    local-cache-scope: STATEMENT
+    cache-enabled: false
+    jdbc-type-for-null: 'NULL'
+    call-setters-on-nulls: true
+reconis:
+  environment: ${RECONIS_ENV:DEMO}
+  data-dir: ${DATA_DIR:./data/demo}
+  font-file: ${REPORT_FONT:C:/Windows/Fonts/simsun.ttc}
+  query-delay-ms: ${QUERY_DELAY_MS:15000}
+  alipay:
+    app-id: ${ALIPAY_APP_ID:}
+    seller-id: ${ALIPAY_SELLER_ID:}
+    private-key-file: ${ALIPAY_PRIVATE_KEY_FILE:}
+    public-key-file: ${ALIPAY_PUBLIC_KEY_FILE:}
+    notify-url: ${ALIPAY_NOTIFY_URL:}
+logging:
+  level:
+    root: INFO

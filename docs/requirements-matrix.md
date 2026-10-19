@@ -1,0 +1,33 @@
+# 课程要求与源码入口
+
+本表表示源码已落地，真实运行状态另见implementation-status.md。
+
+| 编号 | 要求 | 页面与实现 |
+| --- | --- | --- |
+| B1 | 关系数据增删改查 | 商户/门店/成员、订单草稿；MerchantController、OrderController，引用数据停用，事实不可改 |
+| B2 | 首页/列表/详情/多条件/排序/分页/跳转 | Dashboard、Orders、OrderDetail、Cases，Db.page的计数和OFFSET/FETCH |
+| B3 | 实际业务 | 开单→收款→退款→对账→工单，PaymentService与5个usp过程 |
+| B4 | 多角度统计/表格图形/PDF或Word | AnalyticsService共用口径，ECharts、JFreeChart、PDFBox和POI双报告 |
+| B5 | 多角色/注册审核/权限分配/登录 | IdentityController、Access、SecurityConfig，平台/商户分层，BCrypt+Session+CSRF |
+| A1 | Excel或者XML导入导出 | 两种均实现，ImportService、ExportController；模板、预览、提交、错误反馈、SHA256 |
+| A2 | 高级用户审核数据 | 商户入驻和proposed_*候选审核，现行资料继续有效，审核历史写审计 |
+| A3 | 自动获取数据 | recover定时调用官方交易/退款查询，接入页显示返回摘要；真实证据待沙箱配置 |
+| A4 | 全文检索 | FREETEXTTABLE、2052中文全文索引、相关度与索引状态；不以LIKE替代全文 |
+| A5 | 数据比较 | 本地/渠道证据双栏，baseline/current逐事件变化，历史不可覆盖 |
+| A6 | 数据推荐 | 仅已结案可见案例，类型/环节/文本相关度及解释，排除自身与未解决问题 |
+| A7 | 审核和任务分派 | 退款独立审批与数据库额度检查；工单分派/处理/证据/提交/独立复核/退回 |
+| A8 | 粒度钻取 | 商户→门店→流水，年→月→日→流水，保留筛选及返回路径 |
+| A9 | 数据关联统计 | 差错→结果→账单/流水→支付退款→订单→门店→商户，分组数量/金额/处理时长 |
+| A10 | 访问/操作日志检索统计 | RequestAuditFilter与审核触发器，人员/商户/类别/结果/时间筛选与统计 |
+
+指导书的全文/比较/推荐为替代项，本项目主动全部覆盖；Excel/XML和PDF/Word也是主动双格式覆盖。
+
+| 其他要求 | 材料 |
+| --- | --- |
+| 12–15个实体（含联系） | 001_schema.sql共15表；design.md区分概念对象与物理关系 |
+| 3NF | reports/system-design.md逐关系候选键与依赖 |
+| 服务器端过程/触发器/函数 | 003/004脚本，业务接口实际调用usp |
+| 外模式与授权 | 消费者/商户/对账/案例/审计视图，运行和审计角色，同一连接会话上下文清理 |
+| 两份报告 | reports中的设计和实现Markdown源稿，运行实例待数据库联调补齐 |
+| 演示及申优 | demo-and-defense.md操作路线与逐页讲稿，最终截图/PPT在真实演示后定稿 |
+| 源程序与数据库 | 前后端、版本SQL、种子与备份脚本；实际bak待建库后生成 |
