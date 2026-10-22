@@ -20,6 +20,7 @@ public class PaymentService {
     this.tx = tx;
   }
 
+  @SuppressWarnings("unchecked")
   public Map<String, Object> create(long order, String request) {
     var p =
         tx.execute(
@@ -68,23 +69,112 @@ public class PaymentService {
     p.putAll(
         db.need(
             "SELECT amount_cent,subject FROM v_order WHERE id=#{p.id}", Api.params("id", order)));
-    if (Set.of("SUCCEEDED", "CLOSED", "FAILED").contains(p.get("status"))) return p;
+    long id = Db.id(p, "id");
+    if (terminal(p)) return current(id);
+    if ("PENDING".equals(p.get("status")) && hasQr(p)) return current(id);
+    // A committed send counter survives a crash before or after network I/O. Its outcome
+    // is uncertain even if the process died before sending; always query the original id.
+    if (Db.id(p, "precreateCount") > 0 || !"CREATED".equals(p.get("status"))) {
+      p = (Map<String, Object>) syncPayment(id);
+      if (terminal(p) || ("PENDING".equals(p.get("status")) && hasQr(p))) return p;
+      if (!("PENDING".equals(p.get("status"))
+          || "ACQ.TRADE_NOT_EXIST".equals(p.get("lastResultCode")))) return p;
+    }
+    String token = UUID.randomUUID().toString();
+    var claimed =
+        db.one(
+            "DECLARE @claimed TABLE(previous_status VARCHAR(16),precreate_count INT);"
+                + " UPDATE payment_attempt SET dispatch_token=#{p.token},"
+                + " dispatch_lease_until=DATEADD(SECOND,90,SYSUTCDATETIME()),"
+                + " next_query_at=DATEADD(SECOND,90,SYSUTCDATETIME()),precreate_count=precreate_count+1,"
+                + " last_result_code='REQUEST_IN_PROGRESS',last_result_message=N'正在获取支付结果，请稍后刷新',"
+                + " next_action='QUERY',updated_at=SYSUTCDATETIME()"
+                + " OUTPUT deleted.status,inserted.precreate_count INTO @claimed"
+                + " WHERE id=#{p.id} AND status IN ('CREATED','PENDING','UNKNOWN') AND"
+                + " (dispatch_lease_until IS NULL OR dispatch_lease_until<=SYSUTCDATETIME());"
+                + " SELECT * FROM @claimed;",
+            Api.params("id", id, "token", token));
+    if (claimed == null) return current(id);
     try {
       var r = gateway.create(p);
-      String evidence = save(r);
+      save(r);
+      String status = r.status();
+      boolean firstSend = Db.id(claimed, "precreateCount") == 1
+          && "CREATED".equals(claimed.get("previousStatus"));
+      if ("FAILED".equals(status) && !firstSend) status = "UNKNOWN";
+      if (!Set.of("FAILED", "PENDING", "UNKNOWN").contains(status)) status = "UNKNOWN";
+      if ("PENDING".equals(status) && (r.qrCode() == null || r.qrCode().isBlank())) status = "UNKNOWN";
+      String code = PaymentGateway.safeCode(null, r.code());
+      var feedback = feedback(status, code, r.qrCode() != null && !r.qrCode().isBlank());
+      if (r.status().equals("FAILED") && !firstSend)
+        feedback = new Feedback("渠道拒绝本次重试，但之前的请求仍需确认。请查询原支付单，勿重复下单。", "QUERY");
       db.exec(
-          "UPDATE payment_attempt SET status=CASE WHEN status='CREATED' THEN 'PENDING' ELSE status"
-              + " END WHERE id=#{p.id}",
-          Api.params("id", p.get("id")));
-      p.put("qrCode", r.qrCode());
-      p.put("evidence", evidence);
+          "UPDATE payment_attempt SET status=#{p.status},qr_code=#{p.qr},"
+              + " last_result_code=#{p.code},last_result_message=#{p.message},next_action=#{p.action},"
+              + " next_query_at=CASE WHEN #{p.status}='FAILED' THEN NULL ELSE DATEADD(SECOND,15,SYSUTCDATETIME()) END,"
+              + " updated_at=SYSUTCDATETIME() WHERE id=#{p.id} AND dispatch_token=#{p.token}"
+              + " AND status IN ('CREATED','PENDING','UNKNOWN')",
+          Api.params("id", id, "token", token, "status", status,
+              "qr", "PENDING".equals(status) ? r.qrCode() : null, "code", code,
+              "message", feedback.message(), "action", feedback.action()));
+      audit(id, "PAYMENT_PRECREATE", code, status);
     } catch (Exception e) {
       db.exec(
-          "UPDATE payment_attempt SET status='UNKNOWN' WHERE id=#{p.id} AND status<>'SUCCEEDED'",
-          Api.params("id", p.get("id")));
-      p.put("message", "渠道结果待确认，将使用原请求号查询恢复");
+          "UPDATE payment_attempt SET status='UNKNOWN',qr_code=NULL,last_result_code='CHANNEL_UNAVAILABLE',"
+              + " last_result_message=N'暂未收到可信的渠道结果，将使用原支付单号查询。请勿重复下单。',"
+              + " next_action='QUERY',next_query_at=DATEADD(SECOND,15,SYSUTCDATETIME()),"
+              + " updated_at=SYSUTCDATETIME() WHERE id=#{p.id} AND dispatch_token=#{p.token}"
+              + " AND status IN ('CREATED','PENDING','UNKNOWN')",
+          Api.params("id", id, "token", token));
+      audit(id, "PAYMENT_PRECREATE", "CHANNEL_UNAVAILABLE", "UNKNOWN");
+    } finally {
+      db.exec("UPDATE payment_attempt SET dispatch_token=NULL,dispatch_lease_until=NULL"
+          + " WHERE id=#{p.id} AND dispatch_token=#{p.token}", Api.params("id", id, "token", token));
     }
-    return p;
+    return current(id);
+  }
+
+  private boolean terminal(Map<String, Object> payment) {
+    return Set.of("SUCCEEDED", "CLOSED", "FAILED").contains(payment.get("status"));
+  }
+
+  private boolean hasQr(Map<String, Object> payment) {
+    return !Objects.toString(payment.get("qrCode"), "").isBlank();
+  }
+
+  private Map<String, Object> current(long id) {
+    return db.need("SELECT p.*,o.amount_cent,o.subject,"
+        + " CAST(CASE WHEN p.dispatch_lease_until>SYSUTCDATETIME() THEN 1 ELSE 0 END AS BIT) precreate_in_flight"
+        + " FROM payment_attempt p JOIN v_order o ON o.id=p.order_id WHERE p.id=#{p.id}", Api.params("id", id));
+  }
+
+  private record Feedback(String message, String action) {}
+
+  private Feedback feedback(String state, String code, boolean qr) {
+    if (state.equals("SUCCEEDED")) return new Feedback("付款成功，已确认入账", "NONE");
+    if (state.equals("CLOSED")) return new Feedback("该支付单已关闭，可重新发起支付", "RETRY");
+    if (state.equals("PENDING"))
+      return qr ? new Feedback("二维码已生成，请扫码付款；付款后可查询结果", "PAY")
+          : new Feedback("渠道确认正在等待付款，可重新获取原支付单二维码", "RETRY");
+    if (state.equals("FAILED")) {
+      String message = switch (code) {
+        case "MISSING_CONFIG", "INVALID_KEY", "KEY_ROLE_MISMATCH" -> "支付接入配置不完整，请联系商户检查配置后重试";
+        case "ACQ.ACCESS_FORBIDDEN", "20001", "40001", "40002", "40006", "ACQ.PARTNER_ERROR" -> "渠道拒绝收款请求，请联系商户检查应用配置和收款权限后重试";
+        case "ACQ.TOTAL_FEE_EXCEED", "ACQ.BEYOND_PAY_RESTRICTION" -> "本次收款超过渠道限额，请联系商户核对金额和收款额度";
+        case "ACQ.EXIST_FORBIDDEN_WORD", "ACQ.INVALID_PARAMETER" -> "渠道拒绝订单信息，请联系商户核对订单内容后重试";
+        default -> "渠道明确拒绝本次收款请求，请联系商户检查后重试";
+      };
+      return new Feedback(message, "CONTACT_SUPPORT");
+    }
+    return switch (code) {
+      case "ACQ.TRADE_NOT_EXIST" -> new Feedback("渠道暂未查到该支付单，可重试获取二维码；系统继续使用原支付单号", "RETRY");
+      case "ACQ.TRADE_HAS_SUCCESS" -> new Feedback("渠道提示该支付单已付款，正在查询核实，请勿重复付款", "QUERY");
+      case "ACQ.TRADE_HAS_CLOSE" -> new Feedback("渠道提示该支付单已关闭，需查询确认后再重新付款", "QUERY");
+      case "ACQ.CONTEXT_INCONSISTENT" -> new Feedback("渠道记录与本次请求不一致，请查询原支付单并联系商户核查", "QUERY");
+      case "MISSING_QR_CODE" -> new Feedback("渠道未返回有效二维码，正在查询原支付单，请勿重复下单", "QUERY");
+      case "AMOUNT_MISMATCH" -> new Feedback("渠道金额与订单不一致，已建立核查工单，请联系商户处理", "CONTACT_SUPPORT");
+      default -> new Feedback("渠道结果暂未确认，将使用原支付单号继续查询，请勿重复下单", "QUERY");
+    };
   }
 
   private String save(PaymentGateway.Result r) {
@@ -93,18 +183,17 @@ public class PaymentService {
   }
 
   public Object syncPayment(long id) {
-    var p =
-        db.need(
-            "SELECT p.*,o.amount_cent,o.subject FROM payment_attempt p JOIN v_order o ON"
-                + " o.id=p.order_id WHERE p.id=#{p.id}",
-            Api.params("id", id));
+    var p = current(id);
+    if (terminal(p) || Boolean.TRUE.equals(p.get("precreateInFlight"))) return p;
     try {
       var r = gateway.query(p);
       String evidence = save(r);
       if (r.status().equals("SUCCEEDED")) {
         if (r.amountCent() != Db.id(p, "amountCent")) {
           recordQueryDifference(p, r, evidence);
-          throw Api.fail(409, "可信渠道结果金额与订单不一致，已建立核查工单");
+          updateQueryFeedback(p, "UNKNOWN", "AMOUNT_MISMATCH");
+          audit(id, "PAYMENT_QUERY", "AMOUNT_MISMATCH", "UNKNOWN");
+          return current(id);
         }
         db.list(
             "EXEC usp_confirm_payment"
@@ -124,23 +213,32 @@ public class PaymentService {
             db.need(
                 "SELECT is_primary FROM payment_attempt WHERE id=#{p.id}", Api.params("id", id));
         if (!Boolean.TRUE.equals(confirmed.get("isPrimary"))) recordQueryDifference(p, r, evidence);
-      } else
         db.exec(
-            "UPDATE payment_attempt SET"
-                + " status=#{p.status},query_count=query_count+1,next_query_at=DATEADD(SECOND,CASE"
-                + " WHEN query_count<1 THEN 15 WHEN query_count<3 THEN 60 ELSE 300"
-                + " END,SYSUTCDATETIME()) WHERE id=#{p.id} AND status<>'SUCCEEDED'",
-            Api.params("id", id, "status", r.status()));
+            "UPDATE payment_attempt SET qr_code=NULL,last_result_code=#{p.code},"
+                + " last_result_message=N'付款成功，已确认入账',next_action='NONE'"
+                + " WHERE id=#{p.id} AND status='SUCCEEDED'",
+            Api.params("id", id, "code", PaymentGateway.safeCode(null, r.code())));
+      } else updateQueryFeedback(p, Set.of("PENDING", "CLOSED").contains(r.status()) ? r.status() : "UNKNOWN", r.code());
       audit(id, "PAYMENT_QUERY", r.code(), r.status());
     } catch (Exception e) {
       audit(id, "PAYMENT_QUERY", "ERROR", "UNKNOWN");
-      db.exec(
-          "UPDATE payment_attempt SET"
-              + " next_query_at=DATEADD(MINUTE,5,SYSUTCDATETIME()),query_count=query_count+1 WHERE"
-              + " id=#{p.id} AND status<>'SUCCEEDED'",
-          Api.params("id", id));
+      updateQueryFeedback(p, "UNKNOWN", "CHANNEL_UNAVAILABLE");
     }
-    return db.need("SELECT * FROM payment_attempt WHERE id=#{p.id}", Api.params("id", id));
+    return current(id);
+  }
+
+  private void updateQueryFeedback(Map<String, Object> payment, String state, String code) {
+    code = PaymentGateway.safeCode(null, code);
+    var feedback = feedback(state, code, hasQr(payment));
+    db.exec("UPDATE payment_attempt SET status=#{p.status},last_result_code=#{p.code},"
+        + " last_result_message=#{p.message},next_action=#{p.action},"
+        + " qr_code=CASE WHEN #{p.status}='CLOSED' THEN NULL ELSE qr_code END,"
+        + " query_count=query_count+1,next_query_at=CASE WHEN #{p.status}='CLOSED' THEN NULL ELSE"
+        + " DATEADD(SECOND,CASE WHEN query_count<1 THEN 15 WHEN query_count<3 THEN 60 ELSE 300 END,SYSUTCDATETIME()) END,"
+        + " updated_at=SYSUTCDATETIME() WHERE id=#{p.id} AND status IN ('CREATED','PENDING','UNKNOWN')"
+        + " AND precreate_count=#{p.count} AND (dispatch_lease_until IS NULL OR dispatch_lease_until<=SYSUTCDATETIME())",
+        Api.params("id", payment.get("id"), "count", payment.get("precreateCount"), "status", state,
+            "code", code, "message", feedback.message(), "action", feedback.action()));
   }
 
   private void recordQueryDifference(
@@ -218,25 +316,57 @@ public class PaymentService {
   }
 
   public void executeRefund(long id) {
-    if (db.exec(
-            "UPDATE refund_request SET"
-                + " status='PROCESSING',next_query_at=DATEADD(SECOND,30,SYSUTCDATETIME()) WHERE"
-                + " id=#{p.id} AND status='APPROVED'",
-            Api.params("id", id))
-        == 0) return;
+    recoverRefund(id);
+  }
+
+  private void recoverRefund(long id) {
+    String token = UUID.randomUUID().toString();
+    // The lease is committed before network I/O. A crashed worker can be replaced;
+    // every retry keeps the immutable channel refund request number and amount.
+    var claimed =
+        db.one(
+            "DECLARE @claimed TABLE(previous_status VARCHAR(24)); UPDATE refund_request SET"
+                + " dispatch_token=#{p.token},"
+                + " dispatch_lease_until=DATEADD(SECOND,90,SYSUTCDATETIME()),"
+                + " next_query_at=DATEADD(SECOND,90,SYSUTCDATETIME()), status=CASE WHEN"
+                + " status='APPROVED' THEN 'PROCESSING' ELSE status END,"
+                + " updated_at=SYSUTCDATETIME() OUTPUT deleted.status INTO @claimed WHERE"
+                + " id=#{p.id} AND status IN ('APPROVED','PROCESSING','UNKNOWN') AND"
+                + " (status='APPROVED' OR next_query_at IS NULL OR next_query_at<=SYSUTCDATETIME())"
+                + " AND (dispatch_lease_until IS NULL OR dispatch_lease_until<=SYSUTCDATETIME());"
+                + " SELECT previous_status FROM @claimed;",
+            Api.params("id", id, "token", token));
+    if (claimed == null) return;
     try {
-      applyRefund(id, gateway.refund(refund(id)));
+      var request = refund(id);
+      PaymentGateway.Result result;
+      if ("APPROVED".equals(claimed.get("previousStatus"))) {
+        result = gateway.refund(request);
+      } else {
+        result = gateway.queryRefund(request);
+        if (Set.of("NOT_FOUND", "NOT_EXECUTED").contains(result.status())) {
+          save(result);
+          audit(id, "REFUND_REDISPATCH", result.code(), "RETRY");
+          result = gateway.refund(request);
+        }
+      }
+      applyRefund(id, token, result);
     } catch (Exception e) {
       db.exec(
           "UPDATE refund_request SET"
               + " status='UNKNOWN',next_query_at=DATEADD(SECOND,15,SYSUTCDATETIME()) WHERE"
-              + " id=#{p.id} AND status='PROCESSING'",
-          Api.params("id", id));
+              + " id=#{p.id} AND dispatch_token=#{p.token} AND status IN ('PROCESSING','UNKNOWN')",
+          Api.params("id", id, "token", token));
       audit(id, "REFUND_CALL", "UNCERTAIN", "UNKNOWN");
+    } finally {
+      db.exec(
+          "UPDATE refund_request SET dispatch_token=NULL,dispatch_lease_until=NULL"
+              + " WHERE id=#{p.id} AND dispatch_token=#{p.token}",
+          Api.params("id", id, "token", token));
     }
   }
 
-  private void applyRefund(long id, PaymentGateway.Result r) {
+  private void applyRefund(long id, String token, PaymentGateway.Result r) {
     String evidence = save(r);
     if (r.status().equals("SUCCEEDED"))
       db.list(
@@ -248,28 +378,42 @@ public class PaymentService {
       db.exec(
           "UPDATE refund_request SET"
               + " status='UNKNOWN',query_count=query_count+1,next_query_at=DATEADD(MINUTE,1,SYSUTCDATETIME())"
-              + " WHERE id=#{p.id} AND status IN ('PROCESSING','UNKNOWN')",
-          Api.params("id", id));
+              + " WHERE id=#{p.id} AND dispatch_token=#{p.token} AND status IN"
+              + " ('PROCESSING','UNKNOWN')",
+          Api.params("id", id, "token", token));
     audit(id, "REFUND_QUERY", r.code(), r.status());
   }
 
   public Object syncRefund(long id) {
-    try {
-      applyRefund(id, gateway.queryRefund(refund(id)));
-    } catch (Exception e) {
-      audit(id, "REFUND_QUERY", "ERROR", "UNKNOWN");
-    }
+    recoverRefund(id);
     return refund(id);
   }
 
   public void audit(long id, String action, String code, String status) {
+    boolean refundAction = action.startsWith("REFUND");
+    String from =
+        refundAction
+            ? "refund_request r JOIN payment_attempt p ON p.id=r.payment_id"
+            : "payment_attempt p";
+    var scope =
+        db.one(
+            "SELECT o.merchant_id FROM "
+                + from
+                + " JOIN v_order o ON o.id=p.order_id WHERE "
+                + (refundAction ? "r" : "p")
+                + ".id=#{p.id}",
+            Api.params("id", id));
     db.exec(
         "INSERT"
-            + " audit_log(event_category,actor_user_id,object_type,object_id,action,result,summary,request_id)"
-            + " VALUES('CHANNEL_QUERY',#{p.actor},'CHANNEL',#{p.id},#{p.action},#{p.result},#{p.summary},#{p.req})",
+            + " audit_log(event_category,actor_user_id,scope_merchant_id,object_type,object_id,action,result,summary,request_id)"
+            + " VALUES('CHANNEL_QUERY',#{p.actor},#{p.merchant},#{p.type},#{p.id},#{p.action},#{p.result},#{p.summary},#{p.req})",
         Api.params(
             "actor",
             RequestContext.actor() == null ? null : RequestContext.actor().id(),
+            "merchant",
+            scope == null ? null : scope.get("merchantId"),
+            "type",
+            refundAction ? "REFUND" : "PAYMENT",
             "id",
             id,
             "action",
@@ -298,7 +442,8 @@ public class PaymentService {
       for (var r :
           db.list(
               "SELECT TOP 20 id,status FROM refund_request WHERE status='APPROVED' OR (status IN"
-                  + " ('PROCESSING','UNKNOWN') AND next_query_at<=SYSUTCDATETIME()) ORDER BY id",
+                  + " ('PROCESSING','UNKNOWN') AND next_query_at<=SYSUTCDATETIME())"
+                  + " ORDER BY COALESCE(next_query_at,created_at),id",
               Map.of())) {
         if ("APPROVED".equals(r.get("status"))) executeRefund(Db.id(r, "id"));
         else syncRefund(Db.id(r, "id"));

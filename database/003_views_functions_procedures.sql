@@ -17,11 +17,51 @@ CREATE OR ALTER VIEW dbo.v_statement_normalized AS
  FROM dbo.statement_line l;
 GO
 CREATE OR ALTER VIEW dbo.v_case AS
- SELECT t.*,origin.classification,origin.reason_code,r.classification latest_classification,r.batch_id,r.source_event_key,r.entry_id,r.statement_line_id,b.merchant_id,m.name merchant_name,
+ SELECT t.*,origin.classification,origin.reason_code,r.classification latest_classification,r.batch_id,origin.source_event_key,r.entry_id,r.statement_line_id,ob.merchant_id,m.name merchant_name,
  a.display_name assignee_name,u.display_name reviewer_name,b.batch_no
  FROM dbo.exception_task t JOIN dbo.reconciliation_result r ON r.id=t.latest_result_id JOIN dbo.reconciliation_result origin ON origin.id=t.origin_result_id
- JOIN dbo.reconciliation_batch b ON b.id=r.batch_id LEFT JOIN dbo.merchant m ON m.id=b.merchant_id
+ JOIN dbo.reconciliation_batch b ON b.id=r.batch_id JOIN dbo.reconciliation_batch ob ON ob.id=origin.batch_id LEFT JOIN dbo.merchant m ON m.id=ob.merchant_id
  LEFT JOIN dbo.app_user a ON a.id=t.assignee_id LEFT JOIN dbo.app_user u ON u.id=t.reviewed_by;
+GO
+CREATE OR ALTER VIEW dbo.v_case_matched_evidence AS
+ SELECT t.id case_id,r.id result_id,b.batch_no,b.observed_at,r.detected_at
+ FROM dbo.exception_task t JOIN dbo.reconciliation_result origin ON origin.id=t.origin_result_id
+ JOIN dbo.reconciliation_batch ob ON ob.id=origin.batch_id
+ JOIN dbo.reconciliation_result r ON r.source_event_key=origin.source_event_key AND r.classification='MATCHED'
+ JOIN dbo.reconciliation_batch b ON b.id=r.batch_id AND b.status='COMPLETED'
+ JOIN dbo.reconciliation_batch source ON source.id=COALESCE(b.statement_source_batch_id,b.id)
+ WHERE b.scope_type=ob.scope_type AND ISNULL(b.merchant_id,-1)=ISNULL(ob.merchant_id,-1)
+ AND COALESCE(b.observed_at,b.created_at)>origin.detected_at
+ AND NOT EXISTS(
+  SELECT 1 FROM dbo.reconciliation_result issue JOIN dbo.reconciliation_batch ib ON ib.id=issue.batch_id
+   JOIN dbo.reconciliation_batch issue_source ON issue_source.id=COALESCE(ib.statement_source_batch_id,ib.id)
+  WHERE issue.source_event_key=origin.source_event_key AND issue.classification<>'MATCHED'
+   AND ib.status='COMPLETED' AND ib.scope_type=ob.scope_type AND ISNULL(ib.merchant_id,-1)=ISNULL(ob.merchant_id,-1)
+   AND (issue.detected_at>=COALESCE(b.observed_at,b.created_at)
+    OR (b.source_type<>'TRADE_QUERY' AND issue_source.created_at>source.created_at)));
+GO
+CREATE OR ALTER VIEW dbo.v_case_attribution_evidence AS
+ SELECT t.id case_id,b.id batch_id,b.batch_no,b.observed_at,b.merchant_id,m.name merchant_name,r.id result_id,r.classification
+ FROM dbo.exception_task t JOIN dbo.reconciliation_result origin ON origin.id=t.origin_result_id
+ JOIN dbo.reconciliation_result latest ON latest.id=t.latest_result_id
+ JOIN dbo.reconciliation_batch ob ON ob.id=origin.batch_id AND ob.scope_type='PLATFORM_UNASSIGNED'
+ JOIN dbo.reconciliation_batch os ON os.id=COALESCE(ob.statement_source_batch_id,ob.id)
+ JOIN dbo.statement_line old_line ON old_line.id=origin.statement_line_id
+ JOIN dbo.reconciliation_batch source ON source.file_sha256=os.file_sha256 AND source.scope_type='MERCHANT' AND source.statement_source_batch_id IS NULL
+ JOIN dbo.statement_line line ON line.import_batch_id=source.id AND line.line_no=old_line.line_no
+  AND line.event_type=old_line.event_type AND line.amount_cent=old_line.amount_cent AND line.channel_occurred_at=old_line.channel_occurred_at
+ JOIN dbo.reconciliation_result r ON r.statement_line_id=line.id
+ JOIN dbo.reconciliation_batch b ON b.id=r.batch_id AND COALESCE(b.statement_source_batch_id,b.id)=source.id AND b.status='COMPLETED'
+  AND b.scope_type='MERCHANT' AND b.merchant_id=source.merchant_id AND b.observed_at>latest.detected_at
+ JOIN dbo.merchant m ON m.id=b.merchant_id
+ JOIN dbo.payment_attempt p ON p.out_trade_no=line.out_trade_no
+ JOIN dbo.v_order o ON o.id=p.order_id AND o.merchant_id=b.merchant_id
+ WHERE os.file_sha256 IS NOT NULL
+  AND (NULLIF(old_line.out_trade_no,'') IS NULL OR old_line.out_trade_no=line.out_trade_no)
+  AND (NULLIF(old_line.channel_trade_no,'') IS NULL OR old_line.channel_trade_no=line.channel_trade_no)
+  AND (NULLIF(old_line.out_request_no,'') IS NULL OR old_line.out_request_no=line.out_request_no)
+  AND (NULLIF(line.channel_trade_no,'') IS NULL OR p.channel_trade_no IS NULL OR line.channel_trade_no=p.channel_trade_no)
+  AND (line.event_type='RECEIPT' OR EXISTS(SELECT 1 FROM dbo.refund_request refund WHERE refund.out_request_no=line.out_request_no AND refund.payment_id=p.id));
 GO
 CREATE OR ALTER VIEW dbo.v_public_merchant AS SELECT id,merchant_code,name,category_code FROM dbo.merchant WHERE status='ACTIVE';
 GO
@@ -31,7 +71,7 @@ CREATE OR ALTER VIEW dbo.v_merchant_transaction AS SELECT * FROM dbo.v_transacti
 GO
 CREATE OR ALTER VIEW dbo.v_reconciliation_summary AS
  SELECT b.id,b.batch_no,b.merchant_id,b.status,r.classification,COUNT_BIG(r.id) result_count
- FROM dbo.reconciliation_batch b LEFT JOIN dbo.reconciliation_result r ON r.batch_id=b.id GROUP BY b.id,b.batch_no,b.merchant_id,b.status,r.classification;
+ FROM dbo.reconciliation_batch b LEFT JOIN dbo.reconciliation_result r ON r.batch_id=b.id WHERE b.source_type<>'AUTO_JOB' GROUP BY b.id,b.batch_no,b.merchant_id,b.status,r.classification;
 GO
 CREATE OR ALTER VIEW dbo.v_case_search AS SELECT * FROM dbo.v_case WHERE merchant_id=TRY_CONVERT(BIGINT,SESSION_CONTEXT(N'merchant_id')) OR CONVERT(VARCHAR(24),SESSION_CONTEXT(N'role')) IN ('PLATFORM_FINANCE','AUDITOR');
 GO
@@ -66,7 +106,8 @@ BEGIN
    COMMIT; SELECT 'ALREADY_CONFIRMED' outcome; RETURN;
   END;
   IF @status='WAITING_PAYMENT' AND NOT EXISTS(SELECT 1 FROM dbo.payment_attempt WHERE order_id=@order AND is_primary=1) SET @primary=1;
-  UPDATE dbo.payment_attempt SET status='SUCCEEDED',channel_trade_no=@channel_trade_no,is_primary=@primary,confirmed_at=@occurred_at,next_query_at=NULL,updated_at=SYSUTCDATETIME() WHERE id=@payment_id;
+  UPDATE dbo.payment_attempt SET status='SUCCEEDED',channel_trade_no=@channel_trade_no,is_primary=@primary,confirmed_at=@occurred_at,next_query_at=NULL,
+   qr_code=NULL,last_result_code='PAYMENT_CONFIRMED',last_result_message=N'付款成功，已确认入账',next_action='NONE',updated_at=SYSUTCDATETIME() WHERE id=@payment_id;
   INSERT dbo.transaction_entry(entry_no,event_key,entry_type,payment_id,amount_cent,channel_occurred_at,evidence_file_uri)
    SELECT CONCAT('E',REPLACE(NEWID(),'-','')),CONCAT('P:',out_trade_no),'RECEIPT',id,@amount_cent,@occurred_at,@evidence FROM dbo.payment_attempt WHERE id=@payment_id;
   UPDATE dbo.business_order SET status=CASE WHEN @primary=1 THEN 'PAID' ELSE 'PAYMENT_EXCEPTION' END,updated_at=SYSUTCDATETIME() WHERE id=@order;
@@ -136,16 +177,23 @@ BEGIN
    SELECT @batch_id,COALESCE(l.event_key,c.event_key),COALESCE(l.event_key,c.event_key),l.id,c.id,
     CASE WHEN l.id IS NULL THEN 'CHANNEL_ONLY' WHEN l.entry_type='RECEIPT' AND l.is_primary=0 THEN 'EXTRA_SUCCESS'
      WHEN c.id IS NULL AND @complete='UNKNOWN' THEN 'PENDING_CONFIRMATION' WHEN c.id IS NULL THEN 'LOCAL_ONLY'
+     WHEN c.event_type='REFUND' AND NULLIF(c.out_trade_no,'') IS NOT NULL AND l.out_trade_no<>c.out_trade_no THEN 'KEY_UNRESOLVED'
      WHEN NULLIF(c.channel_trade_no,'') IS NOT NULL AND l.channel_trade_no<>c.channel_trade_no THEN 'KEY_UNRESOLVED'
      WHEN l.amount_cent<>c.amount_cent THEN 'AMOUNT_MISMATCH' ELSE 'MATCHED' END,
-    CASE WHEN l.id IS NULL THEN 'PAYMENT_CONFIRMATION' WHEN l.entry_type='RECEIPT' AND l.is_primary=0 THEN 'DUPLICATE_PAYMENT'
+    CASE WHEN l.id IS NULL AND @scope='PLATFORM_UNASSIGNED' THEN 'UNASSIGNED_MERCHANT'
+     WHEN l.id IS NULL THEN 'PAYMENT_CONFIRMATION' WHEN l.entry_type='RECEIPT' AND l.is_primary=0 THEN 'DUPLICATE_PAYMENT'
      WHEN c.id IS NULL AND @complete='UNKNOWN' THEN 'STATEMENT_INCOMPLETE' WHEN c.id IS NULL THEN 'MISSING_CHANNEL_EVENT'
+     WHEN c.event_type='REFUND' AND NULLIF(c.out_trade_no,'') IS NOT NULL AND l.out_trade_no<>c.out_trade_no THEN 'REFUND_PAYMENT_MISMATCH'
      WHEN NULLIF(c.channel_trade_no,'') IS NOT NULL AND l.channel_trade_no<>c.channel_trade_no THEN 'CHANNEL_ID_CONFLICT'
      WHEN l.amount_cent<>c.amount_cent THEN 'AMOUNT_DIFFERENCE' ELSE 'IDENTICAL' END
    FROM (SELECT * FROM #local WHERE event_key NOT IN(SELECT event_key FROM #channel WHERE key_count>1 AND event_key IS NOT NULL)) l
    FULL OUTER JOIN (SELECT * FROM #channel WHERE event_key IS NOT NULL AND key_count=1) c ON l.event_key=c.event_key;
   ;WITH issues AS(SELECT *,ROW_NUMBER() OVER(PARTITION BY source_event_key,classification ORDER BY id) issue_number FROM dbo.reconciliation_result WHERE batch_id=@batch_id AND classification<>'MATCHED')
-  UPDATE t SET latest_result_id=r.id,status=CASE WHEN t.status='CLOSED' THEN 'OPEN' ELSE t.status END,
+  UPDATE t SET latest_result_id=r.id,status=CASE WHEN t.status='CLOSED' THEN 'OPEN' WHEN t.status='PENDING_REVIEW' THEN 'PROCESSING' ELSE t.status END,
+   submitted_by=CASE WHEN t.status IN ('CLOSED','PENDING_REVIEW') THEN NULL ELSE t.submitted_by END,
+   reviewed_by=CASE WHEN t.status='CLOSED' THEN NULL ELSE t.reviewed_by END,
+   resolution_code=CASE WHEN t.status='CLOSED' THEN NULL ELSE t.resolution_code END,
+   due_at=CASE WHEN t.status='CLOSED' THEN DATEADD(DAY,2,SYSUTCDATETIME()) ELSE t.due_at END,
    closed_at=CASE WHEN t.status='CLOSED' THEN NULL ELSE t.closed_at END,updated_at=SYSUTCDATETIME()
    FROM dbo.exception_task t JOIN issues r ON t.case_key=CONCAT(ISNULL(CONVERT(VARCHAR,@merchant),'UNASSIGNED'),':',r.source_event_key,':',r.classification) WHERE r.issue_number=1;
   ;WITH issues AS(SELECT *,ROW_NUMBER() OVER(PARTITION BY source_event_key,classification ORDER BY id) issue_number FROM dbo.reconciliation_result WHERE batch_id=@batch_id AND classification<>'MATCHED')
@@ -159,24 +207,44 @@ BEGIN
  END TRY BEGIN CATCH IF @@TRANCOUNT>0 ROLLBACK; SET TRANSACTION ISOLATION LEVEL READ COMMITTED; THROW; END CATCH;
 END;
 GO
-CREATE OR ALTER PROCEDURE dbo.usp_review_exception @case_id BIGINT,@reviewer BIGINT,@approve BIT,@resolution_code VARCHAR(40),@reason NVARCHAR(MAX),@evidence_result BIGINT=NULL
+CREATE OR ALTER PROCEDURE dbo.usp_review_exception @case_id BIGINT,@reviewer BIGINT,@approve BIT,@resolution_code VARCHAR(40),@reason NVARCHAR(MAX),@evidence_result BIGINT=NULL,@expected_version BINARY(8)=NULL,@attribution_batch BIGINT=NULL
 AS
 BEGIN
  SET NOCOUNT ON; SET XACT_ABORT ON;
  BEGIN TRY
   BEGIN TRANSACTION;
-  DECLARE @submitter BIGINT,@event VARCHAR(150),@merchant BIGINT;
-  SELECT @submitter=t.submitted_by,@event=r.source_event_key,@merchant=b.merchant_id FROM dbo.exception_task t WITH(UPDLOCK,HOLDLOCK)
-   JOIN dbo.reconciliation_result r ON r.id=t.latest_result_id JOIN dbo.reconciliation_batch b ON b.id=r.batch_id WHERE t.id=@case_id AND t.status='PENDING_REVIEW';
+  DECLARE @submitter BIGINT,@version BINARY(8);
+  SELECT @submitter=t.submitted_by,@version=t.version FROM dbo.exception_task t WITH(UPDLOCK,HOLDLOCK)
+   WHERE t.id=@case_id AND t.status='PENDING_REVIEW';
   IF @submitter IS NULL THROW 51030,N'工单不在待复核状态',1;
-  IF @reviewer=@submitter THROW 51031,N'处理人不能复核自己的工单',1;
+  IF @expected_version IS NULL OR @version<>@expected_version THROW 51036,N'工单已变化，请刷新后重新复核',1;
+  IF @reviewer IS NULL OR @reviewer=@submitter THROW 51031,N'处理人不能复核自己的工单',1;
+  IF NOT EXISTS(SELECT 1 FROM dbo.app_user u WHERE u.id=@reviewer AND u.status='ACTIVE'
+   AND (u.platform_role='PLATFORM_FINANCE' OR (u.platform_role='MEMBER' AND EXISTS(
+    SELECT 1 FROM dbo.merchant_member mm JOIN dbo.exception_task t ON t.id=@case_id
+     JOIN dbo.reconciliation_result origin ON origin.id=t.origin_result_id JOIN dbo.reconciliation_batch ob ON ob.id=origin.batch_id
+     WHERE mm.merchant_id=ob.merchant_id AND mm.user_id=u.id AND mm.status='ACTIVE' AND mm.role_code IN ('OWNER','REVIEWER')))))
+   THROW 51037,N'复核人已无此工单的复核权限',1;
+  IF @approve IS NULL THROW 51033,N'请选择复核决定',1;
   IF NULLIF(LTRIM(RTRIM(@reason)),N'') IS NULL THROW 51032,N'请输入复核意见',1;
-  IF @approve=1 AND @resolution_code NOT IN ('RECONCILED','INVALID_INPUT','FALSE_POSITIVE','KNOWN_EXCEPTION') THROW 51033,N'结案类型不合法',1;
-  IF @evidence_result IS NOT NULL AND @resolution_code<>'RECONCILED' THROW 51035,N'仅重新匹配结论可替换结果证据',1;
-  IF @approve=1 AND @resolution_code='RECONCILED' AND NOT EXISTS(SELECT 1 FROM dbo.reconciliation_result r JOIN dbo.reconciliation_batch b ON b.id=r.batch_id WHERE r.id=@evidence_result AND r.source_event_key=@event AND r.classification='MATCHED' AND ISNULL(b.merchant_id,-1)=ISNULL(@merchant,-1) AND b.status='COMPLETED' AND b.id>(SELECT o.batch_id FROM dbo.reconciliation_result o JOIN dbo.exception_task t ON t.origin_result_id=o.id WHERE t.id=@case_id)) THROW 51034,N'需要同一事件的新批次匹配证据',1;
+  IF @approve=1 AND ISNULL(@resolution_code,'') NOT IN ('RECONCILED','INVALID_INPUT','FALSE_POSITIVE','KNOWN_EXCEPTION','OWNERSHIP_CONFIRMED') THROW 51033,N'结案类型不合法',1;
+  IF @evidence_result IS NOT NULL AND (@approve=0 OR ISNULL(@resolution_code,'')<>'RECONCILED') THROW 51035,N'退回或非重新匹配结论不能替换结果证据',1;
+  IF @approve=1 AND @resolution_code='RECONCILED' AND NOT EXISTS(SELECT 1 FROM dbo.v_case_matched_evidence WHERE case_id=@case_id AND result_id=@evidence_result) THROW 51034,N'需要同一商户同一事件、晚于最近异常的新匹配证据',1;
+  IF @attribution_batch IS NOT NULL AND (@approve=0 OR ISNULL(@resolution_code,'')<>'OWNERSHIP_CONFIRMED') THROW 51039,N'仅归属确认结案可引用归属批次',1;
+  DECLARE @attributed_merchant BIGINT,@attributed_result BIGINT;
+  IF @approve=1 AND @resolution_code='OWNERSHIP_CONFIRMED'
+  BEGIN
+   SELECT TOP 1 @attributed_merchant=merchant_id,@attributed_result=result_id FROM dbo.v_case_attribution_evidence WHERE case_id=@case_id AND batch_id=@attribution_batch ORDER BY result_id;
+   IF @attributed_result IS NULL THROW 51038,N'需要相同原件同一行、已确认原支付归属的新商户对账结果',1;
+  END;
   UPDATE dbo.exception_task SET status=CASE WHEN @approve=1 THEN 'CLOSED' ELSE 'PROCESSING' END,reviewed_by=@reviewer,
-   resolution_code=@resolution_code,resolution_text=CONCAT(COALESCE(resolution_text,N''),CHAR(10),N'复核：',@reason),
-   latest_result_id=COALESCE(@evidence_result,latest_result_id),closed_at=CASE WHEN @approve=1 THEN SYSUTCDATETIME() ELSE NULL END,updated_at=SYSUTCDATETIME() WHERE id=@case_id;
+   resolution_code=CASE WHEN @approve=1 THEN @resolution_code ELSE NULL END,resolution_text=CONCAT(COALESCE(resolution_text,N''),CHAR(10),N'复核：',@reason),
+   latest_result_id=CASE WHEN @approve=1 AND @resolution_code='RECONCILED' THEN @evidence_result ELSE latest_result_id END,
+   closed_at=CASE WHEN @approve=1 THEN SYSUTCDATETIME() ELSE NULL END,updated_at=SYSUTCDATETIME() WHERE id=@case_id;
+  IF @attributed_result IS NOT NULL
+   INSERT dbo.audit_log(event_category,actor_user_id,object_type,object_id,action,result,summary,after_json,request_id)
+   SELECT 'BUSINESS',@reviewer,'CASE',@case_id,'CASE_OWNERSHIP_CONFIRMED','SUCCESS',N'已确认原账单行的商户归属，原平台工单保留',
+    (SELECT CONVERT(VARCHAR(20),@attribution_batch) target_batch_id,CONVERT(VARCHAR(20),@attributed_result) target_result_id,CONVERT(VARCHAR(20),@attributed_merchant) merchant_id FOR JSON PATH,WITHOUT_ARRAY_WRAPPER),CONVERT(VARCHAR(36),SESSION_CONTEXT(N'request_id'));
   COMMIT;
  END TRY BEGIN CATCH IF @@TRANCOUNT>0 ROLLBACK; THROW; END CATCH;
 END;

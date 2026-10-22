@@ -1,5 +1,5 @@
 #Requires -Version 7.4
-param([ValidateSet('DEMO','ALIPAY_SANDBOX')][string]$Environment='DEMO',[string]$Server='localhost\RECONIS',[Parameter(Mandatory)][string]$BackupDirectory)
+param([ValidateSet('DEMO','ALIPAY_SANDBOX')][string]$Environment='DEMO',[string]$Server='127.0.0.1,1433',[Parameter(Mandatory)][string]$BackupDirectory)
 $ErrorActionPreference='Stop'
 $path=[IO.Path]::GetFullPath($BackupDirectory)
 if(-not(Test-Path -LiteralPath $path -PathType Container)){throw '备份目录须预先创建，并授予SQL Server服务账号写入权限。'}

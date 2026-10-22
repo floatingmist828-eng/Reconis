@@ -42,7 +42,7 @@ onMounted(() =>
   action(async () => {
     await load();
     merchants.value = (await api("/merchants?pageSize=100")).items;
-    dialog.value = route.query.create === "true";
+    if (route.query.create === "true" && session.canAny(["OWNER", "CASHIER", "FINANCE"])) dialog.value = true;
   }),
 );
 </script>
@@ -55,7 +55,7 @@ onMounted(() =>
         <p>开单、收款，查看订单进展。</p>
       </div>
       <el-button
-        v-if="session.writable"
+        v-if="session.canAny(['OWNER', 'CASHIER', 'FINANCE'])"
         type="primary"
         :icon="Plus"
         @click="dialog = true"

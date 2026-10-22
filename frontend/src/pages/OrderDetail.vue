@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import QRCode from "qrcode";
@@ -18,10 +18,49 @@ const route = useRoute(),
   refund = ref<Row | null>(null),
   amount = ref(""),
   reason = ref(""),
-  refreshing = ref(false);
+  refreshing = ref(false),
+  paymentBusy = ref(false),
+  refundBusy = ref(false),
+  loadError = ref("");
+let refundRequestId = "", loadingOrder = false, qrRevision = 0;
+const canEditOrder = computed(() => row.value && session.can(row.value.merchantId, ["OWNER", "CASHIER", "FINANCE"]));
+const canRequestRefund = computed(() => session.writable && row.value && (
+  row.value.consumerId === session.user?.id || canEditOrder.value
+));
+const currentPayment = computed(() => pay.value && (row.value?.payments.find((p: Row) => p.id === pay.value?.id) || pay.value));
+const refundSummary = computed(() => {
+  const entries: Row[] = row.value?.entries || [];
+  const received = entries.filter(e => e.entryType === "RECEIPT").reduce((n, e) => n + BigInt(e.amountCent), 0n);
+  const refunded = entries.filter(e => e.entryType === "REFUND").reduce((n, e) => n + BigInt(e.amountCent), 0n);
+  return { refunded, label: refunded > 0n ? (received > 0n && refunded >= received ? "已全额退款" : "已部分退款") : "" };
+});
+function paymentMessage(p: Row | null) {
+  if (!p) return "";
+  if (p.status === "SUCCEEDED") return "付款已确认，可关闭此窗口查看收款记录。";
+  if (p.status === "CLOSED") return "该笔支付已关闭。";
+  return p.lastResultMessage || p.message || (p.status === "FAILED"
+    ? "本次付款未能发起，请确认后重新尝试。"
+    : "暂未获取二维码，可查询这笔支付的最新状态。");
+}
+watch(currentPayment, async (p) => {
+  const revision = ++qrRevision;
+  qr.value = "";
+  if (p?.qrCode && ["CREATED", "PENDING"].includes(p.status)) {
+    const image = await QRCode.toDataURL(p.qrCode, { width: 260, margin: 2 });
+    if (revision === qrRevision) qr.value = image;
+  }
+});
 let timer: ReturnType<typeof setInterval> | undefined;
-async function load() {
-  row.value = await api("/orders/" + route.params.id);
+async function load(quiet = false) {
+  if (loadingOrder) return;
+  loadingOrder = true;
+  try {
+    row.value = await api("/orders/" + route.params.id, { quiet });
+    loadError.value = "";
+  } catch (error: any) {
+    loadError.value = error.message || "订单加载失败，请重试";
+    if (!quiet) throw error;
+  } finally { loadingOrder = false; }
 }
 onMounted(() =>
   action(async () => {
@@ -30,30 +69,29 @@ onMounted(() =>
       await load();
       timer = setInterval(() => {
         if (
-          row.value?.payments.some((p: Row) =>
+          !document.hidden && (row.value?.payments.some((p: Row) =>
             ["CREATED", "PENDING", "UNKNOWN"].includes(p.status),
-          )
+          ) || row.value?.refunds.some((r: Row) => ["PENDING_REVIEW", "APPROVED", "PROCESSING", "UNKNOWN"].includes(r.status)))
         )
-          action(load);
+          void load(true);
       }, 10000);
     } finally {
       busy.value = false;
     }
   }),
 );
-onBeforeUnmount(() => clearInterval(timer));
+onBeforeUnmount(() => { clearInterval(timer); qrRevision++; });
 async function command(path: string) {
   await post(`/orders/${route.params.id}/${path}`);
   await load();
 }
 async function createPayment() {
-  pay.value = await post(`/orders/${route.params.id}/payments`, {
-    clientRequestId: crypto.randomUUID(),
-  });
-  qr.value = pay.value!.qrCode
-    ? await QRCode.toDataURL(pay.value!.qrCode, { width: 260, margin: 2 })
-    : "";
-  await load();
+  if (paymentBusy.value) return;
+  paymentBusy.value = true;
+  try {
+    pay.value = await post(`/orders/${route.params.id}/payments`, { clientRequestId: crypto.randomUUID() });
+    await load();
+  } finally { paymentBusy.value = false; }
 }
 async function sync(p: Row) {
   refreshing.value = true;
@@ -77,19 +115,24 @@ async function remove() {
   router.push("/orders");
 }
 function openRefund(p: Row) {
+  refundRequestId = crypto.randomUUID();
   refund.value = p;
   amount.value = money(p.refundableCent).replace(/,/g, "");
   reason.value = "";
 }
 async function submitRefund() {
+  if (refundBusy.value) return;
+  refundBusy.value = true;
+  try {
   await post(`/payments/${refund.value!.id}/refunds`, {
-    clientRequestId: crypto.randomUUID(),
+    clientRequestId: refundRequestId,
     amountCent: toCent(amount.value),
     reason: reason.value,
   });
   refund.value = null;
   await load();
   ElMessage.success("退款申请已提交，待其他财务人员审批");
+  } finally { refundBusy.value = false; }
 }
 </script>
 <template>
@@ -103,29 +146,33 @@ async function submitRefund() {
         <p class="mono">{{ row?.orderNo }}</p>
       </div>
       <div v-if="row" class="heading-actions">
-        <StatusTag :value="row.status" /><template v-if="session.writable"
-          ><el-button v-if="row.status === 'DRAFT'" @click="edit = true"
+        <StatusTag :value="row.status" /><el-tag v-if="refundSummary.label" type="info">{{ refundSummary.label }}</el-tag><template v-if="session.writable"
+          ><el-button v-if="canEditOrder && row.status === 'DRAFT'" @click="edit = true"
             >编辑草稿</el-button
-          ><el-button v-if="row.status === 'DRAFT'" @click="action(remove)"
+          ><el-button v-if="canEditOrder && row.status === 'DRAFT'" @click="action(remove)"
             >删除</el-button
           ><el-button
-            v-if="row.status === 'DRAFT'"
+            v-if="canEditOrder && row.status === 'DRAFT'"
             type="primary"
             @click="action(() => command('submit'))"
             >提交收款</el-button
           ><el-button
             v-if="row.status === 'WAITING_PAYMENT'"
             type="primary"
+            :loading="paymentBusy"
             @click="action(createPayment)"
             >打开付款</el-button
           ><el-button
-            v-if="['DRAFT', 'WAITING_PAYMENT'].includes(row.status)"
+            v-if="canEditOrder && ['DRAFT', 'WAITING_PAYMENT'].includes(row.status)"
             @click="action(() => command('cancel'))"
             >取消订单</el-button
           ></template
         >
       </div>
     </div>
+    <el-alert v-if="loadError" :title="loadError" type="error" :closable="false" style="margin-bottom: 18px">
+      <el-button link @click="action(() => load())">重新加载订单</el-button>
+    </el-alert>
     <div v-if="row" class="detail-grid">
       <div class="detail-stack">
         <section class="panel">
@@ -207,6 +254,8 @@ async function submitRefund() {
               {{ p.isPrimary ? "主支付" : "非主支付" }} · 可退 ¥
               {{ money(p.refundableCent) }}
             </p>
+            <el-alert v-if="p.lastResultMessage && ['FAILED', 'UNKNOWN', 'CREATED'].includes(p.status)"
+              :title="paymentMessage(p)" :type="p.status === 'FAILED' ? 'error' : 'warning'" :closable="false" />
             <div
               v-if="session.writable"
               class="row-actions"
@@ -218,7 +267,7 @@ async function submitRefund() {
                 @click="action(() => sync(p))"
                 >主动查询渠道</el-button
               ><el-button
-                v-if="p.status === 'SUCCEEDED'"
+                v-if="canRequestRefund && p.status === 'SUCCEEDED' && BigInt(p.refundableCent || '0') > 0n"
                 size="small"
                 type="primary"
                 plain
@@ -321,7 +370,7 @@ async function submitRefund() {
         <strong>¥ {{ money(row?.amountCent) }}</strong
         ><img v-if="qr" :src="qr" alt="收款二维码" />
         <p v-else class="muted">
-          {{ pay?.message || "暂未获取二维码，可主动查询已有支付状态。" }}
+          {{ paymentMessage(currentPayment) }}
         </p>
         <p>
           <StatusTag
@@ -371,7 +420,7 @@ async function submitRefund() {
             type="textarea"
             maxlength="1000" /></el-form-item></el-form
       ><template #footer
-        ><el-button type="primary" @click="action(submitRefund)"
+        ><el-button type="primary" :loading="refundBusy" @click="action(submitRefund)"
           >提交退款申请</el-button
         ></template
       ></el-dialog

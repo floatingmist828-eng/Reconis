@@ -8,25 +8,28 @@
     "node": ">=24 <25"
   },
   "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "playwright test",
     "dev": "vite --host 127.0.0.1",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
-    "vue": "3.5.22",
-    "vue-router": "4.6.3",
-    "pinia": "3.0.3",
-    "element-plus": "2.11.5",
     "@element-plus/icons-vue": "2.3.2",
     "echarts": "6.0.0",
-    "qrcode": "1.5.4"
+    "element-plus": "2.11.5",
+    "pinia": "3.0.3",
+    "qrcode": "1.5.4",
+    "vue": "3.5.22",
+    "vue-router": "4.6.3"
   },
   "devDependencies": {
-    "vite": "7.1.12",
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.7.2",
+    "@types/qrcode": "1.5.5",
     "@vitejs/plugin-vue": "6.0.1",
     "typescript": "5.9.3",
-    "vue-tsc": "3.1.1",
-    "@types/node": "24.7.2",
-    "@types/qrcode": "1.5.5"
+    "vite": "7.1.12",
+    "vue-tsc": "3.1.1"
   }
 }

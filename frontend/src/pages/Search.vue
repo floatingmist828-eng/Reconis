@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { api, query, time, action, type Row } from "../api";
@@ -9,13 +9,27 @@ const router = useRouter(),
   status = ref("CLOSED"),
   busy = ref(false),
   result = ref<Row | null>(null);
+const readiness = ref<Row>({ ready: false, message: "全文检索正在准备" });
+let timer: ReturnType<typeof setTimeout> | undefined;
+let disposed = false;
+async function checkReadiness() {
+  try { readiness.value = await api("/cases/search/status"); }
+  catch { readiness.value = { ready: false, message: "暂时无法连接检索服务" }; }
+  if (!disposed && !readiness.value.ready) timer = setTimeout(checkReadiness, 3000);
+}
+onMounted(checkReadiness);
+onUnmounted(() => { disposed = true; if (timer) clearTimeout(timer); });
 async function search() {
   if (!q.value.trim()) return;
   busy.value = true;
+  result.value = null;
   try {
     result.value = await api(
       "/cases/search?" + query({ q: q.value, status: status.value }),
     );
+  } catch (error) {
+    await checkReadiness();
+    throw error;
   } finally {
     busy.value = false;
   }
@@ -35,6 +49,7 @@ async function search() {
       <div class="table-toolbar">
         <el-input
           v-model="q"
+          maxlength="400"
           :prefix-icon="Search"
           placeholder="描述遇到的问题，例如：支付成功但通知未到达"
           style="width: min(100%, 600px)"
@@ -44,8 +59,9 @@ async function search() {
           ><el-option label="已解决案例" value="CLOSED" /><el-option
             label="处理中"
             value="PROCESSING" /></el-select
-        ><el-button type="primary" @click="action(search)">全文检索</el-button>
+        ><el-button type="primary" :disabled="!readiness.ready || busy" @click="action(search)">全文检索</el-button>
       </div>
+      <el-alert v-if="!readiness.ready" :title="readiness.message" type="info" :closable="false" show-icon />
       <div v-if="result" class="help-note">
         找到
         {{ result.items?.length || 0 }} 条结果。{{

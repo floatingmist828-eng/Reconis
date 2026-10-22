@@ -76,6 +76,15 @@ public class AnalyticsController {
       p.put("end", Api.utc(f.get("end")));
       where += " AND occurred_at<#{p.end}";
     }
+    if (p.containsKey("merchantId")) {
+      long merchant = Api.number(f, "merchantId");
+      db.need("SELECT id FROM merchant WHERE id=#{p.id}", Api.params("id", merchant));
+      RequestContext.merchant(merchant);
+    }
+    if (p.containsKey("start")
+        && p.containsKey("end")
+        && !((java.time.LocalDateTime) p.get("end"))
+            .isAfter((java.time.LocalDateTime) p.get("start"))) throw Api.fail(422, "结束时间必须晚于开始时间");
     return where;
   }
 
@@ -109,10 +118,13 @@ public class AnalyticsController {
                 p),
             "actors",
             db.list(
-                "SELECT TOP 10 COALESCE(u.display_name,N'系统/未登录') actor_name,COUNT_BIG(*) count"
-                    + " FROM audit_log a LEFT JOIN app_user u ON u.id=a.actor_user_id WHERE "
+                "SELECT TOP 10 a.actor_user_id,CASE WHEN a.actor_user_id IS NULL THEN N'系统/未登录'"
+                    + " ELSE CONCAT(u.display_name,N' [',a.actor_user_id,N']') END"
+                    + " actor_name,COUNT_BIG(*) count FROM audit_log a LEFT JOIN app_user u ON"
+                    + " u.id=a.actor_user_id WHERE "
                     + where
-                    + " GROUP BY u.display_name ORDER BY count DESC",
+                    + " GROUP BY a.actor_user_id,u.display_name ORDER BY count"
+                    + " DESC,a.actor_user_id",
                 p),
             "results",
             db.list(

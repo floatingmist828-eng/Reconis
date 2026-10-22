@@ -121,7 +121,7 @@ async function sync(row: Row) {
                   >退回</el-button
                 ></template
               ><el-button
-                v-if="['UNKNOWN', 'PROCESSING'].includes(row.status)"
+                v-if="session.can(row.merchantId, ['OWNER', 'FINANCE']) && ['UNKNOWN', 'PROCESSING'].includes(row.status)"
                 link
                 type="primary"
                 @click="action(() => sync(row))"

@@ -46,6 +46,8 @@ CREATE TABLE dbo.payment_attempt (
  channel_env VARCHAR(24) NOT NULL CHECK(channel_env IN ('DEMO','ALIPAY_SANDBOX')), app_id VARCHAR(64) NOT NULL, seller_id VARCHAR(64) NOT NULL,
  channel_trade_no VARCHAR(100), status VARCHAR(16) NOT NULL DEFAULT 'CREATED' CHECK(status IN ('CREATED','PENDING','SUCCEEDED','CLOSED','FAILED','UNKNOWN')),
  is_primary BIT NOT NULL DEFAULT 0, next_query_at DATETIME2(3), query_count INT NOT NULL DEFAULT 0, confirmed_at DATETIME2(3),
+ qr_code NVARCHAR(2048), last_result_code VARCHAR(64), last_result_message NVARCHAR(300), next_action VARCHAR(32),
+ precreate_count INT NOT NULL DEFAULT 0, dispatch_token VARCHAR(36), dispatch_lease_until DATETIME2(3),
  created_at DATETIME2(3) NOT NULL DEFAULT SYSUTCDATETIME(), updated_at DATETIME2(3) NOT NULL DEFAULT SYSUTCDATETIME()
 );
 CREATE TABLE dbo.payment_notification (
@@ -59,6 +61,7 @@ CREATE TABLE dbo.refund_request (
  status VARCHAR(24) NOT NULL DEFAULT 'PENDING_REVIEW' CHECK(status IN ('PENDING_REVIEW','APPROVED','PROCESSING','SUCCEEDED','REJECTED','FAILED','UNKNOWN')),
  applicant_id BIGINT NOT NULL REFERENCES dbo.app_user(id), reviewed_by BIGINT REFERENCES dbo.app_user(id), reviewed_at DATETIME2(3), review_reason NVARCHAR(1000),
  query_count INT NOT NULL DEFAULT 0, next_query_at DATETIME2(3), succeeded_at DATETIME2(3),
+ dispatch_token VARCHAR(36), dispatch_lease_until DATETIME2(3),
  created_at DATETIME2(3) NOT NULL DEFAULT SYSUTCDATETIME(), updated_at DATETIME2(3) NOT NULL DEFAULT SYSUTCDATETIME(), version ROWVERSION
 );
 CREATE TABLE dbo.transaction_entry (
@@ -73,9 +76,9 @@ CREATE TABLE dbo.reconciliation_batch (
  id BIGINT IDENTITY PRIMARY KEY, batch_no VARCHAR(64) NOT NULL UNIQUE,
  scope_type VARCHAR(24) NOT NULL CHECK(scope_type IN ('MERCHANT','PLATFORM_UNASSIGNED')),
  merchant_id BIGINT REFERENCES dbo.merchant(id), period_start DATETIME2(3) NOT NULL, period_end DATETIME2(3) NOT NULL,
- source_type VARCHAR(24) NOT NULL CHECK(source_type IN ('XLSX','XML','TRADE_QUERY','DEMO_SEED')),
+ source_type VARCHAR(24) NOT NULL CONSTRAINT CK_batch_source_type CHECK(source_type IN ('XLSX','XML','ALIPAY_CSV','ALIPAY_ZIP','TRADE_QUERY','DEMO_SEED')),
  statement_source_batch_id BIGINT REFERENCES dbo.reconciliation_batch(id), baseline_batch_id BIGINT REFERENCES dbo.reconciliation_batch(id),
- source_file_uri NVARCHAR(300), file_sha256 CHAR(64), completeness VARCHAR(24) NOT NULL DEFAULT 'UNKNOWN' CHECK(completeness IN ('UNKNOWN','DECLARED_COMPLETE','PROVIDER_COMPLETE')),
+ source_file_uri NVARCHAR(300), file_sha256 CHAR(64), ingest_options_sha256 CHAR(64), completeness VARCHAR(24) NOT NULL DEFAULT 'UNKNOWN' CHECK(completeness IN ('UNKNOWN','DECLARED_COMPLETE','PROVIDER_COMPLETE')),
  status VARCHAR(16) NOT NULL DEFAULT 'READY' CHECK(status IN ('IMPORTING','READY','RUNNING','COMPLETED','FAILED')),
  observed_at DATETIME2(3), started_at DATETIME2(3), finished_at DATETIME2(3), created_by BIGINT NULL REFERENCES dbo.app_user(id),
  created_at DATETIME2(3) NOT NULL DEFAULT SYSUTCDATETIME(),

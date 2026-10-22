@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from "vue";
 import { api, post, patch, money, toCent, action, type Row } from "../api";
+import { useSession } from "../stores/session";
+const session = useSession();
 const props = defineProps<{ existing?: Row }>(),
   emit = defineEmits<{ saved: [id: string]; cancel: [] }>();
 const merchants = ref<Row[]>([]),
@@ -25,7 +27,7 @@ form.items = form.items.map((i: Row) => ({
 onMounted(() =>
   action(async () => {
     const r = await api("/merchants?status=ACTIVE&pageSize=100");
-    merchants.value = r.items;
+    merchants.value = r.items.filter((m: Row) => session.can(m.id, ["OWNER", "CASHIER", "FINANCE"]));
     if (props.existing) merchantId.value = props.existing.merchantId;
     else if (merchants.value.length) merchantId.value = merchants.value[0]!.id;
     await loadStores();

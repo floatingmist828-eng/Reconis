@@ -72,6 +72,10 @@ public class ExportController {
   Object export(@RequestBody Map<String, Object> b) throws Exception {
     String format = Api.required(b, "format"), kind = Api.required(b, "kind");
     if (!Set.of("xlsx", "xml", "pdf", "docx").contains(format)) throw Api.fail(422, "导出格式不支持");
+    if (!Set.of("merchants", "transactions", "reconciliation").contains(kind))
+      throw Api.fail(422, "导出对象无效");
+    if ((format.equals("pdf") || format.equals("docx")) && !kind.equals("transactions"))
+      throw Api.fail(422, "PDF/Word 分析报告仅支持交易统计；请为此对象选择 Excel 或 XML");
     Map<String, String> filters = new HashMap<>();
     if (b.get("filters") instanceof Map<?, ?> map)
       map.forEach(
@@ -106,7 +110,7 @@ public class ExportController {
           bytes = report.xlsx(mapped, List.of("merchant_code", "name", "category_code", "contact"));
         else bytes = merchantXml(mapped);
       } else if (kind.equals("transactions")) {
-        rows = analytics.details(filters);
+        rows = analytics.exportDetails(filters);
         List<Map<String, Object>> mapped = new ArrayList<>();
         for (var r : rows) {
           Map<String, Object> m = new LinkedHashMap<>();

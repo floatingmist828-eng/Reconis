@@ -22,7 +22,7 @@ public class ReconciliationController {
   @PostMapping("/reconciliation/imports")
   Object upload(
       @RequestParam MultipartFile file,
-      @RequestParam long merchantId,
+      @RequestParam(required = false) Long merchantId,
       @RequestParam String start,
       @RequestParam String end,
       @RequestParam(defaultValue = "UNKNOWN") String completeness,
@@ -44,7 +44,9 @@ public class ReconciliationController {
     String name = Objects.toString(f.getOriginalFilename(), "").toLowerCase();
     if (name.endsWith(".xlsx")) return "xlsx";
     if (name.endsWith(".xml")) return "xml";
-    throw Api.fail(422, "请选择 XLSX 或 XML 文件");
+    if (name.endsWith(".csv")) return "csv";
+    if (name.endsWith(".zip")) return "zip";
+    throw Api.fail(422, "请选择 XLSX、XML 或支付宝交易账单 CSV / ZIP 文件");
   }
 
   @GetMapping("/reconciliation/batches")
@@ -55,7 +57,7 @@ public class ReconciliationController {
         db.page(
             "FROM (SELECT b.*,m.name merchant_name FROM reconciliation_batch b LEFT JOIN merchant m"
                 + " ON m.id=b.merchant_id) x",
-            access.scope("x.merchant_id", p) + " AND batch_no LIKE #{p.q}",
+            access.scope("x.merchant_id", p) + " AND source_type<>'AUTO_JOB' AND batch_no LIKE #{p.q}",
             "id DESC",
             p,
             page,
@@ -65,7 +67,7 @@ public class ReconciliationController {
   @PostMapping("/reconciliation/batches/{id}/run")
   Object run(@PathVariable long id) {
     var b = access.batch(id);
-    access.merchant(Db.id(b, "merchantId"), "OWNER", "FINANCE");
+    batchWrite(b);
     try {
       db.exec("EXEC usp_run_reconciliation @batch_id=#{p.id}", Api.params("id", id));
     } catch (Exception e) {
@@ -81,7 +83,8 @@ public class ReconciliationController {
   @PostMapping("/reconciliation/batches/{id}/rerun")
   Object rerun(@PathVariable long id) {
     var b = access.batch(id);
-    access.merchant(Db.id(b, "merchantId"), "OWNER", "FINANCE");
+    batchWrite(b);
+    if (!"COMPLETED".equals(b.get("status"))) throw Api.fail(409, "请先完成原批次对账，再创建重跑批次");
     var p = Api.params("id", id, "no", Api.no("BAT"), "actor", access.actor().id());
     long next =
         db.insert(
@@ -91,8 +94,28 @@ public class ReconciliationController {
                 + " #{p.no},scope_type,merchant_id,period_start,period_end,source_type,COALESCE(statement_source_batch_id,id),id,source_file_uri,completeness,#{p.actor}"
                 + " FROM reconciliation_batch WHERE id=#{p.id}",
             p);
-    db.exec("EXEC usp_run_reconciliation @batch_id=#{p.id}", Api.params("id", next));
+    try {
+      db.exec("EXEC usp_run_reconciliation @batch_id=#{p.id}", Api.params("id", next));
+    } catch (Exception e) {
+      db.exec(
+          "UPDATE reconciliation_batch SET status='FAILED' WHERE id=#{p.id} AND"
+              + " status<>'COMPLETED'",
+          Api.params("id", next));
+      throw e;
+    }
     return Api.ok(Map.of("id", next, "baselineBatchId", id));
+  }
+
+  private void batchWrite(Map<String, Object> batch) {
+    if ("AUTO_JOB".equals(batch.get("sourceType"))) throw Api.fail(422, "请在自动对账中心管理获取任务");
+    if (batch.get("merchantId") == null) access.role("PLATFORM_FINANCE");
+    else access.merchant(Db.id(batch, "merchantId"), "OWNER", "FINANCE");
+  }
+
+  @PostMapping("/reconciliation/batches/{id}/identify")
+  Object identify(@PathVariable long id, @RequestParam(defaultValue = "true") boolean preview)
+      throws Exception {
+    return Api.ok(importer.identify(id, preview));
   }
 
   @GetMapping("/reconciliation/batches/{id}/results")
@@ -117,6 +140,16 @@ public class ReconciliationController {
     var response = new LinkedHashMap<>(result);
     response.put("batch", batch);
     response.put(
+        "identifications",
+        "PLATFORM_UNASSIGNED".equals(batch.get("scopeType"))
+            ? db.list(
+                "SELECT TOP 20 a.id,a.occurred_at,a.after_json,u.display_name actor_name FROM"
+                    + " audit_log a LEFT JOIN app_user u ON u.id=a.actor_user_id WHERE"
+                    + " a.object_type='RECONCILIATION_BATCH' AND a.object_id=#{p.id} AND"
+                    + " a.action='BATCH_REIDENTIFIED' ORDER BY a.id DESC",
+                p)
+            : List.of());
+    response.put(
         "distribution",
         db.list(
             "SELECT classification,COUNT_BIG(*) count FROM reconciliation_result WHERE"
@@ -129,8 +162,9 @@ public class ReconciliationController {
   Object compare(@RequestParam long baseline, @RequestParam long current) {
     var a = access.batch(baseline);
     var b = access.batch(current);
-    if (!Objects.equals(a.get("merchantId"), b.get("merchantId")))
-      throw Api.fail(422, "请选择同一商户的批次");
+    if (!Objects.equals(a.get("merchantId"), b.get("merchantId"))
+        || !Objects.equals(a.get("scopeType"), b.get("scopeType")))
+      throw Api.fail(422, "请选择同一商户或同一平台待核验范围的批次");
     return Api.ok(
         db.list(
             "WITH a AS(SELECT source_event_key,classification,ROW_NUMBER() OVER(PARTITION BY"

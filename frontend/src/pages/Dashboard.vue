@@ -75,7 +75,7 @@ const option = computed(() => ({
           aria-label="刷新工作台"
           @click="action(load)"
         /><el-button
-          v-if="session.writable"
+          v-if="session.canAny(['OWNER', 'CASHIER', 'FINANCE'])"
           type="primary"
           :icon="Plus"
           @click="router.push('/orders?create=true')"

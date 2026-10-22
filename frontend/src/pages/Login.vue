@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ElMessage } from "element-plus";
 import { post, action } from "../api";
 import { useSession } from "../stores/session";
 const router = useRouter(),
+  route = useRoute(),
   session = useSession(),
   register = ref(false),
   busy = ref(false);
@@ -59,6 +60,7 @@ async function submit() {
             register ? "填写资料，提交账号申请。" : "查看交易，处理对账与待办。"
           }}
         </p>
+        <el-alert v-if="route.query.expired === '1'" title="登录已失效，请重新登录" type="warning" :closable="false" style="margin-bottom: 18px" />
         <el-form label-position="top" @submit.prevent="action(submit)"
           ><el-form-item label="用户名"
             ><el-input

@@ -15,8 +15,15 @@ spring:
     username: ${DB_USER:reconis_app}
     password: ${DB_PASSWORD:}
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: ${DB_POOL_SIZE:5}
+      minimum-idle: 1
       connection-timeout: 10000
+      validation-timeout: 3000
+      data-source-properties:
+        loginTimeout: 8
+        socketTimeout: 45000
+        queryTimeout: 30
+        cancelQueryTimeout: 5
   servlet:
     multipart:
       max-file-size: 20MB

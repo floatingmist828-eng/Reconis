@@ -87,29 +87,39 @@ public class MerchantController {
   Object review(@PathVariable long id, @RequestBody Map<String, Object> b) {
     access.role("ADMIN");
     boolean approve = Boolean.TRUE.equals(b.get("approve"));
-    db.exec(
-        "UPDATE merchant SET name=CASE WHEN #{p.approve}=1 THEN COALESCE(proposed_name,name) ELSE"
-            + " name END,category_code=CASE WHEN #{p.approve}=1 THEN"
-            + " COALESCE(proposed_category,category_code) ELSE category_code END,contact=CASE WHEN"
-            + " #{p.approve}=1 THEN COALESCE(proposed_contact,contact) ELSE contact END,status=CASE"
-            + " WHEN status='ACTIVE' THEN status WHEN #{p.approve}=1 THEN 'ACTIVE' ELSE 'REJECTED'"
-            + " END,proposed_name=NULL,proposed_category=NULL,proposed_contact=NULL,reviewed_by=#{p.actor},reviewed_at=SYSUTCDATETIME(),review_reason=#{p.reason},updated_at=SYSUTCDATETIME()"
-            + " WHERE id=#{p.id}",
-        Api.params(
-            "id",
-            id,
-            "approve",
-            approve,
-            "actor",
-            access.actor().id(),
-            "reason",
-            Api.required(b, "reason")));
+    int changed =
+        db.exec(
+            "UPDATE merchant SET name=CASE WHEN #{p.approve}=1 THEN COALESCE(proposed_name,name)"
+                + " ELSE name END,category_code=CASE WHEN #{p.approve}=1 THEN"
+                + " COALESCE(proposed_category,category_code) ELSE category_code END,contact=CASE"
+                + " WHEN #{p.approve}=1 THEN COALESCE(proposed_contact,contact) ELSE contact"
+                + " END,status=CASE WHEN status='ACTIVE' THEN status WHEN #{p.approve}=1 THEN"
+                + " 'ACTIVE' ELSE 'REJECTED'"
+                + " END,proposed_name=NULL,proposed_category=NULL,proposed_contact=NULL,reviewed_by=#{p.actor},reviewed_at=SYSUTCDATETIME(),review_reason=#{p.reason},updated_at=SYSUTCDATETIME()"
+                + " WHERE id=#{p.id} AND version=CONVERT(BINARY(8),#{p.version},2) AND"
+                + " (status='PENDING' OR proposed_name IS NOT NULL)",
+            Api.params(
+                "id",
+                id,
+                "approve",
+                approve,
+                "actor",
+                access.actor().id(),
+                "reason",
+                Api.required(b, "reason"),
+                "version",
+                Api.required(b, "version")));
+    if (changed == 0) throw Api.fail(409, "待审资料已变更或已审核，请刷新后重新查看");
+    RequestContext.merchant(id);
     return Api.ok(Map.of("message", "商户审核已完成"));
   }
 
   @GetMapping("/merchants/{id}/stores")
   Object stores(@PathVariable long id) {
-    if (!access.platform() && !access.actor().role().equals("ADMIN")) access.merchant(id);
+    if (access.actor().role().equals("ADMIN")) {
+      db.need("SELECT id FROM merchant WHERE id=#{p.id}", Api.params("id", id));
+      RequestContext.merchant(id);
+    } else access.readMerchant(id);
     return Api.ok(
         db.list("SELECT * FROM store WHERE merchant_id=#{p.id} ORDER BY id", Api.params("id", id)));
   }

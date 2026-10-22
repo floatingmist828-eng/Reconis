@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import {
@@ -27,6 +27,16 @@ const route = useRoute(),
   file = ref<File>(),
   preview = ref<Row | null>(null),
   importBusy = ref(false);
+const importScope = ref("MERCHANT"),
+  identifyBatch = ref<Row | null>(null),
+  importDone = ref(false);
+const canImport = computed(
+  () =>
+    session.finance ||
+    session.user?.memberships?.some((m: Row) =>
+      session.can(m.merchantId, ["OWNER", "FINANCE"]),
+    ),
+);
 const form = reactive({
     merchantId: "",
     start: dateDays(-29),
@@ -40,6 +50,43 @@ const form = reactive({
   baseline = ref(""),
   tab = ref("results"),
   pair = ref<Row | null>(null);
+watch(
+  form,
+  () => {
+    preview.value = null;
+    importDone.value = false;
+  },
+  { deep: true },
+);
+watch(importScope, () => {
+  preview.value = null;
+  importDone.value = false;
+});
+function canRun(batch: Row) {
+  return batch.merchantId
+    ? session.can(batch.merchantId, ["OWNER", "FINANCE"])
+    : session.finance;
+}
+function identifiedBatches(event: Row): Row[] {
+  try {
+    return JSON.parse(event.afterJson)?.batches || [];
+  } catch {
+    return [];
+  }
+}
+function startImport() {
+  identifyBatch.value = null;
+  preview.value = null;
+  importDone.value = false;
+  importing.value = true;
+}
+async function identify(batch: Row) {
+  identifyBatch.value = batch;
+  preview.value = null;
+  importDone.value = false;
+  importing.value = true;
+  await upload(true);
+}
 const classifications = [
   "MATCHED",
   "CHANNEL_ONLY",
@@ -69,23 +116,33 @@ onMounted(() =>
   }),
 );
 async function upload(isPreview: boolean) {
-  if (!file.value || !form.merchantId)
+  if (
+    !identifyBatch.value &&
+    (!file.value || (importScope.value === "MERCHANT" && !form.merchantId))
+  )
     return ElMessage.warning("请选择商户与账单文件");
   const b = new FormData();
-  b.append("file", file.value);
-  Object.entries(form).forEach(([k, v]) => b.append(k, v));
+  if (file.value) b.append("file", file.value);
+  Object.entries(form).forEach(([k, v]) => {
+    if (k !== "merchantId" || importScope.value === "MERCHANT") b.append(k, v);
+  });
   b.append("preview", String(isPreview));
   importBusy.value = true;
   try {
-    preview.value = await post("/reconciliation/imports", b);
+    preview.value = identifyBatch.value
+      ? await post(
+          `/reconciliation/batches/${identifyBatch.value.id}/identify?preview=${isPreview}`,
+        )
+      : await post("/reconciliation/imports", b);
     if (!isPreview) {
+      importDone.value = true;
       ElMessage.success(
         preview.value!.reused
-          ? "相同原件已存在，返回原批次"
-          : "有效原始行已导入，错误清单已保留",
+          ? "原件、账期和解析条件相同，已返回现有批次"
+          : `已按归属保存 ${preview.value!.batches.length} 个批次，可分别执行对账`,
       );
       await load();
-      if (preview.value!.batch) {
+      if (preview.value!.batches?.length === 1) {
         importing.value = false;
         await open(preview.value!.batch);
       }
@@ -133,13 +190,7 @@ async function compare() {
         <h1>账单与对账</h1>
         <p>导入账单，核对差异，查看每次结果。</p>
       </div>
-      <el-button
-        v-if="session.writable"
-        type="primary"
-        @click="
-          importing = true;
-          preview = null;
-        "
+      <el-button v-if="canImport" type="primary" @click="startImport"
         >＋ 导入渠道账单</el-button
       >
     </div>
@@ -169,11 +220,11 @@ async function compare() {
                 : "首次导入 · " + row.sourceType
             }}</span></template
           ></el-table-column
-        ><el-table-column
-          label="商户"
-          prop="merchantName"
-          min-width="135"
-        /><el-table-column label="账期（北京时间）" min-width="190"
+        ><el-table-column label="归属范围" min-width="135"
+          ><template #default="{ row }">{{
+            row.merchantName || "平台待核验归属"
+          }}</template> </el-table-column
+        ><el-table-column label="账期（北京时间）" min-width="190"
           ><template #default="{ row }"
             ><span class="mono"
               >{{ time(row.periodStart).split(" ")[0] }} —
@@ -194,14 +245,12 @@ async function compare() {
               <el-button link type="primary" @click="action(() => open(row))"
                 >查看结果</el-button
               ><el-button
-                v-if="
-                  session.writable && ['READY', 'FAILED'].includes(row.status)
-                "
+                v-if="canRun(row) && ['READY', 'FAILED'].includes(row.status)"
                 link
                 @click="action(() => run(row))"
                 >执行对账</el-button
               ><el-button
-                v-if="session.writable && row.status === 'COMPLETED'"
+                v-if="canRun(row) && row.status === 'COMPLETED'"
                 link
                 @click="action(() => run(row, true))"
                 >重新核对</el-button
@@ -220,18 +269,34 @@ async function compare() {
         />
       </div>
     </section>
-    <el-dialog v-model="importing" title="导入标准渠道账单" width="760"
-      ><div class="row-actions">
+    <el-dialog
+      v-model="importing"
+      :title="identifyBatch ? '重新识别账单归属' : '导入渠道账单'"
+      width="880"
+      ><div v-if="!identifyBatch" class="row-actions">
         <a href="/api/v1/templates?format=xlsx"
           ><el-button>下载 Excel 模板 ↓</el-button></a
         ><a href="/api/v1/templates?format=xml"
           ><el-button>下载 XML 模板 ↓</el-button></a
         >
       </div>
-      <div class="help-note">使用模板导入。金额单位为分，时间填写时区。</div>
-      <el-form label-position="top"
+      <div v-if="identifyBatch" class="help-note">
+        重新读取原件并核对当前交易关联，创建或复用独立输入批次；历史账单、对账结果与工单保持可追溯。
+      </div>
+      <div v-else class="help-note">
+        支持标准 XLSX/XML（金额为分、时间带时区），以及支付宝中文交易明细
+        CSV/ZIP（订单金额为元、完成时间为北京时间）。不接受资金账单或单独汇总表。导入当前
+        {{ session.integration.environment }} 环境。
+      </div>
+      <el-form v-if="!identifyBatch" label-position="top"
         ><div class="form-grid">
-          <el-form-item label="所属商户"
+          <el-form-item v-if="session.finance" label="归属识别方式">
+            <el-select v-model="importScope">
+              <el-option label="指定单个商户并校验" value="MERCHANT" />
+              <el-option label="平台混合账单 · 自动拆分归属" value="AUTO" />
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="importScope === 'MERCHANT'" label="所属商户"
             ><el-select v-model="form.merchantId" @change="preview = null"
               ><el-option
                 v-for="m in merchants"
@@ -257,14 +322,15 @@ async function compare() {
               @change="preview = null"
           /></el-form-item>
         </div>
-        <el-form-item label="选择 XLSX / XML"
+        <el-form-item label="选择 XLSX / XML / 支付宝 CSV / ZIP（不超过20MB）"
           ><input
             type="file"
-            accept=".xlsx,.xml"
+            accept=".xlsx,.xml,.csv,.zip"
             @change="
               (e: Event) => {
                 file = (e.target as HTMLInputElement).files?.[0];
                 preview = null;
+                importDone = false;
               }
             " /></el-form-item></el-form
       ><template v-if="preview"
@@ -282,10 +348,56 @@ async function compare() {
             <small>错误行</small><strong>{{ preview.errors.length }}</strong>
           </div>
         </div>
+        <el-alert
+          v-if="preview.emptyComplete"
+          type="warning"
+          :closable="false"
+          title="本文件只有合法表头，没有渠道交易。你已声明账期完整，执行对账将把对应范围内所有本地流水判为本地单边，请确认日期和完整性。" />
+        <el-alert
+          v-if="preview.unassigned"
+          type="warning"
+          :closable="false"
+          :title="`${preview.unassigned} 行无法通过原支付或退款识别商户，将进入平台待核验范围；由平台财务运行对账并分派工单。`" />
+        <el-table
+          :data="preview.batches || preview.partitions"
+          max-height="230"
+        >
+          <el-table-column label="归属" prop="merchantName" min-width="160" />
+          <el-table-column label="有效行" prop="rows" width="85" />
+          <el-table-column
+            v-if="importDone"
+            label="批次"
+            prop="batchNo"
+            min-width="220"
+          />
+          <el-table-column v-if="importDone" label="操作" width="110"
+            ><template #default="{ row }">
+              <el-button
+                link
+                type="primary"
+                @click="
+                  action(async () => {
+                    importing = false;
+                    await open(row);
+                  })
+                "
+                >查看批次</el-button
+              >
+            </template></el-table-column
+          >
+        </el-table>
         <el-table
           v-if="preview.errors.length"
           :data="preview.errors"
           max-height="210"
+          ><el-table-column
+            v-if="preview.errors.some((e: Row) => e.sourceFile)"
+            label="文件 / 文件行"
+            min-width="160"
+          >
+            <template #default="{ row }"
+              >{{ row.sourceFile }} : {{ row.sourceLine }}</template
+            > </el-table-column
           ><el-table-column
             label="原行号"
             prop="line"
@@ -298,9 +410,11 @@ async function compare() {
         ><el-button
           type="primary"
           :loading="importBusy"
-          :disabled="!preview || !preview.accepted"
+          :disabled="!preview?.canImport || importDone"
           @click="action(() => upload(false))"
-          >导入有效原始行</el-button
+          >{{
+            preview?.emptyComplete ? "确认导入完整空账单" : "导入有效原始行"
+          }}</el-button
         ></template
       ></el-dialog
     >
@@ -312,19 +426,31 @@ async function compare() {
       ><template v-if="selected"
         ><div class="table-toolbar">
           <StatusTag :value="selected.status" /><span class="muted"
-            >{{ selected.merchantName }} · {{ time(selected.observedAt) }}</span
+            >{{
+              selected.merchantName ||
+              (selected.merchantId ? "商户批次" : "平台待核验归属")
+            }}
+            · {{ time(selected.observedAt) }}</span
           ><span class="grow"></span
           ><el-button
             v-if="
-              session.writable && ['READY', 'FAILED'].includes(selected.status)
+              canRun(selected) && ['READY', 'FAILED'].includes(selected.status)
             "
             type="primary"
             @click="action(() => run(selected!))"
             >执行对账</el-button
           ><el-button
-            v-if="session.writable && selected.status === 'COMPLETED'"
+            v-if="canRun(selected) && selected.status === 'COMPLETED'"
             @click="action(() => run(selected!, true))"
             >创建重跑批次</el-button
+          ><el-button
+            v-if="
+              session.finance &&
+              selected.scopeType === 'PLATFORM_UNASSIGNED' &&
+              selected.sourceFileUri
+            "
+            @click="action(() => identify(selected!))"
+            >重新识别归属</el-button
           ><el-dropdown
             @command="
               (v: string) =>
@@ -350,6 +476,20 @@ async function compare() {
             }}</strong>
           </div>
         </div>
+        <section v-if="results.identifications?.length" class="help-note">
+          <b>归属重新识别记录（最近20次）</b>
+          <div v-for="event in results.identifications" :key="event.id">
+            {{ time(event.occurredAt) }} · {{ event.actorName }} →
+            <el-button
+              v-for="batch in identifiedBatches(event)"
+              :key="batch.id"
+              link
+              type="primary"
+              @click="action(() => open(batch))"
+              >{{ batch.merchantName }} · {{ batch.batchNo }}</el-button
+            >
+          </div>
+        </section>
         <el-tabs v-model="tab"
           ><el-tab-pane label="逐笔对账结果" name="results"
             ><div class="table-toolbar">
@@ -414,13 +554,14 @@ async function compare() {
             ><div class="table-toolbar">
               <el-select
                 v-model="baseline"
-                placeholder="选择同商户基线批次"
+                placeholder="选择同一归属范围的基线批次"
                 style="width: 350px"
                 ><el-option
                   v-for="b in list.items.filter(
                     (b: Row) =>
                       b.id !== selected!.id &&
                       b.merchantId === selected!.merchantId &&
+                      b.scopeType === selected!.scopeType &&
                       b.status === 'COMPLETED',
                   )"
                   :key="b.id"

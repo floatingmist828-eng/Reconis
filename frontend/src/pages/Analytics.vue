@@ -13,8 +13,10 @@ import {
 } from "../api";
 import Chart from "../components/Chart.vue";
 import StatusTag from "../components/StatusTag.vue";
+import RiskPanel from "../components/RiskPanel.vue";
+import { drillFilters, type AnalysisFilters } from "../analyticsFilters";
 const router = useRouter(),
-  filters = reactive({
+  filters = reactive<AnalysisFilters>({
     start: dateDays(-29),
     end: dateDays(),
     merchantId: "",
@@ -22,28 +24,74 @@ const router = useRouter(),
     minCent: "",
     maxCent: "",
     dimension: "merchant",
+    reconciliationSource: "BILL",
   }),
+  applied = ref<AnalysisFilters>({ ...filters }),
   merchants = ref<Row[]>([]),
   data = ref<Row>({ summary: {}, groups: [], trend: [] }),
-  reconciliation = ref<Row>({ distribution: [], associations: [] }),
+  reconciliation = ref<Row>({
+    distribution: [],
+    associations: [],
+    batches: [],
+  }),
   cases = ref<Row[]>([]),
+  risk = ref<Row>({ summary: {}, aging: [], stores: [], trend: [] }),
   details = ref<Row[] | null>(null),
   busy = ref(false),
-  history = ref<{ label: string; filters: Row }[]>([]),
-  detailPage = ref(1);
-async function load() {
+  history = ref<{ label: string; filters: AnalysisFilters }[]>([]),
+  detailPage = ref(1),
+  detailTotal = ref(0),
+  detailSize = ref(20);
+let requestVersion = 0;
+const filtersChanged = computed(() =>
+  Object.keys(filters).some(
+    (key) =>
+      key !== "asOf" &&
+      filters[key as keyof AnalysisFilters] !==
+        applied.value[key as keyof AnalysisFilters],
+  ),
+);
+async function load(
+  next: AnalysisFilters = { ...filters },
+  showDetails = false,
+) {
+  const version = ++requestVersion;
   busy.value = true;
   try {
-    const q = query(filters);
-    [data.value, reconciliation.value, cases.value] = await Promise.all([
-      api("/analytics/transactions?" + q),
+    // The server chooses the cutoff; subsequent panels, drilldowns and exports reuse it.
+    const transactionData = await api("/analytics/transactions?" + query(next));
+    const snapshot: AnalysisFilters = { ...next, ...transactionData.filters };
+    const q = query(snapshot);
+    const [reconciliationData, caseData, riskData, page] = await Promise.all([
       api("/analytics/reconciliation?" + q),
       api("/analytics/cases?" + q),
+      api("/analytics/risk?" + q),
+      showDetails
+        ? api(
+            "/analytics/transactions/details?" +
+              query({ ...snapshot, page: 1, pageSize: detailSize.value }),
+          )
+        : Promise.resolve(null),
     ]);
-    details.value = null;
+    if (version !== requestVersion) return;
+    data.value = transactionData;
+    reconciliation.value = reconciliationData;
+    cases.value = caseData;
+    risk.value = riskData;
+    applied.value = snapshot;
+    Object.assign(filters, snapshot);
+    details.value = page?.items ?? null;
+    detailTotal.value = Number(page?.total ?? 0);
+    detailPage.value = 1;
   } finally {
-    busy.value = false;
+    if (version === requestVersion) busy.value = false;
   }
+}
+async function applyFilters() {
+  const next = { ...filters };
+  delete next.asOf;
+  await load(next);
+  history.value = [];
 }
 onMounted(() =>
   action(async () => {
@@ -109,52 +157,34 @@ const distribution = computed(() => ({
   ],
 }));
 async function drill(g: Row) {
-  history.value.push({ label: g.groupName, filters: { ...filters } });
-  if (filters.dimension === "merchant") {
-    filters.merchantId = g.groupKey;
-    filters.dimension = "store";
-    await load();
-  } else if (filters.dimension === "store") {
-    filters.storeId = g.groupKey;
-    await loadDetails();
-  } else if (filters.dimension === "year") {
-    filters.start = g.groupKey + "-01-01";
-    filters.end = g.groupKey + "-12-31";
-    filters.dimension = "month";
-    await load();
-  } else if (filters.dimension === "month") {
-    filters.start = g.groupKey + "-01";
-    const [y, m] = g.groupKey.split("-").map(Number);
-    filters.end = new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
-    filters.dimension = "day";
-    await load();
-  } else {
-    filters.start = g.groupKey;
-    filters.end = g.groupKey;
-    await loadDetails();
-  }
+  const parent = { ...applied.value };
+  const showDetails =
+    parent.dimension === "store" || parent.dimension === "day";
+  await load(drillFilters(parent, String(g.groupKey)), showDetails);
+  history.value.push({ label: String(g.groupName), filters: parent });
 }
 async function restore(index: number) {
-  if (index === -1) {
-    Object.assign(filters, {
-      merchantId: "",
-      storeId: "",
-      dimension: "merchant",
-      start: dateDays(-29),
-      end: dateDays(),
-    });
-    history.value = [];
-  } else {
-    Object.assign(filters, history.value[index]!.filters);
-    history.value = history.value.slice(0, index);
-  }
-  await load();
+  if (index === history.value.length - 1) return;
+  const target = history.value[index === -1 ? 0 : index + 1];
+  if (!target) return;
+  await load({ ...target.filters });
+  history.value = index === -1 ? [] : history.value.slice(0, index + 1);
 }
-async function loadDetails() {
-  details.value = await api(
-    "/analytics/transactions/details?" + query(filters),
-  );
-  detailPage.value = 1;
+async function loadDetails(page = 1) {
+  const version = ++requestVersion;
+  busy.value = true;
+  try {
+    const result = await api(
+      "/analytics/transactions/details?" +
+        query({ ...applied.value, page, pageSize: detailSize.value }),
+    );
+    if (version !== requestVersion) return;
+    details.value = result.items;
+    detailTotal.value = Number(result.total);
+    detailPage.value = Number(result.page);
+  } finally {
+    if (version === requestVersion) busy.value = false;
+  }
 }
 </script>
 <template>
@@ -169,7 +199,7 @@ async function loadDetails() {
         <el-dropdown
           @command="
             (format: string) =>
-              action(() => exportFile('transactions', format, filters))
+              action(() => exportFile('transactions', format, applied))
           "
           ><el-button type="primary">导出分析 / 流水 ↓</el-button
           ><template #dropdown
@@ -218,15 +248,17 @@ async function loadDetails() {
             value="store" /><el-option label="按年" value="year" /><el-option
             label="按月"
             value="month" /><el-option label="按日" value="day" /></el-select
-        ><el-button
-          type="primary"
-          @click="
-            history = [];
-            action(load);
-          "
+        ><el-button type="primary" @click="action(applyFilters)"
           >更新分析</el-button
         >
       </div>
+      <el-alert
+        v-if="filtersChanged"
+        title="筛选条件尚未应用；当前图表、明细及导出仍使用上次更新的范围。"
+        type="info"
+        :closable="false"
+        style="margin-bottom: 12px"
+      />
       <div class="table-toolbar" style="margin-bottom: 0">
         <el-input
           v-model="filters.minCent"
@@ -238,7 +270,13 @@ async function loadDetails() {
           placeholder="最大金额（分）"
           inputmode="numeric"
           style="width: 160px"
-        /><span class="grow"></span
+        /><el-select
+          v-model="filters.reconciliationSource"
+          style="width: 180px"
+        >
+          <el-option label="账单对账统计" value="BILL" />
+          <el-option label="单笔渠道核查统计" value="TRADE_QUERY" /> </el-select
+        ><span class="grow"></span
         ><small class="muted"
           >截止
           {{
@@ -247,6 +285,11 @@ async function loadDetails() {
         >
       </div>
     </section>
+    <p class="help-note">
+      当前展示：{{ applied.start }} 至 {{ applied.end }}；{{
+        data.scopeDescription
+      }}
+    </p>
     <div class="kpi-grid" style="margin-top: 23px">
       <div
         v-for="m in [
@@ -283,7 +326,7 @@ async function loadDetails() {
         />
       </section>
       <section class="panel">
-        <div class="panel-heading"><h2>最近批次结果分布</h2></div>
+        <div class="panel-heading"><h2>有效结果分布</h2></div>
         <Chart
           v-if="reconciliation.distribution.length"
           :option="distribution"
@@ -296,7 +339,7 @@ async function loadDetails() {
           <h2>{{ details ? "交易明细" : "分组汇总与钻取" }}</h2>
           <p>点击分组：商户 → 门店 → 流水；年 → 月 → 日 → 流水</p>
         </div>
-        <el-button link type="primary" @click="action(loadDetails)"
+        <el-button link type="primary" @click="action(() => loadDetails())"
           >查看当前范围明细 →</el-button
         >
       </div>
@@ -340,7 +383,7 @@ async function loadDetails() {
         ></el-table
       ><template v-else
         ><el-table
-          :data="details.slice((detailPage - 1) * 20, detailPage * 20)"
+          :data="details"
           class="clickable"
           @row-click="(r: Row) => router.push('/orders/' + r.orderId)"
           ><el-table-column label="事件" width="90"
@@ -368,18 +411,22 @@ async function loadDetails() {
         <div class="pagination">
           <el-pagination
             v-model:current-page="detailPage"
-            :total="details.length"
-            :page-size="20"
-            layout="total,prev,pager,next"
+            :total="detailTotal"
+            v-model:page-size="detailSize"
+            :page-sizes="[20, 50, 100]"
+            layout="total,sizes,prev,pager,next,jumper"
+            @current-change="(page: number) => action(() => loadDetails(page))"
+            @size-change="() => action(() => loadDetails())"
           /></div
       ></template>
     </section>
+    <RiskPanel :data="risk" :filters="applied" />
     <div class="overview-bottom">
       <section class="panel">
         <div class="panel-heading">
           <div>
             <h2>差错关联分析</h2>
-            <p>商户 / 门店 × 业务环节 · 最近完成批次</p>
+            <p>商户 / 门店 × 业务环节 · 所选范围的有效观察</p>
           </div>
         </div>
         <el-table :data="reconciliation.associations"
@@ -392,7 +439,7 @@ async function loadDetails() {
             label="环节"
             prop="reasonCode"
             min-width="150"
-          /><el-table-column
+          ><template #default="{ row }">{{ codeName(row.reasonCode) }}</template></el-table-column><el-table-column
             label="数量"
             prop="count"
             width="60"
@@ -407,33 +454,64 @@ async function loadDetails() {
         <div class="panel-heading">
           <div>
             <h2>差错协作效率</h2>
-            <p>已关闭工单平均处理时长，未完成单独统计</p>
+            <p>
+              按起因交易筛选，以数据截止时间的审计历史还原状态；缺关闭时间不计平均时长
+            </p>
           </div>
         </div>
         <el-table :data="cases"
           ><el-table-column label="状态" width="105"
             ><template #default="{ row }"
-              ><StatusTag :value="row.status" /></template></el-table-column
+              ><el-tag
+                v-if="row.status === 'HISTORY_UNAVAILABLE'"
+                type="warning"
+                >历史状态未记录</el-tag
+              ><StatusTag
+                v-else
+                :value="row.status" /></template></el-table-column
           ><el-table-column
             label="差错类型"
             prop="classification"
             min-width="150"
-          /><el-table-column
+          ><template #default="{ row }">{{ codeName(row.classification) }}</template></el-table-column><el-table-column
             label="数量"
             prop="count"
             width="60"
           /><el-table-column label="平均分钟" width="100"
             ><template #default="{ row }">{{
-              row.averageMinutes ? Number(row.averageMinutes).toFixed(1) : "—"
+              row.averageMinutes != null
+                ? Number(row.averageMinutes).toFixed(1)
+                : "—"
             }}</template></el-table-column
           ></el-table
         >
       </section>
     </div>
+    <section
+      v-if="reconciliation.batches?.length"
+      class="panel"
+      style="margin-top: 23px"
+    >
+      <div class="panel-heading">
+        <div>
+          <h2>统计采用的对账批次</h2>
+          <p>
+            同账期优先采用渠道确认完整的账单，其次声明完整、完整性未知；同等级取最新。单笔核查另行统计，可凭批次号核对来源。
+          </p>
+        </div>
+      </div>
+      <el-table :data="reconciliation.batches">
+        <el-table-column label="批次号" prop="batchNo" min-width="220" />
+        <el-table-column label="商户" prop="merchantName" min-width="130" />
+        <el-table-column label="来源" prop="sourceType" width="130"><template #default="{ row }">{{ codeName(row.sourceType) }}</template></el-table-column>
+        <el-table-column label="完整性" prop="completeness" min-width="150"><template #default="{ row }">{{ codeName(row.completeness) }}</template></el-table-column>
+        <el-table-column label="纳入结果数" prop="resultCount" width="120" />
+      </el-table>
+    </section>
     <div class="help-note">
       {{ data.definition }}。{{
         reconciliation.definition
-      }}。明细单次导出上限10000条。
+      }}。明细在服务器分页，单次导出最多100000条；超过上限会提示缩小范围，不会截断文件。
     </div>
   </div>
 </template>

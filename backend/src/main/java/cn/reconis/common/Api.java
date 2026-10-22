@@ -79,6 +79,21 @@ public final class Api {
 
   @RestControllerAdvice
   public static class Errors {
+    @ExceptionHandler(Exception.class)
+    ResponseEntity<?> unexpected(Exception e) {
+      if (e instanceof org.springframework.web.ErrorResponse response) {
+        return ResponseEntity.status(response.getStatusCode()).body(Map.of(
+            "code", "INVALID_REQUEST", "message", "请求参数或访问方式不正确",
+            "requestId", RequestContext.requestId()));
+      }
+      org.slf4j.LoggerFactory.getLogger(Errors.class)
+          .error("请求处理失败，requestId={}", RequestContext.requestId(), e);
+      return ResponseEntity.internalServerError().body(Map.of(
+          "code", "INTERNAL_ERROR",
+          "message", "请求处理失败，请稍后重试并提供请求编号",
+          "requestId", RequestContext.requestId()));
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     ResponseEntity<?> known(ResponseStatusException e) {
       return ResponseEntity.status(e.getStatusCode())
@@ -95,15 +110,29 @@ public final class Api {
     @ExceptionHandler(DataAccessException.class)
     ResponseEntity<?> database(DataAccessException e) {
       Throwable t = e.getMostSpecificCause();
+      boolean conflict =
+          e instanceof org.springframework.dao.DataIntegrityViolationException
+              || e instanceof org.springframework.dao.ConcurrencyFailureException
+              || t instanceof java.sql.SQLException sql && sql.getErrorCode() >= 51000;
+      boolean unavailable =
+          e instanceof org.springframework.dao.DataAccessResourceFailureException
+              || e instanceof org.springframework.dao.TransientDataAccessResourceException;
+      if (!conflict)
+        org.slf4j.LoggerFactory.getLogger(Errors.class)
+            .error("数据库操作失败，requestId={}", RequestContext.requestId(), e);
       String msg =
           t instanceof java.sql.SQLException s && s.getErrorCode() >= 51000
               ? s.getMessage()
-              : "数据冲突或数据库操作未完成，请刷新后重试";
-      return ResponseEntity.status(409)
+              : conflict
+                  ? "数据已变更或不符合业务约束，请刷新后重试"
+                  : unavailable ? "数据库暂时不可用，请稍后重试" : "数据库操作失败，请联系管理员并提供请求编号";
+      return ResponseEntity.status(conflict ? 409 : unavailable ? 503 : 500)
           .body(
               Map.of(
                   "code",
-                  "DATA_CONFLICT",
+                  conflict
+                      ? "DATA_CONFLICT"
+                      : unavailable ? "DATABASE_UNAVAILABLE" : "DATABASE_ERROR",
                   "message",
                   msg,
                   "requestId",

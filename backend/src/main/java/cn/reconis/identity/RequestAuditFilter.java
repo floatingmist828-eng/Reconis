@@ -63,11 +63,14 @@ public class RequestAuditFilter extends OncePerRequestFilter {
     } finally {
       try {
         db.exec(
-            "INSERT audit_log(event_category,actor_user_id,action,result,summary,request_id)"
-                + " VALUES('ACCESS',#{p.user},#{p.action},#{p.result},#{p.summary},#{p.req})",
+            "INSERT"
+                + " audit_log(event_category,actor_user_id,scope_merchant_id,action,result,summary,request_id)"
+                + " VALUES('ACCESS',#{p.user},#{p.merchant},#{p.action},#{p.result},#{p.summary},#{p.req})",
             Api.params(
                 "user",
                 actor == null ? null : actor.id(),
+                "merchant",
+                RequestContext.auditMerchant(),
                 "action",
                 q.getMethod() + " " + q.getRequestURI(),
                 "result",

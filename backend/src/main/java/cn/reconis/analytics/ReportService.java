@@ -11,7 +11,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.*;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.poi.util.Units;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.*;
 import org.jfree.chart.*;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -27,7 +27,7 @@ public class ReportService {
   }
 
   public byte[] xlsx(List<Map<String, Object>> rows, List<String> headers) throws Exception {
-    try (var book = new XSSFWorkbook();
+    try (var book = new SXSSFWorkbook(200);
         var out = new ByteArrayOutputStream()) {
       var sheet = book.createSheet("Reconis");
       var head = sheet.createRow(0);
@@ -76,10 +76,10 @@ public class ReportService {
     var filters = (Map<String, String>) data.get("filters");
     String period =
         filters.containsKey("start") ? filters.get("start") + " 至 " + filters.get("end") : "近30日";
-    String scope =
-        "merchant".equals(data.get("dimension")) && groups.size() == 1
-            ? groups.getFirst().get("groupName").toString()
-            : "当前商户范围";
+    String scope = Objects.toString(data.get("scopeDescription"), "全部可访问商户；全部门店；单笔金额不限");
+    String dimension =
+        Map.of("merchant", "商户", "store", "门店", "year", "年", "month", "月", "day", "日")
+            .getOrDefault(Objects.toString(data.get("dimension"), "merchant"), "商户");
     String asOf =
         java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
             .withZone(java.time.ZoneId.of("Asia/Shanghai"))
@@ -89,9 +89,11 @@ public class ReportService {
             List.of(
                 "Reconis 收退款分析报告",
                 "环境：" + environment,
-                "统计期间：" + period + "；" + scope,
-                "数据截止：" + asOf,
-                "按交易发生日期统计；净收款 = 收款 - 退款",
+                "统计期间：" + period,
+                scope,
+                "数据截止：" + asOf + "；汇总维度：" + dimension,
+                "按交易发生日期及截止时间前已入账事实统计；净收款 = 收款 - 退款",
+                "图表覆盖全部 " + groups.size() + " 个分组，每图最多12组；下表列出完整结果",
                 "收款："
                     + money(summary.get("receiptCent"))
                     + " 元    退款："
@@ -100,6 +102,7 @@ public class ReportService {
                     + money(summary.get("netCent"))
                     + " 元",
                 "分组 | 事件数 | 收款(元) | 退款(元) | 净收款(元)"));
+    int metadataLines = lines.size() - 1;
     for (var g : groups)
       lines.add(
           g.get("groupName")
@@ -111,24 +114,41 @@ public class ReportService {
               + money(g.get("refundCent"))
               + " | "
               + money(g.get("netCent")));
-    byte[] chart = chart(groups);
+    List<byte[]> charts = new ArrayList<>();
+    for (int offset = 0; offset < groups.size(); offset += 12)
+      charts.add(chart(groups.subList(offset, Math.min(offset + 12, groups.size()))));
+    if (charts.isEmpty()) charts.add(chart(List.of()));
     if (format.equals("docx")) {
       try (var doc = new XWPFDocument();
           var out = new ByteArrayOutputStream()) {
-        for (int n = 0; n < 6; n++) {
+        for (int n = 0; n < metadataLines; n++) {
           var p = doc.createParagraph();
           var r = p.createRun();
           r.setFontFamily("Microsoft YaHei");
           r.setFontSize(n == 0 ? 20 : 10);
           r.setText(lines.get(n));
         }
-        var picture = doc.createParagraph().createRun();
-        picture.addPicture(
-            new ByteArrayInputStream(chart),
-            org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG,
-            "chart.png",
-            Units.toEMU(460),
-            Units.toEMU(200));
+        for (int i = 0; i < charts.size(); i++) {
+          doc.createParagraph()
+              .createRun()
+              .setText(
+                  "收退款分布：第 "
+                      + (i + 1)
+                      + " / "
+                      + charts.size()
+                      + " 图（分组 "
+                      + (groups.isEmpty() ? 0 : i * 12 + 1)
+                      + "–"
+                      + Math.min((i + 1) * 12, groups.size())
+                      + "）");
+          var picture = doc.createParagraph().createRun();
+          picture.addPicture(
+              new ByteArrayInputStream(charts.get(i)),
+              org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG,
+              "chart-" + i + ".png",
+              Units.toEMU(460),
+              Units.toEMU(200));
+        }
         var table = doc.createTable(groups.size() + 1, 5);
         String[] headers = {"分组", "事件数", "收款（元）", "退款（元）", "净收款（元）"};
         for (int i = 0; i < 5; i++) table.getRow(0).getCell(i).setText(headers[i]);
@@ -188,10 +208,6 @@ public class ReportService {
             y -= spacing;
           }
           c.endText();
-          if (offset == 0 && wrapped.size() <= 24) {
-            c.drawImage(
-                PDImageXObject.createFromByteArray(doc, chart, "chart"), 42, y - 240, 510, 210);
-          }
           c.beginText();
           c.setFont(selected[0], 9);
           c.newLineAtOffset(42, 30);
@@ -199,15 +215,28 @@ public class ReportService {
           c.endText();
         }
       }
-      if (wrapped.size() > 24) {
+      for (int i = 0; i < charts.size(); i++) {
         var chartPage = new PDPage(PDRectangle.A4);
         doc.addPage(chartPage);
         try (var c = new PDPageContentStream(doc, chartPage)) {
-          c.drawImage(PDImageXObject.createFromByteArray(doc, chart, "chart"), 42, 450, 510, 210);
+          c.drawImage(
+              PDImageXObject.createFromByteArray(doc, charts.get(i), "chart-" + i),
+              42,
+              450,
+              510,
+              210);
           c.beginText();
           c.setFont(selected[0], 10);
           c.newLineAtOffset(42, 710);
-          c.showText("收退款分布（前12组，元）");
+          c.showText(
+              "收退款分布（元）：第 "
+                  + (i + 1)
+                  + " / "
+                  + charts.size()
+                  + " 图，分组 "
+                  + (groups.isEmpty() ? 0 : i * 12 + 1)
+                  + "–"
+                  + Math.min((i + 1) * 12, groups.size()));
           c.endText();
           c.beginText();
           c.setFont(selected[0], 9);
@@ -230,13 +259,7 @@ public class ReportService {
   }
 
   private byte[] chart(List<Map<String, Object>> rows) throws Exception {
-    var set = new DefaultCategoryDataset();
-    for (var row : rows.stream().limit(12).toList()) {
-      set.addValue(
-          Double.parseDouble(money(row.get("receiptCent"))), "收款", row.get("groupName").toString());
-      set.addValue(
-          Double.parseDouble(money(row.get("refundCent"))), "退款", row.get("groupName").toString());
-    }
+    var set = chartData(rows);
     var chart = ChartFactory.createBarChart("收退款分布", "统计分组", "元", set);
     Font font = new Font("Microsoft YaHei", Font.PLAIN, 23);
     chart.getTitle().setFont(new Font("Microsoft YaHei", Font.BOLD, 28));
@@ -258,6 +281,22 @@ public class ReportService {
     var out = new ByteArrayOutputStream();
     ChartUtils.writeChartAsPNG(out, chart, 1100, 450);
     return out.toByteArray();
+  }
+
+  static DefaultCategoryDataset chartData(List<Map<String, Object>> rows) {
+    var set = new DefaultCategoryDataset();
+    for (var row : rows) {
+      String category = row.get("groupName") + " (#" + row.get("groupKey") + ")";
+      set.addValue(
+          new java.math.BigDecimal(Objects.toString(row.get("receiptCent"), "0")).movePointLeft(2),
+          "收款",
+          category);
+      set.addValue(
+          new java.math.BigDecimal(Objects.toString(row.get("refundCent"), "0")).movePointLeft(2),
+          "退款",
+          category);
+    }
+    return set;
   }
 
   private String money(Object v) {

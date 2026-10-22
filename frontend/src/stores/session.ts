@@ -19,6 +19,11 @@ export const useSession = defineStore("session", () => {
         ))
     );
   }
+  function canAny(roles: string[]) {
+    return writable.value && (finance.value || user.value?.memberships?.some(
+      (m: Row) => roles.includes(m.roleCode),
+    ));
+  }
   async function load() {
     try {
       user.value = await api("/auth/me", { quiet: true });
@@ -40,6 +45,7 @@ export const useSession = defineStore("session", () => {
     finance,
     writable,
     can,
+    canAny,
     load,
     logout,
   };

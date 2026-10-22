@@ -77,7 +77,11 @@ async function review(row: Row, approve: boolean) {
     "审核商户资料",
     { inputValidator: (v) => !!v || "请填写意见" },
   );
-  await post(`/merchants/${row.id}/review`, { approve, reason: value });
+  await post(`/merchants/${row.id}/review`, {
+    approve,
+    reason: value,
+    version: row.version,
+  });
   await load();
 }
 async function open(row: Row) {
@@ -335,7 +339,7 @@ async function importFile(preview: boolean) {
             <p class="muted">管理门店信息与营业状态。</p>
             <span class="grow"></span
             ><el-button
-              v-if="session.writable"
+              v-if="selected && session.can(selected.id, ['OWNER'])"
               type="primary"
               @click="editStore()"
               >新增门店</el-button
@@ -353,7 +357,10 @@ async function importFile(preview: boolean) {
             /><el-table-column label="状态" width="90"
               ><template #default="{ row }"
                 ><StatusTag :value="row.status" /></template></el-table-column
-            ><el-table-column v-if="session.writable" label="操作" width="100"
+            ><el-table-column
+              v-if="selected && session.can(selected.id, ['OWNER'])"
+              label="操作"
+              width="100"
               ><template #default="{ row }"
                 ><el-button link @click="editStore(row)">编辑</el-button
                 ><el-button
@@ -375,7 +382,9 @@ async function importFile(preview: boolean) {
           ><div class="table-toolbar">
             <p class="muted">分配成员职责。</p>
             <span class="grow"></span
-            ><el-button v-if="session.writable" @click="memberDialog = true"
+            ><el-button
+              v-if="selected && session.can(selected.id, ['OWNER'])"
+              @click="memberDialog = true"
               >添加成员</el-button
             >
           </div>
@@ -392,7 +401,7 @@ async function importFile(preview: boolean) {
               ><template #default="{ row }"
                 ><el-select
                   v-model="row.roleCode"
-                  :disabled="!session.writable"
+                  :disabled="!selected || !session.can(selected.id, ['OWNER'])"
                   size="small"
                   ><el-option
                     v-for="r in ['OWNER', 'CASHIER', 'FINANCE', 'REVIEWER']"
@@ -405,12 +414,14 @@ async function importFile(preview: boolean) {
               ><template #default="{ row }"
                 ><el-select
                   v-model="row.status"
-                  :disabled="!session.writable"
+                  :disabled="!selected || !session.can(selected.id, ['OWNER'])"
                   size="small"
                   ><el-option label="已启用" value="ACTIVE" /><el-option
                     label="已停用"
                     value="DISABLED" /></el-select></template></el-table-column
-            ><el-table-column v-if="session.writable" width="70"
+            ><el-table-column
+              v-if="selected && session.can(selected.id, ['OWNER'])"
+              width="70"
               ><template #default="{ row }"
                 ><el-button
                   link

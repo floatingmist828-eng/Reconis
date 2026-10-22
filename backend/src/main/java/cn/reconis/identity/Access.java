@@ -28,7 +28,7 @@ public class Access {
 
   public void merchant(long id, String... roles) {
     if (actor().role().equals("PLATFORM_FINANCE")) {
-      RequestContext.merchant(id);
+      readMerchant(id);
       return;
     }
     var p = Api.params("merchant", id, "user", actor().id());
@@ -53,6 +53,12 @@ public class Access {
             + " status='ACTIVE')";
   }
 
+  public void readMerchant(long id) {
+    var p = Api.params("id", id);
+    db.need("SELECT m.id FROM merchant m WHERE m.id=#{p.id} AND " + scope("m.id", p), p);
+    RequestContext.merchant(id);
+  }
+
   public String ordersScope(String alias, Map<String, Object> p) {
     return "(" + scope(alias + ".merchant_id", p) + " OR " + alias + ".consumer_id=#{p.actor})";
   }
@@ -61,6 +67,7 @@ public class Access {
     var p = Api.params("id", id);
     var row = db.need("SELECT * FROM v_order o WHERE o.id=#{p.id} AND " + ordersScope("o", p), p);
     if (write) merchant(Db.id(row, "merchantId"), "OWNER", "CASHIER", "FINANCE");
+    else RequestContext.merchant(Db.id(row, "merchantId"));
     return row;
   }
 
@@ -76,18 +83,25 @@ public class Access {
 
   public Map<String, Object> batch(long id) {
     var p = Api.params("id", id);
-    return db.need(
-        "SELECT * FROM reconciliation_batch b WHERE b.id=#{p.id} AND " + scope("b.merchant_id", p),
-        p);
+    var row =
+        db.need(
+            "SELECT * FROM reconciliation_batch b WHERE b.id=#{p.id} AND "
+                + scope("b.merchant_id", p),
+            p);
+    if (row.get("merchantId") != null) RequestContext.merchant(Db.id(row, "merchantId"));
+    return row;
   }
 
   public Map<String, Object> caseRow(long id) {
     var p = Api.params("id", id);
-    return db.need(
-        "SELECT *,dbo.fn_case_overdue_days(due_at,closed_at,SYSUTCDATETIME()) overdue_days FROM"
-            + " v_case c WHERE c.id=#{p.id} AND "
-            + scope("c.merchant_id", p),
-        p);
+    var row =
+        db.need(
+            "SELECT *,dbo.fn_case_overdue_days(due_at,closed_at,SYSUTCDATETIME()) overdue_days FROM"
+                + " v_case c WHERE c.id=#{p.id} AND "
+                + scope("c.merchant_id", p),
+            p);
+    if (row.get("merchantId") != null) RequestContext.merchant(Db.id(row, "merchantId"));
+    return row;
   }
 
   public void caseWrite(Map<String, Object> row, String... roles) {

@@ -24,11 +24,6 @@ public class IdentityController {
     this.encoder = encoder;
   }
 
-  @GetMapping("/health")
-  Object health() {
-    return Api.ok(Map.of("application", "Reconis", "status", "UP"));
-  }
-
   @GetMapping("/auth/csrf")
   Object csrf(CsrfToken t) {
     return Api.ok(Map.of("token", t.getToken(), "headerName", t.getHeaderName()));
@@ -60,14 +55,17 @@ public class IdentityController {
             Api.params("name", Api.required(b, "username")));
     boolean valid =
         u != null && encoder.matches(Api.required(b, "password"), u.get("passwordHash").toString());
+    boolean allowed = valid && "ACTIVE".equals(u.get("status"));
     db.exec(
         "INSERT audit_log(event_category,actor_user_id,action,result,summary,request_id)"
-            + " VALUES('AUTH',#{p.user},'LOGIN',#{p.result},N'账号登录',#{p.req})",
+            + " VALUES('AUTH',#{p.user},'LOGIN',#{p.result},#{p.summary},#{p.req})",
         Api.params(
             "user",
             u == null ? null : u.get("id"),
             "result",
-            valid ? "SUCCESS" : "FAILED",
+            allowed ? "SUCCESS" : "FAILED",
+            "summary",
+            !valid ? "用户名或密码不正确" : allowed ? "账号登录" : "账号未启用，拒绝登录",
             "req",
             RequestContext.requestId()));
     if (!valid) throw Api.fail(401, "用户名或密码不正确");

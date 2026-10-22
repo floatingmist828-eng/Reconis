@@ -3,6 +3,8 @@ package cn.reconis.payment;
 import cn.reconis.common.*;
 import cn.reconis.identity.Access;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,12 +14,19 @@ public class PaymentController {
   private final Access access;
   private final PaymentService service;
   private final FileStore files;
+  private final long queryDelayMs;
 
-  public PaymentController(Db db, Access access, PaymentService service, FileStore files) {
+  public PaymentController(
+      Db db,
+      Access access,
+      PaymentService service,
+      FileStore files,
+      @Value("${reconis.query-delay-ms}") long queryDelayMs) {
     this.db = db;
     this.access = access;
     this.service = service;
     this.files = files;
+    this.queryDelayMs = queryDelayMs;
   }
 
   @PostMapping("/orders/{id}/payments")
@@ -156,74 +165,141 @@ public class PaymentController {
   @GetMapping("/integration/status")
   Object status() {
     access.actor();
+    var params = Api.params();
+    String scope = access.scope("a.scope_merchant_id", params);
+    var configuration = service.gateway.configuration();
     return Api.ok(
         Map.of(
             "environment",
             service.gateway.environment,
             "configured",
-            service.gateway.configured(),
+            configuration.configured(),
+            "configurationStatus",
+            configuration.status(),
+            "configurationMessage",
+            configuration.message(),
+            "callbackConfigured",
+            service.gateway.callbackConfigured(),
+            "callbackMessage",
+            service.gateway.environment.equals("DEMO")
+                ? "模拟环境不接收支付宝沙箱通知"
+                : (service.gateway.callbackConfigured()
+                    ? "已设置通知地址；公网可达性仍需实际通知验证"
+                    : "未设置可用的公网通知地址；仍可通过主动查询确认支付和退款"),
             "channel",
             "支付宝",
             "automaticQueryIntervalSeconds",
-            15,
+            queryDelayMs / 1000.0,
             "recentQueries",
             db.list(
-                "SELECT TOP 12 action,result,summary,occurred_at FROM audit_log WHERE"
-                    + " event_category='CHANNEL_QUERY' AND (actor_user_id=#{p.actor} OR"
-                    + " actor_user_id IS NULL) ORDER BY id DESC",
-                Api.params("actor", access.actor().id()))));
+                "SELECT TOP 12 a.action,a.result,a.summary,a.occurred_at FROM audit_log a WHERE"
+                    + " a.event_category='CHANNEL_QUERY' AND ("
+                    + scope
+                    + " OR EXISTS (SELECT 1 FROM payment_attempt p JOIN business_order o ON"
+                    + " o.id=p.order_id WHERE o.consumer_id=#{p.actor} AND"
+                    + " ((a.object_type='PAYMENT' AND a.object_id=p.id) OR (a.object_type='REFUND'"
+                    + " AND EXISTS (SELECT 1 FROM refund_request r WHERE r.id=a.object_id AND"
+                    + " r.payment_id=p.id))))) ORDER BY a.id DESC",
+                params)));
   }
 
   @PostMapping(value = "/callbacks/alipay", produces = "text/plain")
-  String callback(@RequestParam Map<String, String> b) {
-    String payload = new String(files.jsonBytes(b), java.nio.charset.StandardCharsets.UTF_8);
-    var p =
-        db.one(
-            "SELECT p.*,o.amount_cent FROM payment_attempt p JOIN v_order o ON o.id=p.order_id"
-                + " WHERE p.out_trade_no=#{p.no}",
-            Api.params("no", b.get("out_trade_no")));
+  String callback(@RequestParam MultiValueMap<String, String> parameters) {
+    // Do not let form/query parameter collisions select an arbitrary signed value.
+    if (parameters.size() > 100
+        || parameters.entrySet().stream()
+            .anyMatch(e -> e.getKey().length() > 128 || e.getValue().size() != 1))
+      return "failure";
+    Map<String, String> b = new TreeMap<>(parameters.toSingleValueMap());
+    if (b.values().stream().anyMatch(Objects::isNull)
+        || b.values().stream().mapToLong(String::length).sum() > 65536)
+      return "failure";
+    Map<String, Object> p = null;
     boolean valid = false;
     String outcome = "REJECTED";
     try {
-      valid = service.gateway.verify(b);
-      if (!valid
-          || p == null
+      if (!"RSA2".equals(b.get("sign_type"))
+          || !"trade_status_sync".equals(b.get("notify_type"))
+          || !callbackField(b, "notify_id", 100)
+          || !callbackField(b, "out_trade_no", 64)
+          || !callbackField(b, "trade_no", 100)
+          || !callbackField(b, "sign", 1024)
+          || !Set.of("TRADE_SUCCESS", "TRADE_FINISHED", "WAIT_BUYER_PAY", "TRADE_CLOSED")
+              .contains(Objects.toString(b.get("trade_status"), "")))
+        throw Api.fail(422, "通知字段不合法");
+      // The SDK may remove signature fields during verification. Preserve the original evidence.
+      valid = service.gateway.verify(new HashMap<>(b));
+      if (!valid) throw Api.fail(422, "通知签名无效");
+      p =
+          db.one(
+              "SELECT p.*,o.amount_cent FROM payment_attempt p JOIN v_order o ON o.id=p.order_id"
+                  + " WHERE p.out_trade_no=#{p.no}",
+              Api.params("no", b.get("out_trade_no")));
+      if (p == null
           || !service.gateway.appId.equals(b.get("app_id"))
           || !service.gateway.sellerId.equals(b.get("seller_id"))
+          || !Objects.equals(p.get("appId"), b.get("app_id"))
+          || !Objects.equals(p.get("sellerId"), b.get("seller_id"))
+          || !Objects.equals(p.get("channelEnv"), service.gateway.environment)
+          || !Objects.toString(b.get("total_amount"), "").matches("[0-9]{1,12}(\\.[0-9]{1,2})?")
+          || PaymentGateway.cent(b.get("total_amount")) <= 0
           || PaymentGateway.cent(b.get("total_amount")) != Db.id(p, "amountCent"))
         throw Api.fail(422, "通知不可信");
-      if (Set.of("TRADE_SUCCESS", "TRADE_FINISHED").contains(b.get("trade_status"))) {
+      String trade = b.get("trade_no");
+      if ("SUCCEEDED".equals(p.get("status"))) {
+        // A committed receipt is enough to acknowledge a repeated, independently verified
+        // notification. A temporary query outage must not turn an accepted payment into failure.
+        if (!trade.equals(p.get("channelTradeNo"))) throw Api.fail(422, "通知交易号不一致");
+        outcome = "ACCEPTED_DUPLICATE";
+      } else if ("WAIT_BUYER_PAY".equals(b.get("trade_status"))) {
+        // Informational notifications must never downgrade a confirmed or closed transaction.
+        outcome = "ACCEPTED_INFORMATIONAL";
+      } else {
+        outcome = "RETRY_QUERY_UNCONFIRMED";
         service.syncPayment(Db.id(p, "id"));
-        var state =
-            db.need(
-                "SELECT status FROM payment_attempt WHERE id=#{p.id}",
-                Api.params("id", p.get("id")));
-        if (!"SUCCEEDED".equals(state.get("status"))) throw Api.fail(409, "查询尚未确认");
+        var state = db.need(
+            "SELECT status,channel_trade_no FROM payment_attempt WHERE id=#{p.id}",
+            Api.params("id", p.get("id")));
+        boolean succeeded = "SUCCEEDED".equals(state.get("status"));
+        if (succeeded && !trade.equals(state.get("channelTradeNo"))) {
+          outcome = "REJECTED_TRADE_MISMATCH";
+          throw Api.fail(422, "通知交易号与查单结果不一致");
+        }
+        if (!succeeded
+            && !("TRADE_CLOSED".equals(b.get("trade_status"))
+                && "CLOSED".equals(state.get("status"))))
+          throw Api.fail(409, "查询尚未确认");
+        outcome = "ACCEPTED";
       }
-      outcome = "ACCEPTED";
     } catch (Exception ignored) {
     }
-    String uri =
-        files.write("evidence", ".json", payload.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-    db.exec(
-        "INSERT"
-            + " payment_notification(payment_id,notify_id,payload_file_uri,payload_hash,signature_valid,handling_result,request_id)"
-            + " VALUES(#{p.id},#{p.notify},#{p.uri},#{p.hash},#{p.valid},#{p.result},#{p.req})",
-        Api.params(
-            "id",
-            p == null ? null : p.get("id"),
-            "notify",
-            b.get("notify_id"),
-            "uri",
-            uri,
-            "hash",
-            FileStore.sha(payload.getBytes(java.nio.charset.StandardCharsets.UTF_8)),
-            "valid",
-            valid,
-            "result",
-            outcome,
-            "req",
-            RequestContext.requestId()));
-    return outcome.equals("ACCEPTED") ? "success" : "failure";
+    try {
+      byte[] payload = files.jsonBytes(b);
+      String uri = files.write("evidence", ".json", payload);
+      db.exec(
+          "INSERT"
+              + " payment_notification(payment_id,notify_id,payload_file_uri,payload_hash,signature_valid,handling_result,request_id)"
+              + " VALUES(#{p.id},#{p.notify},#{p.uri},#{p.hash},#{p.valid},#{p.result},#{p.req})",
+          Api.params(
+              "id", p == null ? null : p.get("id"),
+              "notify", callbackField(b, "notify_id", 100) ? b.get("notify_id") : null,
+              "uri", uri,
+              "hash", FileStore.sha(payload),
+              "valid", valid,
+              "result", outcome,
+              "req", RequestContext.requestId()));
+    } catch (Exception e) {
+      // Alipay retries unless the response body is exactly "success". In particular,
+      // never acknowledge a notification whose durable audit evidence was not stored.
+      org.slf4j.LoggerFactory.getLogger(getClass()).warn(
+          "支付通知保存失败，requestId={}，type={}", RequestContext.requestId(), e.getClass().getSimpleName());
+      return "failure";
+    }
+    return outcome.startsWith("ACCEPTED") ? "success" : "failure";
+  }
+
+  private static boolean callbackField(Map<String, String> b, String key, int maxLength) {
+    String value = b.get(key);
+    return value != null && !value.isBlank() && value.length() <= maxLength;
   }
 }

@@ -30,6 +30,21 @@ export function codeName(value: unknown) {
     PAYMENT_QUERY: "支付查询",
     REFUND_QUERY: "退款查询",
     REFUND_CALL: "发起退款",
+    RECONCILED: "重新对账已匹配",
+    INVALID_INPUT: "输入账单无效",
+    FALSE_POSITIVE: "核实为误报",
+    KNOWN_EXCEPTION: "已说明的例外",
+    OWNERSHIP_CONFIRMED: "已确认商户归属",
+    UNASSIGNED_MERCHANT: "待确认商户归属",
+    REFUND_PAYMENT_MISMATCH: "退款与原支付不符",
+    DECLARED_COMPLETE: "声明完整",
+    PROVIDER_COMPLETE: "渠道确认完整",
+    UNKNOWN: "未知",
+    DEMO_SEED: "教学基准账单",
+    TRADE_QUERY: "单笔渠道核查",
+    ALIPAY_CSV: "支付宝 CSV",
+    ALIPAY_ZIP: "支付宝账单压缩包",
+    AUTO_JOB: "自动获取任务",
   };
   return names[String(value)] || String(value || "—");
 }
@@ -63,6 +78,11 @@ export async function api<T = any>(
         : undefined,
     });
     const raw = await r.text();
+    if (r.status === 401 && !path.startsWith('/auth/')) {
+      token = '';
+      window.location.replace('/login?expired=1');
+      throw new Error('登录已失效，请重新登录');
+    }
     let result: any;
     try {
       result = JSON.parse(raw);
@@ -71,7 +91,8 @@ export async function api<T = any>(
     }
     if (!r.ok) {
       if (r.status === 403) token = "";
-      throw new Error(result.message || `请求未完成 (${r.status})`);
+      const trace = r.status >= 500 && result.requestId ? `（请求编号：${result.requestId}）` : "";
+      throw new Error((result.message || `请求未完成 (${r.status})`) + trace);
     }
     return result.data as T;
   } catch (e: any) {
