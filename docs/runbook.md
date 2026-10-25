@@ -17,6 +17,8 @@ Windows10/11、PowerShell7.4+、Node.js24 LTS、SQL Server2022 Developer（引�
 
 `scripts/build.ps1 -DatabaseTests` 在独立目录保存源码快照，构建前端和后端，并运行真实 SQL Server 集成测试。发布包存放于 `artifacts/releases/<ReleaseId>`，附带程序包与源文件 SHA256 清单；构建不会覆盖正在运行的 JAR。使用 `-NoSelect` 可先构建验收，再执行 `scripts/select-release.ps1 -ReleaseId <ReleaseId>` 切换默认版本；已有上一版时可用 `-Rollback` 回退。切换默认版本后须重启进程，健康接口中的 `releaseId` 和 `buildSourceSha256` 用于核对实际运行版本。
 
+若传递依赖的仓库配置使构建反复访问 snapshot/milestone 地址，可加 `-MavenSettings backend/.mvn/central-settings.xml`，仅从官方 Maven Central 取得相同的固定发行依赖。本次源码副本的验证使用该配置；未改变 pom 或依赖版本。
+
 DEMO 使用 `scripts/start.ps1 -Environment DEMO -Port 8080`，沙箱使用 `scripts/start.ps1 -Environment ALIPAY_SANDBOX -Port 8081`；两者默认读取同一个发布版本，数据库和文件目录分别隔离。`-CheckOnly` 可检查程序包散列与数据库连接。显式 `-JarFile`、`-ReleaseId` 和本地配置中的 `RECONIS_JAR_FILE` 优先于默认版本，统一部署时应移除过期覆盖配置。
 
 单包使用同源 Cookie Session 和 CSRF；HTTPS 部署设置 `COOKIE_SECURE=true`。局域网使用时只对需要的客户端开放应用端口，数据库保持本机访问。
@@ -44,6 +46,8 @@ seed_demo.sql提供3家启用商户、5门店、180笔历史收款、部分跨�
 `scripts/backup.ps1 -BackupDirectory '已有且SQL服务账号可写目录'` 生成COPY_ONLY+CHECKSUM备份并执行RESTORE VERIFYONLY。沙箱加 `-Environment ALIPAY_SANDBOX`。数据库备份和data目录的原件/证据分别保存，不默认提交GitHub。
 
 提交后用package.ps1从Git HEAD生成源码ZIP并输出SHA256，仅包含已跟踪文件；课程数据库备份通过私有提交渠道另附。
+
+课程收尾包使用 `python3 scripts/package-course-delivery.py`，包含当前工作区源码（含尚未提交的项目改动）、数据库重建文件和已生成报告/PPT，输出逐文件散列并校验 ZIP。它与 HEAD 归档用途不同；运行前先按 handover.md 生成材料与本次验证记录。数据库备份及私有配置仍另行保管。
 
 恢复到新实例时，先恢复bak及配套data文件，再创建新的运行登录并用`ALTER USER ... WITH LOGIN ...`映射库内运行用户，使用新生成的本机配置。不要沿用另一台电脑的登录密码或假设备份包含文件目录。也可直接从版本SQL和教学种子重建。
 

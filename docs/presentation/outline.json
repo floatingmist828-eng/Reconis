@@ -1,0 +1,1042 @@
+{
+  "title": "Reconis 数据库课程答辩",
+  "subtitle": "校园多商户跨日支付对账与差错协同处理系统",
+  "deck_style": {
+    "font_pair": "clean_modern_v1",
+    "visual_density": "medium",
+    "emoji_mode": "none",
+    "title_motif": "none",
+    "show_page_numbers": true
+  },
+  "metadata": {
+    "renderer_role_systems_v1": {
+      "schema_version": "renderer_role_systems_v1",
+      "catalog_version": "taste_grammar_catalog_v1",
+      "composition_grammar_id": "scientific-evidence-plate",
+      "style_preset": "forest-research",
+      "narrative_arc": {
+        "arc_id": "question-method-result-limit",
+        "stages": [
+          "question",
+          "method",
+          "result",
+          "interpretation",
+          "limit",
+          "next test"
+        ]
+      },
+      "density": {
+        "level": "high",
+        "distribution": "figure-dense center with compact methods and provenance rails"
+      },
+      "grid": {
+        "columns": 12,
+        "gutter": "0.18-0.24in",
+        "anchor": "figure plate with aligned captions and readouts"
+      },
+      "reading_path": [
+        "research question",
+        "figure or assay plate",
+        "interpretation",
+        "limit and next test"
+      ],
+      "preferred_role_variants": {
+        "title": [
+          "title"
+        ],
+        "section": [
+          "standard"
+        ],
+        "evidence": [
+          "scientific-figure",
+          "image-sidebar"
+        ],
+        "comparison": [
+          "comparison-2col",
+          "table"
+        ],
+        "data": [
+          "lab-run-results",
+          "chart",
+          "table"
+        ],
+        "decision": [
+          "standard",
+          "table"
+        ],
+        "references": [
+          "table"
+        ]
+      },
+      "invariant_moves": [
+        "Keep methods, result, and interpretation visually distinguishable.",
+        "Carry units, denominators, and provenance beside the evidence.",
+        "State uncertainty or limitations before the recommendation."
+      ],
+      "forbidden_moves": [
+        "Do not crop or decorate evidence in ways that obscure interpretation.",
+        "Do not present a proxy metric as the final outcome without qualification."
+      ],
+      "title_system_id": "title-study-plate",
+      "section_system_id": "section-method-result",
+      "evidence_system_id": "evidence-multipanel-plate",
+      "comparison_system_id": "comparison-control-cohort",
+      "data_system_id": "data-assay-readout",
+      "decision_system_id": "decision-evidence-threshold",
+      "references_system_id": "references-scientific-register"
+    },
+    "renderer_role_contracts_v2": {
+      "schema_version": "renderer_role_contracts_v2",
+      "catalog_version": "renderer_role_contract_catalog_v2",
+      "composition_grammar_id": "scientific-evidence-plate",
+      "style_preset": "forest-research",
+      "supported_layout_variants": [
+        "primary",
+        "alternate",
+        "dense"
+      ],
+      "roles": {
+        "title": {
+          "system_id": "title-study-plate",
+          "layout_family": "study-plate",
+          "coordinate_space": "slide",
+          "reading_order": [
+            "study_id",
+            "headline",
+            "support",
+            "method"
+          ],
+          "anchor_slot": "headline",
+          "density": {
+            "level": "high",
+            "max_items": 4
+          },
+          "supported_variants": [
+            "primary",
+            "alternate",
+            "dense"
+          ],
+          "fallback": {
+            "version": "renderer_role_systems_v1",
+            "system_id": "title-study-plate"
+          },
+          "slots": {
+            "study_id": [
+              0.04,
+              0.08,
+              0.18,
+              0.12
+            ],
+            "headline": [
+              0.08,
+              0.24,
+              0.58,
+              0.28
+            ],
+            "support": [
+              0.08,
+              0.58,
+              0.52,
+              0.12
+            ],
+            "method": [
+              0.72,
+              0.18,
+              0.24,
+              0.64
+            ]
+          },
+          "grammar_id": "scientific-evidence-plate",
+          "role": "title"
+        },
+        "section": {
+          "system_id": "section-method-result",
+          "layout_family": "method-result-turn",
+          "coordinate_space": "slide",
+          "reading_order": [
+            "stage",
+            "headline",
+            "support"
+          ],
+          "anchor_slot": "stage",
+          "density": {
+            "level": "medium",
+            "max_items": 3
+          },
+          "supported_variants": [
+            "primary",
+            "alternate",
+            "dense"
+          ],
+          "fallback": {
+            "version": "renderer_role_systems_v1",
+            "system_id": "section-method-result"
+          },
+          "slots": {
+            "stage": [
+              0.05,
+              0.12,
+              0.9,
+              0.12
+            ],
+            "headline": [
+              0.08,
+              0.34,
+              0.72,
+              0.26
+            ],
+            "support": [
+              0.08,
+              0.68,
+              0.62,
+              0.14
+            ]
+          },
+          "grammar_id": "scientific-evidence-plate",
+          "role": "section"
+        },
+        "evidence": {
+          "system_id": "evidence-multipanel-plate",
+          "layout_family": "multipanel-plate",
+          "coordinate_space": "body",
+          "reading_order": [
+            "evidence_0",
+            "evidence_1",
+            "evidence_2",
+            "evidence_3"
+          ],
+          "anchor_slot": "evidence_0",
+          "density": {
+            "level": "high",
+            "max_items": 5
+          },
+          "supported_variants": [
+            "primary",
+            "alternate",
+            "dense"
+          ],
+          "fallback": {
+            "version": "renderer_role_systems_v1",
+            "system_id": "evidence-multipanel-plate"
+          },
+          "slots": {
+            "evidence_0": [
+              0.0,
+              0.0,
+              0.46,
+              0.58
+            ],
+            "evidence_1": [
+              0.52,
+              0.0,
+              0.48,
+              0.58
+            ],
+            "evidence_2": [
+              0.0,
+              0.65,
+              0.3,
+              0.35
+            ],
+            "evidence_3": [
+              0.36,
+              0.65,
+              0.64,
+              0.35
+            ]
+          },
+          "grammar_id": "scientific-evidence-plate",
+          "role": "evidence"
+        },
+        "comparison": {
+          "system_id": "comparison-control-cohort",
+          "layout_family": "control-cohort",
+          "coordinate_space": "body",
+          "reading_order": [
+            "option_0",
+            "option_1",
+            "verdict"
+          ],
+          "anchor_slot": "option_0",
+          "density": {
+            "level": "high",
+            "max_items": 7
+          },
+          "supported_variants": [
+            "primary",
+            "alternate",
+            "dense"
+          ],
+          "fallback": {
+            "version": "renderer_role_systems_v1",
+            "system_id": "comparison-control-cohort"
+          },
+          "slots": {
+            "option_0": [
+              0.0,
+              0.0,
+              0.48,
+              0.64
+            ],
+            "option_1": [
+              0.52,
+              0.0,
+              0.48,
+              0.64
+            ],
+            "verdict": [
+              0.18,
+              0.72,
+              0.64,
+              0.28
+            ]
+          },
+          "grammar_id": "scientific-evidence-plate",
+          "role": "comparison"
+        },
+        "chart": {
+          "system_id": "data-assay-readout",
+          "layout_family": "assay-readout",
+          "coordinate_space": "body",
+          "reading_order": [
+            "chart",
+            "register"
+          ],
+          "anchor_slot": "chart",
+          "density": {
+            "level": "high",
+            "max_items": 5
+          },
+          "supported_variants": [
+            "primary",
+            "alternate",
+            "dense"
+          ],
+          "fallback": {
+            "version": "renderer_role_systems_v1",
+            "system_id": "data-assay-readout"
+          },
+          "slots": {
+            "chart": [
+              0.08,
+              0.0,
+              0.84,
+              0.72
+            ],
+            "register": [
+              0.0,
+              0.8,
+              1.0,
+              0.2
+            ]
+          },
+          "grammar_id": "scientific-evidence-plate",
+          "role": "chart"
+        },
+        "table": {
+          "system_id": "table-assay-register",
+          "layout_family": "assay-register",
+          "coordinate_space": "body",
+          "reading_order": [
+            "index",
+            "table",
+            "readout"
+          ],
+          "anchor_slot": "table",
+          "density": {
+            "level": "high",
+            "max_items": 10
+          },
+          "supported_variants": [
+            "primary",
+            "alternate",
+            "dense"
+          ],
+          "fallback": {
+            "version": "renderer_role_systems_v1",
+            "system_id": "data-assay-readout"
+          },
+          "slots": {
+            "index": [
+              0.0,
+              0.0,
+              1.0,
+              0.11
+            ],
+            "table": [
+              0.0,
+              0.17,
+              1.0,
+              0.63
+            ],
+            "readout": [
+              0.0,
+              0.87,
+              1.0,
+              0.13
+            ]
+          },
+          "grammar_id": "scientific-evidence-plate",
+          "role": "table"
+        },
+        "decision": {
+          "system_id": "decision-evidence-threshold",
+          "layout_family": "evidence-threshold",
+          "coordinate_space": "body",
+          "reading_order": [
+            "decision_0",
+            "decision_1",
+            "decision_2",
+            "decision_3",
+            "commitment"
+          ],
+          "anchor_slot": "commitment",
+          "density": {
+            "level": "high",
+            "max_items": 5
+          },
+          "supported_variants": [
+            "primary",
+            "alternate",
+            "dense"
+          ],
+          "fallback": {
+            "version": "renderer_role_systems_v1",
+            "system_id": "decision-evidence-threshold"
+          },
+          "slots": {
+            "decision_0": [
+              0.0,
+              0.0,
+              0.31,
+              0.45
+            ],
+            "decision_1": [
+              0.345,
+              0.0,
+              0.31,
+              0.45
+            ],
+            "decision_2": [
+              0.69,
+              0.0,
+              0.31,
+              0.45
+            ],
+            "decision_3": [
+              0.18,
+              0.53,
+              0.64,
+              0.18
+            ],
+            "commitment": [
+              0.18,
+              0.78,
+              0.64,
+              0.22
+            ]
+          },
+          "grammar_id": "scientific-evidence-plate",
+          "role": "decision"
+        },
+        "references": {
+          "system_id": "references-scientific-register",
+          "layout_family": "scientific-register",
+          "coordinate_space": "body",
+          "reading_order": [
+            "index",
+            "register",
+            "notes"
+          ],
+          "anchor_slot": "register",
+          "density": {
+            "level": "high",
+            "max_items": 12
+          },
+          "supported_variants": [
+            "primary",
+            "alternate",
+            "dense"
+          ],
+          "fallback": {
+            "version": "renderer_role_systems_v1",
+            "system_id": "references-scientific-register"
+          },
+          "slots": {
+            "index": [
+              0.0,
+              0.0,
+              1.0,
+              0.1
+            ],
+            "register": [
+              0.0,
+              0.17,
+              1.0,
+              0.6
+            ],
+            "notes": [
+              0.0,
+              0.84,
+              1.0,
+              0.13
+            ]
+          },
+          "grammar_id": "scientific-evidence-plate",
+          "role": "references"
+        }
+      }
+    },
+    "evidence_cutoff": "2026-10-26",
+    "source_policy": "local source and dated implementation record",
+    "authoring_status": "topic_specific"
+  },
+  "slides": [
+    {
+      "type": "title",
+      "title": "Reconis",
+      "subtitle": "校园多商户跨日支付对账\n与差错协同处理系统",
+      "caption": "数据库课程设计 · 2026-10-26",
+      "footer": "Java / Spring Boot / SQL Server / Vue 3",
+      "slide_id": "s1"
+    },
+    {
+      "type": "content",
+      "title": "一笔交易，四类一致性问题",
+      "variant": "table",
+      "slide_intent": "evidence",
+      "headers": [
+        "场景",
+        "处理目标",
+        "实现依据"
+      ],
+      "rows": [
+        [
+          "通知重复或丢失",
+          "确认一次，查询可恢复",
+          "通知记录 + 唯一资金事件"
+        ],
+        [
+          "部分退款与超时",
+          "先预留，再确认结果",
+          "锁原支付 + 稳定退款请求号"
+        ],
+        [
+          "跨日退款与迟到记录",
+          "保留发生日与获知时间",
+          "收退款分别登记为事实"
+        ],
+        [
+          "账单差异与任务协作",
+          "保留来源，独立复核",
+          "历史结果 + 工单证据链"
+        ]
+      ],
+      "column_weights": [
+        0.27,
+        0.31,
+        0.42
+      ],
+      "caption": "从收款订单到差错复核，使用同一组可追溯的业务标识。",
+      "sources": [
+        "设计报告 §§1–2"
+      ],
+      "slide_id": "s2",
+      "footer": "来源：设计报告 §§1–2"
+    },
+    {
+      "type": "content",
+      "title": "从工作台进入完整业务链",
+      "variant": "image-sidebar",
+      "slide_intent": "evidence",
+      "assets": {
+        "hero_image": "../assets/workspace.png"
+      },
+      "sidebar_sections": [
+        {
+          "title": "经营管理",
+          "body": [
+            "商户、门店、成员与账号审核",
+            "开单、收款和部分退款"
+          ]
+        },
+        {
+          "title": "对账协作",
+          "body": [
+            "账单比较和历史重跑",
+            "分派、证据与独立复核"
+          ]
+        },
+        {
+          "title": "数据洞察",
+          "body": [
+            "全文与案例推荐",
+            "钻取、导出和审计"
+          ]
+        }
+      ],
+      "caption": "仓库保存的历史 DEMO 工作台画面。",
+      "sources": [
+        "docs/assets/workspace.png"
+      ],
+      "slide_id": "s3",
+      "footer": "来源：docs/assets/workspace.png"
+    },
+    {
+      "type": "content",
+      "title": "15 个关系表达不同业务事实",
+      "variant": "table",
+      "slide_intent": "evidence",
+      "headers": [
+        "关系域",
+        "物理关系",
+        "设计要点"
+      ],
+      "rows": [
+        [
+          "身份与商户（4）",
+          "用户 / 商户 / 成员联系 / 门店",
+          "多对多成员关系与商户角色"
+        ],
+        [
+          "交易事实（6）",
+          "订单 / 明细 / 支付 / 通知 / 退款 / 流水",
+          "请求、观察与确认事实分离"
+        ],
+        [
+          "对账协作（4）",
+          "批次 / 账单行 / 结果 / 工单",
+          "原始输入不改，重跑生成新结果"
+        ],
+        [
+          "审计（1）",
+          "访问与操作日志",
+          "保存人员、范围、动作和时间"
+        ]
+      ],
+      "column_weights": [
+        0.23,
+        0.42,
+        0.35
+      ],
+      "caption": "逐关系说明候选键和函数依赖，避免重复保存可推导信息。",
+      "sources": [
+        "001_schema.sql / 设计报告 §5"
+      ],
+      "slide_id": "s4",
+      "footer": "来源：001_schema.sql / 设计报告 §5"
+    },
+    {
+      "type": "content",
+      "title": "渠道观察与确认事实分开保存",
+      "variant": "image-sidebar",
+      "slide_intent": "evidence",
+      "assets": {
+        "hero_image": "../assets/diagrams/er-funds.png"
+      },
+      "sidebar_sections": [
+        {
+          "title": "独立标识",
+          "body": [
+            "客户端幂等请求号",
+            "渠道商户订单号"
+          ]
+        },
+        {
+          "title": "一次入账",
+          "body": [
+            "重复通知可有多条",
+            "流水来源与事件键唯一"
+          ]
+        },
+        {
+          "title": "异常保真",
+          "body": [
+            "额外收款仍登记事实",
+            "不隐藏第二笔真实交易"
+          ]
+        }
+      ],
+      "caption": "按当前 SQL 重绘交易关系；PK 主键，UK 唯一键。",
+      "sources": [
+        "001 / 002 / 003 SQL"
+      ],
+      "slide_id": "s5",
+      "footer": "来源：001 / 002 / 003 SQL"
+    },
+    {
+      "type": "content",
+      "title": "通知与查询共同推进支付确认",
+      "variant": "comparison-2col",
+      "slide_intent": "evidence",
+      "left": {
+        "title": "通知到达",
+        "body": [
+          "官方 SDK 验签 RSA2",
+          "核验应用、收款方及金额",
+          "可信结果进入确认过程",
+          "重复接收不重复记账"
+        ]
+      },
+      "right": {
+        "title": "通知丢失或调用超时",
+        "body": [
+          "持久保存原请求号",
+          "后台查询原渠道交易",
+          "租约限制并发派发",
+          "迟到结果不覆盖成功状态"
+        ]
+      },
+      "verdict": "网页跳转只展示结果；确认来自可信服务端渠道依据。",
+      "sources": [
+        "PaymentGateway / PaymentService"
+      ],
+      "slide_id": "s6",
+      "footer": "来源：PaymentGateway / PaymentService"
+    },
+    {
+      "type": "content",
+      "title": "退款额度在短事务中原子预留",
+      "variant": "table",
+      "slide_intent": "evidence",
+      "headers": [
+        "步骤",
+        "数据库与渠道动作",
+        "额度口径"
+      ],
+      "rows": [
+        [
+          "申请",
+          "独立退款请求号，提交原因",
+          "待审核不占额度"
+        ],
+        [
+          "审批",
+          "锁原支付，拒绝本人审批",
+          "成功 + 预留 ≤ 收款"
+        ],
+        [
+          "调用",
+          "外部网络调用放在事务之外",
+          "处理中占用额度"
+        ],
+        [
+          "结果未知",
+          "UNKNOWN 使用原请求号查询",
+          "保留预留，避免再退一笔"
+        ],
+        [
+          "成功确认",
+          "状态与流水幂等更新",
+          "成功金额计入已退款"
+        ]
+      ],
+      "column_weights": [
+        0.16,
+        0.51,
+        0.33
+      ],
+      "caption": "100 元收款后退 30 元，可退 70 元；两笔 60 元并发审批不能同时通过。",
+      "sources": [
+        "usp_approve_refund / fn_refundable_amount"
+      ],
+      "slide_id": "s7",
+      "footer": "来源：usp_approve_refund / fn_refundable_amount"
+    },
+    {
+      "type": "content",
+      "title": "今日退款不会倒改昨日收款",
+      "variant": "chart",
+      "slide_intent": "evidence",
+      "chart": {
+        "type": "bar",
+        "categories": [
+          "D 日",
+          "D+1 日"
+        ],
+        "series": [
+          {
+            "name": "当日净收款（元）",
+            "values": [
+              100,
+              -30
+            ]
+          }
+        ],
+        "options": {
+          "showLegend": false,
+          "showValue": true,
+          "valAxisTitle": "人民币元"
+        }
+      },
+      "facts": [
+        {
+          "value": "100",
+          "label": "原收款（元）",
+          "detail": "D 日确认"
+        },
+        {
+          "value": "30",
+          "label": "部分退款（元）",
+          "detail": "D+1 日关联原支付"
+        },
+        {
+          "value": "70",
+          "label": "两日净收款（元）",
+          "detail": "100 − 30"
+        }
+      ],
+      "caption": "固定教学场景：数据库保存整数分，业务日按上海时区。",
+      "sources": [
+        "v_transaction_fact / 固定教学样例"
+      ],
+      "slide_id": "s8",
+      "footer": "来源：v_transaction_fact / 固定教学样例"
+    },
+    {
+      "type": "content",
+      "title": "对账保留两侧来源与历史观察",
+      "variant": "image-sidebar",
+      "slide_intent": "evidence",
+      "assets": {
+        "hero_image": "../assets/reconciliation.png"
+      },
+      "sidebar_sections": [
+        {
+          "title": "先验证输入",
+          "body": [
+            "文件散列识别重导",
+            "重复、缺键与未知归属单列"
+          ]
+        },
+        {
+          "title": "再逐笔比较",
+          "body": [
+            "收款按支付标识匹配",
+            "退款区分单次请求号"
+          ]
+        },
+        {
+          "title": "重跑留历史",
+          "body": [
+            "新批次复用原输入",
+            "旧结果保留并可比较"
+          ]
+        }
+      ],
+      "caption": "仓库保存的历史对账画面；实际渠道账单仍待验收。",
+      "sources": [
+        "reconciliation.png / usp_run_reconciliation"
+      ],
+      "slide_id": "s9",
+      "footer": "来源：reconciliation.png / usp_run_reconciliation"
+    },
+    {
+      "type": "content",
+      "title": "处理结论需要证据与独立复核",
+      "variant": "timeline",
+      "slide_intent": "process",
+      "milestones": [
+        {
+          "label": "01",
+          "title": "分派",
+          "body": "指定负责人及期限"
+        },
+        {
+          "label": "02",
+          "title": "处理",
+          "body": "参考案例，保存分析和证据"
+        },
+        {
+          "label": "03",
+          "title": "提交",
+          "body": "带版本进入待复核"
+        },
+        {
+          "label": "04",
+          "title": "复核",
+          "body": "他人关闭或退回修改"
+        }
+      ],
+      "caption": "全文检索召回长文本；推荐只含可见的已解决案例。",
+      "sources": [
+        "CaseController / usp_review_exception"
+      ],
+      "slide_id": "s10",
+      "footer": "来源：CaseController / usp_review_exception"
+    },
+    {
+      "type": "content",
+      "title": "数据库端程序实际参与业务",
+      "variant": "table",
+      "slide_intent": "evidence",
+      "headers": [
+        "对象类型",
+        "数量",
+        "业务作用"
+      ],
+      "rows": [
+        [
+          "存储过程",
+          "5",
+          "支付确认、退款审批/确认、对账、工单复核"
+        ],
+        [
+          "函数",
+          "2",
+          "剩余可退额度、工单超期天数"
+        ],
+        [
+          "触发器",
+          "9",
+          "审核审计、事实保护、明细冻结"
+        ],
+        [
+          "视图与全文",
+          "按源码定义",
+          "本人订单、商户流水、案例与审计外模式"
+        ]
+      ],
+      "column_weights": [
+        0.22,
+        0.14,
+        0.64
+      ],
+      "caption": "MyBatis 设置并清理连接身份上下文；接口同时检查当前商户权限。",
+      "sources": [
+        "003 / 004 SQL / SessionContextPlugin"
+      ],
+      "slide_id": "s11",
+      "footer": "来源：003 / 004 SQL / SessionContextPlugin"
+    },
+    {
+      "type": "content",
+      "title": "操作、统计与审计使用同一事实",
+      "variant": "image-sidebar",
+      "slide_intent": "evidence",
+      "assets": {
+        "hero_image": "../assets/mobile-order.png"
+      },
+      "sidebar_sections": [
+        {
+          "title": "操作与权限",
+          "body": [
+            "消费者查看本人订单",
+            "申请、审批与复核分离"
+          ]
+        },
+        {
+          "title": "统计与钻取",
+          "body": [
+            "商户 → 门店 → 流水",
+            "年 → 月 → 日 → 流水"
+          ]
+        },
+        {
+          "title": "输出与留痕",
+          "body": [
+            "四种格式导出",
+            "访问、审批与业务审计"
+          ]
+        }
+      ],
+      "caption": "仓库保存的历史手机订单画面。",
+      "sources": [
+        "mobile-order.png / AnalyticsService"
+      ],
+      "slide_id": "s12",
+      "footer": "来源：mobile-order.png / AnalyticsService"
+    },
+    {
+      "type": "content",
+      "title": "验证结果区分时间与覆盖范围",
+      "variant": "table",
+      "slide_intent": "evidence",
+      "headers": [
+        "证据日期",
+        "记录结果",
+        "范围"
+      ],
+      "rows": [
+        [
+          "10 月 22 日（历史）",
+          "后端 190 项通过",
+          "含 SQL 集成测试；原始日志未随目录复制"
+        ],
+        [
+          "10 月 22 日（历史）",
+          "浏览器 5 组 / 接口 26 组",
+          "完整 DEMO 业务与多角色操作"
+        ],
+        [
+          "10 月 22 日（历史）",
+          "0.01 元沙箱支付与退款",
+          "收款退款各 1 分，查询与幂等核验"
+        ],
+        [
+          "10 月 25 日（本次）",
+          "前端类型检查、构建及断言通过",
+          "5 项筛选与金额断言；详见交付记录"
+        ],
+        [
+          "10 月 26 日（本次）",
+          "后端 118 项执行通过，72 项跳过",
+          "缺少 SQL Server；数据库业务未据此验收"
+        ]
+      ],
+      "column_weights": [
+        0.25,
+        0.31,
+        0.44
+      ],
+      "caption": "本次后端共 190 项，实际执行 118 项，0 失败；数据库测试跳过情况单列。",
+      "sources": [
+        "implementation-status.md / closeout.json"
+      ],
+      "slide_id": "s13",
+      "footer": "来源：implementation-status.md / closeout.json"
+    },
+    {
+      "type": "content",
+      "title": "提交材料与剩余验收条件",
+      "variant": "table",
+      "slide_intent": "evidence",
+      "headers": [
+        "交付 / 验收",
+        "当前安排"
+      ],
+      "rows": [
+        [
+          "报告与答辩",
+          "Word、PDF、可编辑 PPT、配图及关键 SQL"
+        ],
+        [
+          "源码与数据库",
+          "当前工作区源码包、版本 SQL、教学种子和迁移"
+        ],
+        [
+          "目标电脑恢复",
+          "取回原环境私有文件，或重建后重新验收"
+        ],
+        [
+          "真实签名通知",
+          "公网 HTTPS 443 接入后，以新支付核验"
+        ],
+        [
+          "真实业务账单",
+          "渠道提供实际交易账单；模板不作为交易"
+        ]
+      ],
+      "column_weights": [
+        0.26,
+        0.74
+      ],
+      "caption": "学校、成员及独立贡献据实填写；数据库备份和私有凭据另行保管。",
+      "sources": [
+        "docs/handover.md"
+      ],
+      "slide_id": "s14",
+      "footer": "来源：docs/handover.md"
+    }
+  ]
+}

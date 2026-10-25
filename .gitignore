@@ -17,3 +17,12 @@ private/
 .vscode/
 artifacts/
 backend/src/main/resources/static/
+__pycache__/
+*.pyc
+docs/presentation/build/
+docs/presentation/deck_start_packet.json
+docs/presentation/agent_brief.json
+docs/presentation/style_contract.json
+docs/presentation/assets/style_reference/
+docs/presentation/assets/icons/starter_icon.png
+docs/presentation/workspace.json

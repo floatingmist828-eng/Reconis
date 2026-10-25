@@ -1,0 +1,40 @@
+{
+  "images": [
+    {
+      "path": "../assets/workspace.png",
+      "source": "本仓库截图或按 SQL 重绘关系图",
+      "rights": "本项目课程展示",
+      "generated_ai": false
+    },
+    {
+      "path": "../assets/diagrams/er-funds.png",
+      "source": "本仓库截图或按 SQL 重绘关系图",
+      "rights": "本项目课程展示",
+      "generated_ai": false
+    },
+    {
+      "path": "../assets/reconciliation.png",
+      "source": "本仓库截图或按 SQL 重绘关系图",
+      "rights": "本项目课程展示",
+      "generated_ai": false
+    },
+    {
+      "path": "../assets/mobile-order.png",
+      "source": "本仓库截图或按 SQL 重绘关系图",
+      "rights": "本项目课程展示",
+      "generated_ai": false
+    }
+  ],
+  "charts": [
+    {
+      "slide_id": "s8",
+      "data": {
+        "net_receipts_yuan": [
+          100,
+          -30
+        ]
+      },
+      "source": "固定教学场景，不是新增实测数据"
+    }
+  ]
+}

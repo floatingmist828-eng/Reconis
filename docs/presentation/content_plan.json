@@ -1,0 +1,196 @@
+{
+  "topic": "Reconis 数据库课程答辩",
+  "audience": "数据库课程教师与答辩评审",
+  "objective": "展示业务闭环、关系设计、数据库程序与可核验证据",
+  "thesis": "跨日资金事实、历史对账与独立复核形成同一业务闭环。",
+  "narrative_arc": [
+    {
+      "act": "problem",
+      "slides": [
+        "s1",
+        "s2",
+        "s3"
+      ]
+    },
+    {
+      "act": "model-and-method",
+      "slides": [
+        "s4",
+        "s5",
+        "s6",
+        "s7",
+        "s8"
+      ]
+    },
+    {
+      "act": "evidence-and-collaboration",
+      "slides": [
+        "s9",
+        "s10",
+        "s11",
+        "s12",
+        "s13"
+      ]
+    },
+    {
+      "act": "delivery",
+      "slides": [
+        "s14"
+      ]
+    }
+  ],
+  "slide_plan": [
+    {
+      "slide_id": "s1",
+      "role": "title",
+      "message": "Reconis",
+      "variant": "title",
+      "visual_strategy": "title",
+      "evidence_needs": [],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s2",
+      "role": "evidence",
+      "message": "一笔交易，四类一致性问题",
+      "variant": "table",
+      "visual_strategy": "table",
+      "evidence_needs": [
+        "设计报告 §§1–2"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s3",
+      "role": "evidence",
+      "message": "从工作台进入完整业务链",
+      "variant": "image-sidebar",
+      "visual_strategy": "image-sidebar",
+      "evidence_needs": [
+        "docs/assets/workspace.png"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s4",
+      "role": "evidence",
+      "message": "15 个关系表达不同业务事实",
+      "variant": "table",
+      "visual_strategy": "table",
+      "evidence_needs": [
+        "001_schema.sql / 设计报告 §5"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s5",
+      "role": "evidence",
+      "message": "渠道观察与确认事实分开保存",
+      "variant": "image-sidebar",
+      "visual_strategy": "image-sidebar",
+      "evidence_needs": [
+        "001 / 002 / 003 SQL"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s6",
+      "role": "evidence",
+      "message": "通知与查询共同推进支付确认",
+      "variant": "comparison-2col",
+      "visual_strategy": "comparison-2col",
+      "evidence_needs": [
+        "PaymentGateway / PaymentService"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s7",
+      "role": "evidence",
+      "message": "退款额度在短事务中原子预留",
+      "variant": "table",
+      "visual_strategy": "table",
+      "evidence_needs": [
+        "usp_approve_refund / fn_refundable_amount"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s8",
+      "role": "evidence",
+      "message": "今日退款不会倒改昨日收款",
+      "variant": "chart",
+      "visual_strategy": "chart",
+      "evidence_needs": [
+        "v_transaction_fact / 固定教学样例"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s9",
+      "role": "evidence",
+      "message": "对账保留两侧来源与历史观察",
+      "variant": "image-sidebar",
+      "visual_strategy": "image-sidebar",
+      "evidence_needs": [
+        "reconciliation.png / usp_run_reconciliation"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s10",
+      "role": "process",
+      "message": "处理结论需要证据与独立复核",
+      "variant": "timeline",
+      "visual_strategy": "timeline",
+      "evidence_needs": [
+        "CaseController / usp_review_exception"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s11",
+      "role": "evidence",
+      "message": "数据库端程序实际参与业务",
+      "variant": "table",
+      "visual_strategy": "table",
+      "evidence_needs": [
+        "003 / 004 SQL / SessionContextPlugin"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s12",
+      "role": "evidence",
+      "message": "操作、统计与审计使用同一事实",
+      "variant": "image-sidebar",
+      "visual_strategy": "image-sidebar",
+      "evidence_needs": [
+        "mobile-order.png / AnalyticsService"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s13",
+      "role": "evidence",
+      "message": "验证结果区分时间与覆盖范围",
+      "variant": "table",
+      "visual_strategy": "table",
+      "evidence_needs": [
+        "implementation-status.md / closeout.json"
+      ],
+      "source_status": "local_source_or_dated_history"
+    },
+    {
+      "slide_id": "s14",
+      "role": "evidence",
+      "message": "提交材料与剩余验收条件",
+      "variant": "table",
+      "visual_strategy": "table",
+      "evidence_needs": [
+        "docs/handover.md"
+      ],
+      "source_status": "local_source_or_dated_history"
+    }
+  ]
+}

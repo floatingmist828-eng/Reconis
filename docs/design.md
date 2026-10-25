@@ -780,4 +780,4 @@ Reconis/
 - [JFreeChart 官方仓库](https://github.com/jfree/jfreechart)：服务端图表，选发布版，不使用未发布主分支版本。
 - [Node.js 发布说明](https://nodejs.org/en/about/previous-releases)：初始化前端时固定支持期内的 LTS 环境。
 
-当前已读指导书、已有选题文档与本地仓库结构，并核对上述技术资料。本文件保留设计基线。当前已新增数据库、后端、前端与运行脚本，实际构建和联调状态以 implementation-status.md 为准；沙箱凭据尚未配置，不宣称已完成真实支付退款。
+本文件保留设计基线。数据库、后端、前端与运行脚本已经落地，实际构建和联调状态以 implementation-status.md 为准。2026-10-22 记录包含真实沙箱支付、查询与退款成功结果；真实签名通知及实际交易账单仍待验收。当前源码副本的环境和交付结果见 handover.md。

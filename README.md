@@ -14,7 +14,7 @@
 - ECharts 图表、PDF/Word 图文报告、访问及操作审计。
 - 15 张关系表、5 个业务过程、2 个函数、审核审计及事实保护触发器、外模式与运行角色。
 
-**已在本机运行：**SQL Server2022 Developer及全文组件已安装，15表和全部数据库对象已执行；收款、重复通知、部分退款、并发额度、对账重跑、独立复核、全文、推荐和四种导出已联调。真实支付宝沙箱待配置应用密钥。详细记录见[实施状态](docs/implementation-status.md)。
+**当前进度：**核心业务已有实现，2026-10-22 的实施记录包含 DEMO 闭环及真实支付宝沙箱支付、查询、退款成功结果。2026-10-25—26 已重新构建前后端与包含前端的 JAR；实际执行的 118 项后端测试通过，72 项数据库测试跳过。原运行环境的数据库备份和私有配置未随源码复制，目标电脑仍需恢复 SQL 环境；真实签名通知和实际交易账单仍待验收。详见[实施状态](docs/implementation-status.md)及[交付说明](docs/handover.md)。
 
 ![Reconis 实际运行工作台](docs/assets/workspace.png)
 
@@ -37,7 +37,7 @@
 
 打开 `http://localhost:8080`。教学账号与随机密码仅位于 `private/demo-accounts.txt`。开发时在 `frontend` 运行 `pnpm dev`，地址为 `http://127.0.0.1:5173`。
 
-当前电脑已完成安装和初始化，直接运行 `启动Reconis.cmd` 即可。新电脑按上方顺序准备。
+已完成本地配置、数据库初始化和构建的电脑可运行 `启动Reconis.cmd`。只有源码的目录需先按上方步骤准备环境。
 
 初始化保留已有数据库，不自动清库。详细配置、沙箱接入、备份及中断处理见[运行说明](docs/runbook.md)。
 
@@ -51,6 +51,8 @@
 | scripts/ | 构建、安装、初始化、启动、备份和打包 |
 | docs/design.md | 完整设计基线与关系模式 |
 | docs/reports/ | 两份课程报告源稿、演示与申优讲稿 |
+| docs/presentation/ | 答辩 PPT 的结构化源稿与证据规划 |
+| docs/handover.md | 提交内容、重建方法与剩余验收条件 |
 | samples/ | 标准账单教学样例和模板说明 |
 | .codex/CODEX.md | 项目实施记忆 |
 
@@ -59,3 +61,5 @@
 昨日收100元、今日退30元，两日分别统计100元和−30元，合计70元。退款仍关联原支付；重跑建立新批次，保留旧观察。
 
 全部基本及高级项入口见[要求对照](docs/requirements-matrix.md)。课程评分为设计报告20%、实现与报告50%、演示30%，高级功能需最终实际演示。
+
+课程材料通过 `python3 scripts/build-course-delivery.py` 生成到 `artifacts/delivery`；封面信息读取 `docs/reports/cover.json`。PPT 使用 presentation-skill 的仓库构建器，重建方法见交付说明。生成文件不替代数据库备份与现场演示。
