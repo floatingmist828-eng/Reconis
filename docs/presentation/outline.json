@@ -949,89 +949,78 @@
     },
     {
       "type": "content",
-      "title": "验证结果区分时间与覆盖范围",
+      "title": "本地运行结果",
       "variant": "table",
       "slide_intent": "evidence",
       "headers": [
-        "证据日期",
-        "记录结果",
-        "范围"
+        "项目",
+        "结果"
       ],
       "rows": [
         [
-          "10 月 22 日（历史）",
-          "后端 190 项通过",
-          "含 SQL 集成测试；原始日志未随目录复制"
+          "构建",
+          "TypeScript、Vite与Spring Boot打包通过"
         ],
         [
-          "10 月 22 日（历史）",
-          "浏览器 5 组 / 接口 26 组",
-          "完整 DEMO 业务与多角色操作"
+          "DEMO流程",
+          "26组业务验证通过"
         ],
         [
-          "10 月 22 日（历史）",
-          "0.01 元沙箱支付与退款",
-          "收款退款各 1 分，查询与幂等核验"
+          "数据库",
+          "15表、5过程、2函数、9触发器，全文索引就绪"
         ],
         [
-          "10 月 25 日（本次）",
-          "前端类型检查、构建及断言通过",
-          "5 项筛选与金额断言；详见交付记录"
-        ],
-        [
-          "10 月 26 日（本次）",
-          "后端 118 项执行通过，72 项跳过",
-          "缺少 SQL Server；数据库业务未据此验收"
-        ]
-      ],
-      "column_weights": [
-        0.25,
-        0.31,
-        0.44
-      ],
-      "caption": "本次后端共 190 项，实际执行 118 项，0 失败；数据库测试跳过情况单列。",
-      "sources": [
-        "implementation-status.md / closeout.json"
-      ],
-      "slide_id": "s13",
-      "footer": "来源：implementation-status.md / closeout.json"
-    },
-    {
-      "type": "content",
-      "title": "提交材料与剩余验收条件",
-      "variant": "table",
-      "slide_intent": "evidence",
-      "headers": [
-        "交付 / 验收",
-        "当前安排"
-      ],
-      "rows": [
-        [
-          "报告与答辩",
-          "Word、PDF、可编辑 PPT、配图及关键 SQL"
-        ],
-        [
-          "源码与数据库",
-          "当前工作区源码包、版本 SQL、教学种子和迁移"
-        ],
-        [
-          "目标电脑恢复",
-          "取回原环境私有文件，或重建后重新验收"
-        ],
-        [
-          "真实签名通知",
-          "公网 HTTPS 443 接入后，以新支付核验"
-        ],
-        [
-          "真实业务账单",
-          "渠道提供实际交易账单；模板不作为交易"
+          "界面",
+          "1440px桌面与390px手机，角色概览、筛选、待办及对账双栏"
         ]
       ],
       "column_weights": [
         0.26,
         0.74
       ],
-      "caption": "学校、成员及独立贡献据实填写；数据库备份和私有凭据另行保管。",
+      "caption": "2026-11-02 本地运行记录",
+      "sources": [
+        "docs/verification-20261102.md"
+      ],
+      "slide_id": "s13",
+      "footer": "来源：docs/verification-20261102.md"
+    },
+    {
+      "type": "content",
+      "title": "交付与演示顺序",
+      "variant": "table",
+      "slide_intent": "evidence",
+      "headers": [
+        "内容",
+        "位置与操作"
+      ],
+      "rows": [
+        [
+          "正式报告",
+          "docs/reports/final：设计报告与实现总结报告，Word／PDF"
+        ],
+        [
+          "答辩文件",
+          "docs/presentation/final：14页可编辑PPT与PDF"
+        ],
+        [
+          "源程序",
+          "backend、frontend、database、scripts、samples"
+        ],
+        [
+          "现场演示",
+          "开单、收款、退款、对账、工单复核、统计与审计"
+        ],
+        [
+          "数据库备份",
+          "SQL Server默认Backup目录，CHECKSUM与RESTORE VERIFYONLY完成"
+        ]
+      ],
+      "column_weights": [
+        0.26,
+        0.74
+      ],
+      "caption": "报告采用标题、目录、正文，黑体标题。",
       "sources": [
         "docs/handover.md"
       ],

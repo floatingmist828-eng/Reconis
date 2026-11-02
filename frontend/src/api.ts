@@ -87,7 +87,7 @@ export async function api<T = any>(
     try {
       result = JSON.parse(raw);
     } catch {
-      throw new Error("服务连接未完成，请确认后端与数据库已启动");
+      throw new Error("无法连接服务");
     }
     if (!r.ok) {
       if (r.status === 403) token = "";

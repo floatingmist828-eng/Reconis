@@ -24,3 +24,16 @@
 - PowerShell传Maven -D参数要整段加引号，否则.repo.local等可能被拆成生命周期参数。
 - 本仓库原README是UTF16，改成UTF8后才可apply_patch。源码统一UTF8。
 - 课程报告源稿与演示讲稿在docs/reports；真实SQL运行、沙箱和最终PPT/截图状态须以docs/implementation-status.md更新，不夸大源码构建证据。
+
+## 2026-11-02 分支优化与正式交付
+- 基于 origin/codex/course-closeout-20261026（b1d4de9）继续，保持该分支推送，不合并 main。
+- 用户要求：不做MVP，少量必要检查；页面语言简短自然；报告直接从标题、目录、正文开始，不加姓名学校封面，标题用黑体。
+- 本机 MSSQL$RECONIS 运行，ReconisDemo 备份后应用006—010及003/004。实测15表、5业务过程、2函数、9触发器，全文READY。
+- 新增消费者本人概览、商户及7/30/90日筛选、实时待办；待办链接携带状态。手机订单卡片与元金额筛选、对账原因中文化；移除在线字体依赖。
+- 完整生产版本20261102-closeout，默认8080。26组既有HTTP业务流程通过（V202611021226132e11a7.json；验证版本20261102-delivery，后续仅调整手机门店文字与对账显示）。不把本轮未执行的190项单元/数据库测试写成重跑通过。
+- 两份Word/PDF正式报告：docs/reports/final；14页原生可编辑PPT/PDF：docs/presentation/final；当前截图docs/assets。报告无个人信息封面。
+- verify-business-flow.ps1 需自动选择.tools/java，不能假设全局java在PATH。
+- 报告表格内的边距循环变量不可覆盖单元格值；字段字典的UNIQUE(...)表级约束不可误记到末列，ROWVERSION标注自动版本。
+- Word导出前更新目录；Windows渲染设PYTHONUTF8=1。项目便携LibreOffice在.tools/libreoffice。
+- 备份已在SQL Server默认目录生成并通过CHECKSUM/RESTORE VERIFYONLY。当前进程无法复制该受限文件；自动审批拒绝向交付目录增加SQL服务权限。保持默认权限，不绕过审批。原件ZIP单独保存在artifacts/delivery/private-database。
+- 交付包排除private/data/工具/密钥/数据库备份；GitHub提交正式报告与PPT，运行程序和本机配置保留本地。

@@ -43,7 +43,7 @@ function closedMinutes(row: Row): string {
 </script>
 <template>
   <section class="panel risk-panel">
-    <div class="panel-heading"><div><h2>风险与处理质量</h2><p>点击指标查看对应明细，再进入订单、对账批次或工单。</p></div></div>
+    <div class="panel-heading"><div><h2>差错与处理进度</h2><p>点击指标查看明细</p></div></div>
     <div class="risk-metrics">
       <button class="risk-metric" @click="action(() => openDetails('pending', '待核实资金事件'))"><span>待核实金额</span><strong>¥{{ money(summary.pendingCent) }}</strong><small>{{ summary.pendingEventCount || 0 }} 个事件 · {{ summary.openCaseCount || 0 }} 张未关闭工单</small></button>
       <button class="risk-metric" @click="action(() => openDetails('exceptions', '有效差错事件'))"><span>差错率</span><strong>{{ ratioPercent(summary.exceptionEventCount, summary.eventCount) }}</strong><small>{{ summary.exceptionEventCount || 0 }} / {{ summary.eventCount || 0 }} 个已对账事件</small></button>
@@ -52,9 +52,9 @@ function closedMinutes(row: Row): string {
       <button class="risk-metric" @click="action(() => openDetails('slaEligible', '按时关闭率的统计工单'))"><span>按时关闭率</span><strong>{{ ratioPercent(summary.onTimeCount, summary.slaEligibleCount) }}</strong><small>{{ summary.onTimeCount || 0 }} / {{ summary.slaEligibleCount || 0 }} 张期限及关闭时间有效的工单</small></button>
       <button class="risk-metric" @click="action(() => openDetails('closed', '处理时长的统计工单'))"><span>关闭耗时 · 中位数 / P95</span><strong>{{ minutes(summary.medianMinutes) }} / {{ minutes(summary.p95Minutes) }}</strong><small>分钟 · {{ summary.closedCaseCount || 0 }} 张关闭时间有效的工单</small></button>
     </div>
-    <p class="help-note">待核实金额及差额不代表实际损失。P95是关闭耗时的第95百分位，用于观察较慢工单。前期 {{ data.previous?.start }} 至 {{ data.previous?.end }}：{{ data.previous?.exceptionEventCount || 0 }} / {{ data.previous?.eventCount || 0 }} 个事件存在差错，差错率 {{ ratioPercent(data.previous?.exceptionEventCount, data.previous?.eventCount) }}；与本期使用同一数据截止时间。</p>
+    <p class="help-note">前期 {{ data.previous?.start }} 至 {{ data.previous?.end }}：{{ data.previous?.exceptionEventCount || 0 }} 个差错事件，差错率 {{ ratioPercent(data.previous?.exceptionEventCount, data.previous?.eventCount) }}。</p>
     <el-alert v-if="Number(summary.incompleteHistoryCount) > 0" type="warning" :closable="false" show-icon>
-      <template #title>{{ summary.incompleteHistoryCount }} 张工单的历史状态、期限或关闭时间不完整，相应指标未将未知值当作零。<el-button link @click="action(() => openDetails('incomplete', '历史记录不完整的工单'))">查看工单</el-button></template>
+      <template #title>{{ summary.incompleteHistoryCount }} 张工单待补充历史记录。<el-button link @click="action(() => openDetails('incomplete', '历史记录不完整的工单'))">查看工单</el-button></template>
     </el-alert>
     <div class="risk-columns">
       <div><h3>待核实账龄</h3><el-table :data="data.aging || []" class="clickable" @row-click="(r: Row) => action(() => openDetails('pending', ageNames[r.ageBucket] + '待核实事件', { ageBucket: r.ageBucket }))">

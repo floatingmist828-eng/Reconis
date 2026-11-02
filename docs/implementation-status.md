@@ -1,14 +1,14 @@
 # 实施状态
 
-更新：2026-10-26（收尾整理）。本文件同时保留 2026-10-22 的历史运行记录和当前源码副本的检查结果。
+更新：2026-11-02。当前版本基于 codex/course-closeout-20261026。
 
 ## 当前目录与交付状态
 
-- 前端依照锁文件安装依赖，TypeScript 检查与生产构建通过；直接执行现有统计测试的 5 项断言全部通过。
-- 本次已准备项目内 JDK 21 与 Maven，包含前端资源的 JAR 已重建到 backend/target/reconis-server-1.0.0.jar。后端 190 项中实际执行 118 项，0 失败、0 错误，72 项数据库测试因缺少 SQL Server 而跳过；完整结果见 artifacts/validation/closeout.json 和 backend-build.log。
-- Windows 主机只读检查未发现 MSSQL 服务，1433、8080、8081 均无监听。当前目录也没有历史的数据库备份、data 和 private 配置，不能直接沿用下方历史版本的运行结论。
-- 两份课程报告已有 Word 和 PDF，附 SQL 数据字典、代码说明和历史截图；答辩已有 14 页可编辑 PPT 与 PDF。生成文件位于 artifacts/delivery，源稿保存在 docs/reports 和 docs/presentation。
-- 报告封面与实际分工从 docs/reports/cover.json 读取，成员尚未提供的字段保留待填栏。生成、打包、恢复与剩余验收见 handover.md。
+- MSSQL$RECONIS 正常运行。ReconisDemo 已在备份后完成迁移 006—010，并刷新过程、函数、视图与触发器；实测 15 张表、5 个业务过程、2 个函数、9 个触发器，中文全文索引就绪。
+- pnpm 锁文件安装、TypeScript 与生产构建通过。单程序包版本为 20261102-closeout，包含前端资源，本机通过 http://localhost:8080 运行。
+- 26 组既有业务联调通过：支付确认与查询恢复、独立退款审批、导入复用、差错识别、历史比较、工单复核、全文推荐、风险钻取、档案归档、自动账单、四格式导出和权限。记录：artifacts/validation/V202611021226132e11a7.json。
+- 浏览器已检查 1440px 桌面、390px 手机页面，以及商户时间筛选、个人消费概览和对账双栏。最新运行截图保存在 docs/assets。
+- 两份正式报告位于 docs/reports/final，直接以标题、目录、正文开篇，黑体标题、A4 版式，包含 3NF、字段字典和关键 SQL。
 
 ## 历史运行版本（2026-10-22）
 

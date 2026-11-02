@@ -1,6 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
 :root {
-  font-family: "DM Sans", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 14px;
   color: #243d37;
   background: #f5f7f4;
   font-synthesis: none;
@@ -13,7 +13,7 @@
   --el-border-radius-base: 7px;
   --el-text-color-primary: #243d37;
   --el-border-color: #dde5de;
-  --el-font-size-base: 13px;
+  --el-font-size-base: 14px;
 }
 * {
   box-sizing: border-box;
@@ -54,13 +54,13 @@ p {
   line-height: 1.8;
 }
 small {
-  font-size: 11px;
+  font-size: 13px;
 }
 .muted {
   color: #85938c;
 }
 .eyebrow {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 2px;
   font-weight: 700;
   color: #658176;
@@ -116,7 +116,7 @@ small {
 }
 .brand small {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2.2px;
   color: #92b5a1;
   margin-top: 3px;
@@ -130,7 +130,7 @@ small {
   gap: 9px;
   border: 1px solid #3b5b4f;
   border-radius: 9px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .workspace-icon {
   background: #345b47;
@@ -142,7 +142,7 @@ small {
 .workspace-chip small {
   display: block;
   color: #87aa96;
-  font-size: 9px;
+  font-size: 11px;
   margin-top: 5px;
 }
 .online-dot {
@@ -159,7 +159,7 @@ small {
   scrollbar-width: none;
 }
 .nav-group {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   color: #83a48e;
   padding: 19px 15px 9px;
@@ -188,7 +188,7 @@ small {
   font-weight: 600;
 }
 .nav-pill {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   background: #426c4c;
   color: #d9e9ca;
@@ -204,14 +204,14 @@ small {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 10px;
+  font-size: 12px;
   color: #b9d0b5;
 }
 .environment-mini .online-dot {
   margin: 0;
 }
 .sidebar-bottom p {
-  font-size: 10px;
+  font-size: 12px;
   color: #6f9780;
   margin-top: 10px;
 }
@@ -234,7 +234,7 @@ small {
   display: flex;
   align-items: center;
   gap: 13px;
-  font-size: 11px;
+  font-size: 13px;
   color: #84928b;
 }
 .breadcrumbs strong {
@@ -242,7 +242,7 @@ small {
   color: #34483e;
 }
 .breadcrumbs .el-icon {
-  font-size: 10px;
+  font-size: 12px;
 }
 .topbar-right {
   display: flex;
@@ -254,7 +254,7 @@ small {
   color: #7b8953;
   border: 1px solid #e0e6cd;
   padding: 5px 10px;
-  font-size: 10px;
+  font-size: 12px;
   border-radius: 4px;
   letter-spacing: 0.4px;
 }
@@ -270,7 +270,7 @@ small {
   color: #5e7553;
 }
 .user-caption {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 .user-caption b {
@@ -279,7 +279,7 @@ small {
 .user-caption small {
   display: block;
   color: #96a098;
-  font-size: 9px;
+  font-size: 11px;
 }
 .workspace {
   padding: 32px 34px 30px;
@@ -292,7 +292,7 @@ small {
   justify-content: space-between;
   gap: 20px;
   color: #a0aaa2;
-  font-size: 9px;
+  font-size: 11px;
   padding: 12px 34px 22px;
   letter-spacing: 0.4px;
 }
@@ -314,7 +314,7 @@ small {
   gap: 10px;
 }
 .date-chip {
-  font-size: 10px;
+  font-size: 12px;
   color: #75867a;
   background: #fff;
   border: 1px solid #e3e9de;
@@ -355,10 +355,10 @@ small {
   display: flex;
   justify-content: space-between;
   color: #6e8073;
-  font-size: 11px;
+  font-size: 13px;
 }
 .kpi-label > span:not(.status-dot) {
-  font-size: 9px;
+  font-size: 11px;
   color: #9ca999;
 }
 .kpi-card strong {
@@ -378,7 +378,7 @@ small {
   letter-spacing: 0;
 }
 .kpi-card small {
-  font-size: 9px;
+  font-size: 11px;
   color: #99a395;
 }
 .kpi-accent {
@@ -411,7 +411,7 @@ small {
 }
 .overview-main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 290px;
+  grid-template-columns: minmax(0, 1fr) 310px;
   gap: 23px;
   margin-bottom: 23px;
 }
@@ -430,12 +430,12 @@ small {
   margin-bottom: 18px;
 }
 .panel-heading p {
-  font-size: 10px;
+  font-size: 12px;
   color: #96a08f;
   margin-top: 7px;
 }
 .panel-heading .el-button {
-  font-size: 10px;
+  font-size: 12px;
   gap: 3px;
 }
 .workflow-panel {
@@ -448,44 +448,50 @@ small {
   line-height: 1.5;
 }
 .workflow-panel > p {
-  font-size: 11px;
+  font-size: 13px;
   color: #809075;
   margin-top: 12px;
 }
-.workflow-step {
+.work-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin: 22px 0;
+  gap: 12px;
+  padding: 17px 0;
+  border-bottom: 1px solid #d9e3d3;
 }
-.workflow-step > b {
-  font-size: 13px;
-  color: #98ad89;
-  border: 1px solid #ced9bf;
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  font-weight: 500;
+.work-item > span:first-child {
+  flex: 1;
 }
-.workflow-step strong {
+.work-item b {
   display: block;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
 }
-.workflow-step span {
-  font-size: 9px;
-  color: #95a08b;
+.work-item small {
+  color: #74856c;
   display: block;
   margin-top: 5px;
 }
+.work-item > strong {font-size: 23px;font-weight: 600;color:#28634c;font-variant-numeric:tabular-nums;}
+.work-item:hover b {color:var(--el-color-primary);}
+.overdue-strip {display:flex;justify-content:space-between;align-items:center;padding:16px 0 20px;color:#67775d;font-size:12px;}
+.overdue-strip strong {color:#9a6b34;font-size:18px;}
+.overdue-strip small {font-weight:400;}
+.overview-merchant {width:160px;}
+.overview-period {width:105px;}
+.mobile-order-list {display:none;}
+.mobile-order-card {display:block;padding:18px 0;border-top:1px solid #e7ede4;}
+.mobile-order-card > div,.mobile-order-card footer {display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.mobile-order-card strong {font-size:14px;}
+.mobile-order-card p {color:#778572;font-size:12px;margin:9px 0 13px;}
+.mobile-order-card footer {font-size:11px;color:#889180;}
+.mobile-order-card footer b {font-size:19px;color:#244f3f;font-weight:600;}
 .workflow-panel > .el-button {
   width: 100%;
   background: transparent;
   border-color: #c8d5bb;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 13px;
 }
 .overview-bottom {
   display: grid;
@@ -505,13 +511,13 @@ small {
 }
 .batch-mini b {
   display: block;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
 }
 .batch-mini small {
   display: block;
   color: #a3aa9b;
-  font-size: 9px;
+  font-size: 11px;
   margin-top: 6px;
 }
 .batch-icon {
@@ -525,14 +531,14 @@ small {
   place-items: center;
 }
 .el-table {
-  font-size: 11px;
+  font-size: 13px;
   --el-table-header-bg-color: #f8faf6;
   --el-table-border-color: #edf0e8;
   --el-table-row-hover-bg-color: #f5f8f1;
   color: #4a5d4d;
 }
 .el-table th.el-table__cell {
-  font-size: 10px;
+  font-size: 12px;
   color: #8b9885;
   font-weight: 500;
   height: 40px;
@@ -544,10 +550,10 @@ small {
   line-height: 1.7;
 }
 .el-table .el-button {
-  font-size: 11px;
+  font-size: 13px;
 }
 .el-tag {
-  font-size: 10px;
+  font-size: 12px;
   border: 0;
   font-weight: 400;
 }
@@ -596,7 +602,7 @@ small {
 }
 .mono {
   font-family: "DM Sans", Consolas, monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
 .amount {
@@ -606,7 +612,7 @@ small {
 }
 .subline {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   color: #9ba696;
   margin-top: 4px;
 }
@@ -635,7 +641,7 @@ small {
 }
 .description-grid label {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   color: #8a9985;
   margin-bottom: 7px;
 }
@@ -659,7 +665,7 @@ small {
   background: #f7f8f1;
   border-left: 3px solid #c1d0ab;
   padding: 13px 16px;
-  font-size: 11px;
+  font-size: 13px;
   color: #859174;
   line-height: 1.8;
   margin: 16px 0;
@@ -673,7 +679,7 @@ small {
   grid-column: 1/-1;
 }
 .el-form-item__label {
-  font-size: 11px;
+  font-size: 13px;
   color: #71816b;
 }
 .el-dialog {
@@ -736,7 +742,7 @@ small {
   margin-bottom: 10px;
 }
 .case-card p {
-  font-size: 11px;
+  font-size: 13px;
   color: #8b9883;
   margin-top: 8px;
   display: -webkit-box;
@@ -749,7 +755,7 @@ small {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  font-size: 10px;
+  font-size: 12px;
   color: #9daa91;
 }
 .comparison {
@@ -774,7 +780,7 @@ small {
   display: grid;
   grid-template-columns: 95px 1fr;
   gap: 12px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .comparison dt {
   color: #98a18d;
@@ -788,7 +794,7 @@ small {
   gap: 8px;
   align-items: center;
   margin: 12px 0;
-  font-size: 11px;
+  font-size: 13px;
   color: #729466;
 }
 .metric-inline {
@@ -854,7 +860,7 @@ small {
   background: #21483b;
 }
 .art-caption {
-  font-size: 10px;
+  font-size: 12px;
   color: #9ab392;
   letter-spacing: 1px;
   margin-bottom: 20px;
@@ -878,7 +884,7 @@ small {
 }
 .ledger-art i {
   font-style: normal;
-  font-size: 10px;
+  font-size: 12px;
   color: #a4b48a;
   margin-left: auto;
 }
@@ -926,12 +932,12 @@ small {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 13px;
   color: #89977e;
   margin-top: 16px;
 }
 .login-switch .el-button {
-  font-size: 11px;
+  font-size: 13px;
   padding-left: 4px;
 }
 .login-note {
@@ -940,7 +946,7 @@ small {
   border-radius: 7px;
   padding: 16px 18px;
   margin-top: 38px;
-  font-size: 10px;
+  font-size: 12px;
   color: #879677;
 }
 .login-note b {
@@ -948,11 +954,11 @@ small {
 }
 .login-note p {
   margin-top: 5px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .login-panel > small {
   margin-top: 45px;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.5px;
 }
 .admin-intro {
@@ -976,17 +982,17 @@ small {
   padding-left: 5px;
 }
 .el-timeline-item__timestamp {
-  font-size: 10px;
+  font-size: 12px;
 }
 .el-timeline-item__content {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.8;
 }
 .el-tabs__item {
   font-size: 12px;
 }
 .el-empty__description p {
-  font-size: 11px;
+  font-size: 13px;
   color: #a0aa97;
 }
 @media (min-width: 1550px) {
@@ -1064,7 +1070,7 @@ small {
     letter-spacing: 1px;
   }
   .workspace-chip {
-    font-size: 10px;
+    font-size: 12px;
     padding: 10px 7px;
   }
   .workspace-chip small {
@@ -1077,9 +1083,6 @@ small {
   .overview-bottom,
   .detail-grid {
     grid-template-columns: 1fr;
-  }
-  .workflow-panel {
-    display: none;
   }
   .page-heading h1 {
     font-size: 24px;
@@ -1101,7 +1104,7 @@ small {
     font-size: 45px;
   }
   .login-copy > p {
-    font-size: 11px;
+    font-size: 13px;
   }
   .ledger-art {
     padding: 20px 15px;
@@ -1113,10 +1116,12 @@ small {
     gap: 18px;
   }
   .heading-actions .el-button {
-    font-size: 11px;
+    font-size: 13px;
   }
 }
 @media (max-width: 650px) {
+  .mobile-order-list {display:block;}
+  .desktop-order-table {display:none;}
   .sidebar {
     transform: translateX(-100%);
     width: 238px;
@@ -1152,7 +1157,7 @@ small {
   }
   .breadcrumbs {
     gap: 8px;
-    font-size: 10px;
+    font-size: 12px;
   }
   .breadcrumbs > span {
     display: none;
@@ -1184,13 +1189,13 @@ small {
     padding: 18px 14px;
   }
   .kpi-label {
-    font-size: 10px;
+    font-size: 12px;
   }
   .kpi-grid {
     gap: 10px;
   }
   .panel-heading p {
-    font-size: 9px;
+    font-size: 11px;
   }
   .table-toolbar {
     gap: 8px;
@@ -1206,7 +1211,7 @@ small {
     grid-template-columns: 1fr;
   }
   .description-grid {
-    font-size: 11px;
+    font-size: 13px;
   }
   .page-footer {
     padding: 12px 15px 20px;
@@ -1258,7 +1263,7 @@ small {
     line-height: 34px;
   }
   .eyebrow {
-    font-size: 9px;
+    font-size: 11px;
     margin-bottom: 9px;
   }
   .metric-inline {
@@ -1272,6 +1277,6 @@ small {
   }
   .el-pagination {
     --el-pagination-button-width: 26px;
-    --el-pagination-font-size: 11px;
+    --el-pagination-font-size: 13px;
   }
 }

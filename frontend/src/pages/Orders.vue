@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Plus, Search } from "@element-plus/icons-vue";
-import { api, query, money, time, action, type Row } from "../api";
+import { api, query, money, toCent, time, action, type Row } from "../api";
 import { useSession } from "../stores/session";
 import StatusTag from "../components/StatusTag.vue";
 import OrderForm from "../components/OrderForm.vue";
@@ -13,21 +13,21 @@ const route = useRoute(),
   merchants = ref<Row[]>([]),
   stores = ref<Row[]>([]),
   busy = ref(false),
-  dialog = ref(false);
+  dialog = ref(false),
+  minAmount = ref(""),
+  maxAmount = ref("");
 const filters = reactive({
   q: "",
-  status: "",
+  status: String(route.query.status || ""),
   merchantId: "",
   storeId: route.query.storeId || "",
-  minCent: "",
-  maxCent: "",
   sort: "createdAt",
   page: 1,
 });
 async function load() {
   busy.value = true;
   try {
-    list.value = await api("/orders?" + query(filters));
+    list.value = await api("/orders?" + query({...filters,minCent:minAmount.value?toCent(minAmount.value):"",maxCent:maxAmount.value?toCent(maxAmount.value):""}));
   } finally {
     busy.value = false;
   }
@@ -51,8 +51,8 @@ onMounted(() =>
     <div class="page-heading">
       <div>
         <div class="eyebrow">COLLECTION ORDERS</div>
-        <h1>收款订单</h1>
-        <p>开单、收款，查看订单进展。</p>
+        <h1>{{ session.consumer ? '我的订单' : '收款订单' }}</h1>
+        <p>{{ session.consumer ? '查看校园消费与付款进度。' : '开单、收款，查看订单进展。' }}</p>
       </div>
       <el-button
         v-if="session.canAny(['OWNER', 'CASHIER', 'FINANCE'])"
@@ -83,6 +83,7 @@ onMounted(() =>
             :label="text"
             :value="key" /></el-select
         ><el-select
+          v-if="!session.consumer"
           v-model="filters.merchantId"
           placeholder="全部商户"
           clearable
@@ -118,22 +119,22 @@ onMounted(() =>
       </div>
       <div class="table-toolbar">
         <el-input
-          v-model="filters.minCent"
-          placeholder="最低金额（分）"
-          inputmode="numeric"
+          v-model="minAmount"
+          placeholder="最低金额（元）"
+          inputmode="decimal"
           style="width: 145px"
         /><span class="muted">—</span
         ><el-input
-          v-model="filters.maxCent"
-          placeholder="最高金额（分）"
-          inputmode="numeric"
+          v-model="maxAmount"
+          placeholder="最高金额（元）"
+          inputmode="decimal"
           style="width: 145px"
         /><span class="grow"></span
         ><span class="muted">共 {{ list.total }} 笔订单</span>
       </div>
       <el-table
         :data="list.items"
-        class="clickable"
+        class="clickable desktop-order-table"
         @row-click="(r: Row) => router.push('/orders/' + r.id)"
         ><el-table-column label="订单" min-width="230"
           ><template #default="{ row }"
@@ -167,11 +168,20 @@ onMounted(() =>
           ></el-table-column
         ></el-table
       >
+      <div class="mobile-order-list">
+        <router-link v-for="row in list.items" :key="row.id" :to="'/orders/'+row.id" class="mobile-order-card">
+          <div><strong>{{row.subject}}</strong><StatusTag :value="row.status"/></div>
+          <p>{{row.storeName || row.merchantName}}</p>
+          <footer><span>{{time(row.createdAt)}}</span><b>¥ {{money(row.amountCent)}}</b></footer>
+        </router-link>
+        <el-empty v-if="!list.items.length" description="暂无订单"/>
+      </div>
       <div class="pagination">
         <el-pagination
           v-model:current-page="filters.page"
           :total="Number(list.total)"
           :page-size="20"
+          :pager-count="5"
           layout="total,prev,pager,next,jumper"
           @current-change="action(load)"
         />

@@ -217,7 +217,7 @@ async function compare() {
             ><span class="subline">{{
               row.statementSourceBatchId
                 ? "复用原始输入 · 历史重跑"
-                : "首次导入 · " + row.sourceType
+                : "首次导入 · " + codeName(row.sourceType)
             }}</span></template
           ></el-table-column
         ><el-table-column label="归属范围" min-width="135"
@@ -539,9 +539,8 @@ async function compare() {
                     :value="row.classification" /></template></el-table-column
               ><el-table-column
                 label="判定原因"
-                prop="reasonCode"
                 min-width="160"
-            /></el-table>
+            ><template #default="{row}">{{codeName(row.reasonCode)}}</template></el-table-column></el-table>
             <div class="pagination">
               <el-pagination
                 v-model:current-page="resultFilters.page"

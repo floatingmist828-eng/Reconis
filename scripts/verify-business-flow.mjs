@@ -558,7 +558,7 @@ try {
     assert.equal(number(risk.summary.exceptionEventCount), 0, 'latest corrected bill is fully matched');
     assert.equal(typeof risk.summary.pendingCent, 'string', 'money must be JSON-safe exact text');
     assert.ok(number(risk.summary.closedCaseCount) >= 1);
-    assert.ok(risk.definitions.some(text => text.includes('不代表实际损失')));
+    assert.ok(risk.definitions.some(text => text.includes('资金事件去重')));
     const detail = await owner.call('GET', `/api/v1/analytics/risk/details?${query({ ...filters, kind: 'pending', pageSize: 1 })}`);
     assert.equal(number(detail.total), number(risk.summary.pendingEventCount));
     assert.equal(detail.items.length, Math.min(1, number(detail.total)));

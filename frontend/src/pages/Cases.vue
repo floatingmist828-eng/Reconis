@@ -7,7 +7,7 @@ const router = useRouter(),
   route = useRoute(),
   filters = reactive({
     q: "",
-    status: "",
+    status: String(route.query.status || ""),
     classification: "",
     mine: route.query.mine === "true",
     page: 1,

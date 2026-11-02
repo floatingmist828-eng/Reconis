@@ -36,12 +36,12 @@ async function submit() {
       </div>
       <div class="login-copy">
         <span class="eyebrow light">CONNECTED. RECONCILED.</span>
-        <h1>每一笔，<br />都有据可循<span>。</span></h1>
+        <h1>把每笔账，<br />核对清楚<span>。</span></h1>
         <p>
-          从校园门店的一次收款，到跨日退款的最后一分。<br />让交易可追溯，让差错有回应，让协作更清晰。
+          收款、退款、对账，放在一起处理。<br />差异找得到，进度看得清。
         </p>
         <div class="ledger-art">
-          <div class="art-caption">交易事实 → 渠道核对 → 协作闭环</div>
+          <div class="art-caption">从一笔收款，到一份清楚的账单</div>
           <div><span class="art-dot"></span><b>订单与收款</b><i>已确认</i></div>
           <div><span class="art-dot"></span><b>逐笔对账</b><i>有据可查</i></div>
           <div><span class="art-dot"></span><b>差错协作</b><i>独立复核</i></div>
@@ -101,8 +101,8 @@ async function submit() {
           }}</el-button>
         </div>
         <div class="login-note">
-          <b>交易清晰，协作有序</b>
-          <p>收款、退款、对账，在一个工作空间完成。</p>
+          <b>你的校园账务工作台</b>
+          <p>登录后继续处理订单与待办。</p>
         </div>
       </div>
       <small class="muted">校园多商户跨日支付对账与差错协同处理系统</small>

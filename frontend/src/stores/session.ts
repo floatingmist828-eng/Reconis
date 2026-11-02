@@ -10,6 +10,7 @@ export const useSession = defineStore("session", () => {
     () => user.value?.platformRole === "PLATFORM_FINANCE",
   );
   const writable = computed(() => !admin.value && !auditor.value);
+  const consumer = computed(() => user.value?.platformRole === "MEMBER" && !user.value?.memberships?.length);
   function can(merchantId: string, roles: string[]) {
     return (
       writable.value &&
@@ -44,6 +45,7 @@ export const useSession = defineStore("session", () => {
     auditor,
     finance,
     writable,
+    consumer,
     can,
     canAny,
     load,

@@ -29,21 +29,21 @@ const items = computed(() =>
   [
     {
       path: "/",
-      text: "总览工作台",
+      text: session.consumer ? "我的概览" : "总览工作台",
       icon: Grid,
       group: "工作空间",
       show: true,
     },
     {
       path: "/orders",
-      text: "收款订单",
+      text: session.consumer ? "我的订单" : "收款订单",
       icon: Tickets,
       group: "交易管理",
       show: !session.admin,
     },
     {
       path: "/refunds",
-      text: "退款工作台",
+      text: session.consumer ? "我的退款" : "退款工作台",
       icon: RefreshLeft,
       group: "",
       show: !session.admin,
@@ -60,28 +60,28 @@ const items = computed(() =>
       text: "账单与对账",
       icon: DocumentChecked,
       group: "对账协作",
-      show: !session.admin,
+      show: !session.admin && !session.consumer,
     },
     {
       path: "/cases",
       text: "差错工作台",
       icon: Warning,
       group: "",
-      show: !session.admin,
+      show: !session.admin && !session.consumer,
     },
     {
       path: "/search",
       text: "案例知识库",
       icon: Search,
       group: "",
-      show: !session.admin,
+      show: !session.admin && !session.consumer,
     },
     {
       path: "/analytics",
       text: "经营与差错分析",
       icon: DataAnalysis,
       group: "数据洞察",
-      show: !session.admin,
+      show: !session.admin && !session.consumer,
     },
     {
       path: "/users",
@@ -102,7 +102,7 @@ const items = computed(() =>
       text: "支付接入",
       icon: Connection,
       group: !session.admin && !session.auditor ? "系统管理" : "",
-      show: true,
+      show: !session.consumer,
     },
   ].filter((i) => i.show),
 );
@@ -112,7 +112,7 @@ const role = computed(
       ADMIN: "平台管理员",
       AUDITOR: "只读审计员",
       PLATFORM_FINANCE: "平台财务",
-      MEMBER: "商户 / 消费者",
+      MEMBER: session.consumer ? "消费者" : "商户成员",
     })[String(session.user?.platformRole)],
 );
 onMounted(() =>
@@ -134,7 +134,7 @@ async function logout() {
       >
       <div class="workspace-chip">
         <span class="workspace-icon">校</span>
-        <div>校园商户工作空间<small>Campus workspace</small></div>
+        <div>{{ session.consumer ? '我的校园消费' : '校园商户工作空间' }}<small>Campus workspace</small></div>
         <span class="online-dot"></span>
       </div>
       <nav>
@@ -182,8 +182,8 @@ async function logout() {
             :icon="Fold"
             aria-label="切换导航"
             @click="collapsed = !collapsed"
-          /><span>工作空间</span><el-icon><ArrowRight /></el-icon
-          ><strong>{{ route.meta.section }}</strong>
+          /><span>Reconis</span><el-icon><ArrowRight /></el-icon
+          ><strong>{{ session.consumer && route.path === '/' ? '我的概览' : route.meta.title }}</strong>
         </div>
         <div class="topbar-right">
           <span class="environment-badge">{{
@@ -194,7 +194,7 @@ async function logout() {
                 : "后端连接中"
           }}</span
           ><el-button
-            v-if="!session.admin"
+            v-if="!session.admin && !session.consumer"
             text
             :icon="Bell"
             aria-label="我的待办"

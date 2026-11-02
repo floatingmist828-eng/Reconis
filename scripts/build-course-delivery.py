@@ -23,6 +23,9 @@ def run(command: list[str], **kwargs) -> None:
 
 
 def diagrams() -> dict[str, Path]:
+    existing = {key: ROOT / 'docs/assets/diagrams' / (key + '.png') for key in ('data-flow', 'modules', 'er-identity', 'er-funds', 'er-reconciliation')}
+    if all(path.is_file() for path in existing.values()):
+        return existing
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -137,7 +140,8 @@ def sql_columns() -> list[tuple[str, list[tuple[str, str, str]]]]:
             if "IDENTITY" in tail: notes.append("IDENTITY")
             if "PRIMARY KEY" in tail: notes.append("PK")
             if "NOT NULL" in tail: notes.append("非空")
-            if "UNIQUE" in tail and "(" not in tail.split("UNIQUE")[0]: notes.append("唯一")
+            if re.search(r"\bUNIQUE\b(?!\s*\()", tail): notes.append("唯一")
+            if column[2].upper() == "ROWVERSION": notes.append("自动版本")
             reference = re.search(r"REFERENCES dbo\.(\w+)\((\w+)\)", tail)
             if reference: notes.append("FK → " + reference[1] + "." + reference[2])
             columns.append((column[1], column[2], "；".join(notes) or "可空或由表级约束定义"))
@@ -150,25 +154,33 @@ def sql_columns() -> list[tuple[str, list[tuple[str, str, str]]]]:
 def build_report(source: Path, target: Path, figures: dict[str, Path], cover: dict) -> None:
     from docx import Document
     from docx.enum.text import WD_ALIGN_PARAGRAPH
+    from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
+    from docx.enum.style import WD_STYLE_TYPE
     from docx.oxml import OxmlElement
     from docx.oxml.ns import qn
     from docx.shared import Cm, Pt, RGBColor
     from PIL import Image
 
     doc = Document()
+    for root in (doc.element, doc.styles.element):
+        for border in root.iter(qn('w:pBdr')):
+            border.getparent().remove(border)
     section = doc.sections[0]
     section.page_width, section.page_height = Cm(21), Cm(29.7)
     section.top_margin, section.bottom_margin = Cm(2.3), Cm(2.2)
     section.left_margin, section.right_margin = Cm(2.6), Cm(2.2)
     section.header_distance, section.footer_distance = Cm(1.1), Cm(1.1)
-    for name, size in [("Normal", 10.5), ("Heading 1", 16), ("Heading 2", 13),
-                       ("Heading 3", 11.5), ("Caption", 9), ("Table Grid", 9)]:
+    for name, size in [("Normal", 11), ("Title", 24), ("Heading 1", 16), ("Heading 2", 14),
+                       ("Heading 3", 12), ("Caption", 10), ("Table Grid", 10), ("TOC 1", 11), ("TOC 2", 10)]:
+        if name not in doc.styles: doc.styles.add_style(name, WD_STYLE_TYPE.PARAGRAPH)
         style = doc.styles[name]
         style.font.name = "Times New Roman" if name == "Normal" else "Arial"
         style.font.size = Pt(size)
+        style.font.color.rgb = RGBColor(0, 0, 0)
+        style.font.italic = False
         style.element.get_or_add_rPr().get_or_add_rFonts().set(qn("w:eastAsia"), "宋体" if name in ("Normal", "Caption", "Table Grid") else "黑体")
         if name.startswith("Heading"):
-            style.font.color.rgb = RGBColor.from_string("163D31")
+            style.font.color.rgb = RGBColor(0, 0, 0)
             style.paragraph_format.keep_with_next = True
             style.paragraph_format.space_before, style.paragraph_format.space_after = Pt(15), Pt(7)
     normal = doc.styles["Normal"].paragraph_format
@@ -181,40 +193,18 @@ def build_report(source: Path, target: Path, figures: dict[str, Path], cover: di
     doc.core_properties.title = "Reconis " + report_title
     doc.core_properties.subject = "数据库课程设计"
     doc.core_properties.author = "、".join(m.get("name", "") for m in cover.get("members", []) if m.get("name"))
-    for _ in range(3): doc.add_paragraph()
-    p = doc.add_paragraph("数据库课程设计", "Title")
+    p = doc.add_paragraph("Reconis " + report_title, "Title")
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p = doc.add_paragraph(report_title)
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.runs[0].font.size = Pt(22)
+    p.runs[0].font.size = Pt(24)
     p.runs[0].bold = True
-    p = doc.add_paragraph("校园多商户跨日支付对账\n与差错协同处理系统的设计与实现")
+    p = doc.add_paragraph("校园多商户支付对账与差错协同处理系统")
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.runs[0].font.size = Pt(17)
-    doc.add_paragraph()
-    for label, key in [("学校", "school"), ("学院", "college"), ("班级", "class_name"), ("指导教师", "teacher")]:
-        p = doc.add_paragraph(f"{label}：{cover.get(key) or '________________（待填写）'}")
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    members = cover.get("members", [])
-    for member in members:
-        p = doc.add_paragraph(f"姓名：{member.get('name') or '待填写'}　学号：{member.get('student_id') or '待填写'}")
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    if not members:
-        p = doc.add_paragraph("姓名 / 学号：________________（待填写）")
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p = doc.add_paragraph(cover.get("date", "2026-10-25"))
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    doc.add_page_break()
-    doc.add_heading("内容导航", level=1)
-    doc.add_paragraph("以下列出正文各章。电子版可使用 Word 导航窗格跳转；章节编号与源稿一致。")
-    for line in lines:
-        if line.startswith("## "):
-            doc.add_paragraph(line[3:], style="Normal")
-    if "system-design" in source.stem:
-        doc.add_paragraph("附录 A　基础表字段字典（从 SQL 生成）")
-    else:
-        doc.add_paragraph("附录 A　数据库端关键代码摘录")
-        doc.add_paragraph("附录 B　本次构建与验证")
+    p.runs[0].font.size = Pt(12)
+    doc.add_paragraph("目　录", style="Subtitle").runs[0].font.color.rgb = RGBColor(0, 0, 0)
+    toc = doc.add_paragraph()
+    field = OxmlElement("w:fldSimple")
+    field.set(qn("w:instr"), 'TOC \\o "1-1" \\h \\z \\u')
+    toc._p.append(field)
     doc.add_page_break()
 
     header = section.header.paragraphs[0]
@@ -228,7 +218,7 @@ def build_report(source: Path, target: Path, figures: dict[str, Path], cover: di
     footer._p.append(field)
     footer.add_run(" 页")
 
-    chapter, table_counter = "0", 0
+    chapter, table_counter, current_heading = "0", 0, "数据定义"
 
     def paragraph(text, style=None):
         text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
@@ -258,12 +248,19 @@ def build_report(source: Path, target: Path, figures: dict[str, Path], cover: di
         if caption:
             p = doc.add_paragraph(caption, style="Caption")
         else:
-            p = doc.add_paragraph(f"表 {chapter}.{table_counter}　{rows[0][0]}及相关定义", style="Caption")
+            caption_title = re.sub(r'^[\d.]+\s*', '', current_heading)
+            p = doc.add_paragraph(f"表 {chapter}.{table_counter}　{caption_title}", style="Caption")
         p.paragraph_format.keep_with_next = True
         grid = doc.add_table(rows=1, cols=len(rows[0]))
         grid.style = "Table Grid"
         grid.autofit = False
         usable = 16.2
+        borders = OxmlElement('w:tblBorders')
+        for edge in ('top', 'left', 'bottom', 'right', 'insideH', 'insideV'):
+            item = OxmlElement('w:' + edge)
+            for key, value in [('val', 'single'), ('sz', '4'), ('color', 'D9D9D9')]: item.set(qn('w:' + key), value)
+            borders.append(item)
+        grid._tbl.tblPr.append(borders)
         longest = [max(len(str(row[col])) for row in rows if col < len(row)) for col in range(len(rows[0]))]
         weights = [min(48, max(12, value)) for value in longest]
         for col, weight in zip(grid.columns, weights): col.width = Cm(usable * weight / sum(weights))
@@ -271,6 +268,14 @@ def build_report(source: Path, target: Path, figures: dict[str, Path], cover: di
             cells = grid.rows[0].cells if i == 0 else grid.add_row().cells
             for j, value in enumerate(values[:len(cells)]):
                 cell = cells[j]
+                cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                margins = OxmlElement('w:tcMar')
+                for edge, margin in [('top', '70'), ('bottom', '70'), ('left', '90'), ('right', '90')]:
+                    item = OxmlElement('w:' + edge)
+                    item.set(qn('w:w'), margin)
+                    item.set(qn('w:type'), 'dxa')
+                    margins.append(item)
+                cell._tc.get_or_add_tcPr().append(margins)
                 cell.width = Cm(usable * weights[j] / sum(weights))
                 cell.text = value.replace("`", "").replace("**", "")
                 for p in cell.paragraphs:
@@ -279,10 +284,10 @@ def build_report(source: Path, target: Path, figures: dict[str, Path], cover: di
                     p.paragraph_format.space_after = Pt(3)
                     p.paragraph_format.space_before = Pt(3)
                     p.paragraph_format.line_spacing = 1.15
-                    for r in p.runs: r.font.size = Pt(8.5)
+                    for r in p.runs: r.font.size = Pt(10)
                 if i == 0:
                     shade = OxmlElement("w:shd")
-                    shade.set(qn("w:fill"), "E8F1ED")
+                    shade.set(qn("w:fill"), "F2F2F2")
                     cell._tc.get_or_add_tcPr().append(shade)
                     for r in cell.paragraphs[0].runs: r.bold = True
             pr = grid.rows[i]._tr.get_or_add_trPr()
@@ -322,6 +327,7 @@ def build_report(source: Path, target: Path, figures: dict[str, Path], cover: di
             table(rows); continue
         heading = re.match(r"^(#{2,4})\s+(.*)", line)
         if heading:
+            current_heading = heading[2]
             level = len(heading[1]) - 1
             if level == 1:
                 chapter = heading[2].split()[0]
@@ -343,7 +349,7 @@ def build_report(source: Path, target: Path, figures: dict[str, Path], cover: di
     if "system-design" in source.stem:
         doc.add_heading("附录 A　基础表字段字典", level=1)
         table_counter = 0
-        paragraph("以下字段来自 database/001_schema.sql。表级 CHECK、复合唯一约束及过滤索引以 SQL 原文为准；迁移 007 的自动账单扩展另列。字段字典只描述结构，不包含账号密码或业务数据。")
+        paragraph("字段字典对应 database/001_schema.sql，自动账单扩展列于附录末尾。复合键、CHECK 与过滤索引见正文第 5、6、8 章。")
         for name, columns in sql_columns():
             doc.add_heading(name, level=2)
             table([["字段", "SQL 类型", "键与约束摘要"], *[list(row) for row in columns]], f"表 A.{table_counter + 1}　{name}")
@@ -369,19 +375,6 @@ def build_report(source: Path, target: Path, figures: dict[str, Path], cover: di
                     p.paragraph_format.line_spacing = 1.05
                     p.paragraph_format.space_after = Pt(1)
                     for r in p.runs: r.font.name = "Consolas"; r.font.size = Pt(8.5)
-        doc.add_heading("附录 B　本次构建与验证", level=1)
-        validation = ROOT / "artifacts/validation/closeout.json"
-        if validation.exists():
-            record = json.loads(validation.read_text())
-            rows = [["检查", "状态", "结果与范围"]]
-            for item in record.get("checks", []):
-                rows.append([item["name"], item["status"], item["detail"]])
-            table(rows, "表 B.1　本次验证记录")
-        else: paragraph("本次验证记录尚未生成。历史结果见正文第 7 节，不能作为本次重跑证据。")
-        paragraph("可复现命令与日志位置见 docs/handover.md。真实签名回调、实际交易账单、目标电脑数据库恢复及现场演示仍需按交付说明完成。")
-    if members:
-        doc.add_heading("团队实际分工", level=1)
-        for member in members: paragraph(f"{member.get('name', '')}：{member.get('contribution') or '待填写实际独立设计与实现内容'}")
     target.parent.mkdir(parents=True, exist_ok=True)
     doc.save(target)
     print("Report:", target, flush=True)

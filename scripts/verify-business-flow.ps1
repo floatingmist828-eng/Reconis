@@ -16,7 +16,13 @@ if(-not $OutputDirectory){$OutputDirectory=Join-Path $root 'artifacts/validation
 $previousPassword=$env:RECONIS_VERIFY_PASSWORD
 $previousJar=$env:RECONIS_VERIFY_JAR
 $previousJarHash=$env:RECONIS_VERIFY_JAR_SHA256
+$previousJava=$env:RECONIS_VERIFY_JAVA
 try {
+ if(-not $env:RECONIS_VERIFY_JAVA){
+  $localJdk=Get-ChildItem (Join-Path $root '.tools/java') -Directory -ErrorAction SilentlyContinue | Where-Object {Test-Path (Join-Path $_.FullName 'bin/java.exe')} | Select-Object -First 1
+  if($localJdk){$env:RECONIS_VERIFY_JAVA=Join-Path $localJdk.FullName 'bin/java.exe'}
+  elseif($env:JAVA_HOME){$env:RECONIS_VERIFY_JAVA=Join-Path $env:JAVA_HOME 'bin/java.exe'}
+ }
  if(-not $CleanupResultFile){
   $release=Resolve-ReconisServerJar -Root $root -JarFile $JarFile -ReleaseId $ReleaseId
   $env:RECONIS_VERIFY_JAR=$release.JarPath
@@ -36,4 +42,5 @@ try {
  $env:RECONIS_VERIFY_PASSWORD=$previousPassword
  $env:RECONIS_VERIFY_JAR=$previousJar
  $env:RECONIS_VERIFY_JAR_SHA256=$previousJarHash
+ $env:RECONIS_VERIFY_JAVA=$previousJava
 }

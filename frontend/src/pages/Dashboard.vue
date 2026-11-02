@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { ArrowRight, Plus, Refresh } from "@element-plus/icons-vue";
-import { api, money, time, dateDays, action, type Row } from "../api";
+import { api, query, money, time, dateDays, action, type Row } from "../api";
 import { useSession } from "../stores/session";
 import Chart from "../components/Chart.vue";
 import StatusTag from "../components/StatusTag.vue";
@@ -14,16 +14,22 @@ const router = useRouter(),
     recentBatches: [],
     recentCases: [],
   }),
-  loading = ref(false);
+  loading = ref(false),
+  days = ref(30),
+  merchantId = ref(""),
+  merchants = ref<Row[]>([]);
 async function load() {
   loading.value = true;
   try {
-    data.value = await api("/dashboard");
+    data.value = await api("/dashboard?"+query({start:dateDays(1-days.value),end:dateDays(),merchantId:merchantId.value}));
   } finally {
     loading.value = false;
   }
 }
-onMounted(() => action(load));
+onMounted(() => action(async()=>{
+  await load();
+  if (!session.admin && !session.consumer) merchants.value=(await api('/merchants?status=ACTIVE&pageSize=100')).items;
+}));
 const option = computed(() => ({
   color: ["#268577", "#b7c8bc"],
   tooltip: { trigger: "axis" },
@@ -64,13 +70,13 @@ const option = computed(() => ({
   <div v-loading="loading">
     <div class="page-heading">
       <div>
-        <div class="eyebrow">WORKSPACE OVERVIEW</div>
-        <h1>{{ session.user?.displayName }}，你好</h1>
-        <p>查看收退款，继续处理待办。</p>
+        <div class="eyebrow">{{ session.consumer ? 'MY CAMPUS' : 'WORKSPACE OVERVIEW' }}</div>
+        <h1>{{ session.consumer ? '我的校园消费' : '经营概览' }}</h1>
+        <p>{{session.consumer ? '订单与退款，随时查看。' : '掌握收退款，及时处理差错。'}}</p>
       </div>
       <div class="heading-actions">
-        <span class="date-chip">{{ dateDays(-29) }} — {{ dateDays() }}</span
-        ><el-button
+        <template v-if="!session.admin && !session.consumer"><el-select v-model="merchantId" placeholder="全部商户" clearable class="overview-merchant" @change="action(load)"><el-option v-for="m in merchants" :key="m.id" :label="m.name" :value="m.id"/></el-select><el-select v-model="days" class="overview-period" @change="action(load)"><el-option v-for="n in [7,30,90]" :key="n" :label="'近'+n+'日'" :value="n"/></el-select></template>
+        <el-button
           :icon="Refresh"
           aria-label="刷新工作台"
           @click="action(load)"
@@ -100,19 +106,30 @@ const option = computed(() => ({
         <p>审核新申请，管理成员权限，查看操作记录。</p>
       </div></template
     >
+    <template v-else-if="data.consumer">
+      <div class="kpi-grid consumer-metrics">
+        <router-link to="/orders" class="kpi-card"><span class="kpi-label">全部订单</span><strong>{{data.summary?.orderCount||0}}</strong><small>查看消费明细 →</small></router-link>
+        <router-link to="/orders?status=WAITING_PAYMENT" class="kpi-card"><span class="kpi-label">待付款</span><strong>{{data.summary?.waitingCount||0}}</strong><small>继续付款 →</small></router-link>
+        <router-link to="/orders?status=PAID" class="kpi-card"><span class="kpi-label">已支付</span><strong>{{data.summary?.paidCount||0}}</strong><small>查看订单 →</small></router-link>
+        <router-link to="/refunds" class="kpi-card task-kpi"><span class="kpi-label">退款处理中</span><strong>{{data.pendingRefunds||0}}</strong><small>查看进度 →</small></router-link>
+      </div>
+      <section class="panel"><div class="panel-heading"><div><h2>最近订单</h2><p>你的校园消费记录</p></div><el-button link @click="router.push('/orders')">全部订单 →</el-button></div>
+        <el-table :data="data.recentOrders" class="clickable" @row-click="(r:Row)=>router.push('/orders/'+r.id)"><el-table-column label="订单" prop="subject" min-width="190"/><el-table-column label="商户" prop="merchantName" min-width="130"/><el-table-column label="金额" align="right" width="125"><template #default="{row}">¥ {{money(row.amountCent)}}</template></el-table-column><el-table-column label="状态" width="110"><template #default="{row}"><StatusTag :value="row.status"/></template></el-table-column><el-table-column label="下单时间" width="175"><template #default="{row}">{{time(row.createdAt)}}</template></el-table-column></el-table>
+      </section>
+    </template>
     <template v-else
       ><div class="kpi-grid">
         <router-link to="/analytics" class="kpi-card"
-          ><div class="kpi-label">成功收款 <span>近30日</span></div>
+          ><div class="kpi-label">成功收款 <span>{{days}}日</span></div>
           <strong><em>¥</em>{{ money(data.summary?.receiptCent) }}</strong
-          ><small>近30日收款</small
+          ><small>{{ dateDays(1-days) }} — {{ dateDays() }}</small
           ><span class="kpi-accent"></span></router-link
         ><router-link to="/refunds" class="kpi-card"
-          ><div class="kpi-label">成功退款 <span>近30日</span></div>
+          ><div class="kpi-label">成功退款 <span>{{days}}日</span></div>
           <strong><em>¥</em>{{ money(data.summary?.refundCent) }}</strong
-          ><small>近30日退款</small></router-link
+          ><small>按退款发生日期统计</small></router-link
         ><router-link to="/analytics" class="kpi-card"
-          ><div class="kpi-label">净收款 <span>近30日</span></div>
+          ><div class="kpi-label">净收款 <span>{{days}}日</span></div>
           <strong><em>¥</em>{{ money(data.summary?.netCent) }}</strong
           ><small>收款 − 退款</small></router-link
         ><router-link to="/cases" class="kpi-card task-kpi"
@@ -128,7 +145,7 @@ const option = computed(() => ({
           <div class="panel-heading">
             <div>
               <h2>收退款趋势</h2>
-              <p>近30日 · 按交易日期</p>
+              <p>近{{days}}日 · 按交易日期</p>
             </div>
             <el-button link type="primary" @click="router.push('/analytics')"
               >查看分析 <el-icon><ArrowRight /></el-icon
@@ -145,29 +162,15 @@ const option = computed(() => ({
           />
         </section>
         <section class="panel workflow-panel">
-          <span class="eyebrow">YOUR NEXT STEP</span>
-          <h2>开始一轮对账</h2>
-          <p>导入账单，核对差异，再交给负责的同事处理。</p>
-          <div class="workflow-step">
-            <b>01</b>
-            <div>
-              <strong>导入与核对</strong><span>双格式账单 · 逐笔差异</span>
-            </div>
-          </div>
-          <div class="workflow-step">
-            <b>02</b>
-            <div>
-              <strong>派单与处理</strong><span>来源追踪 · 历史案例参考</span>
-            </div>
-          </div>
-          <div class="workflow-step">
-            <b>03</b>
-            <div>
-              <strong>复核与闭环</strong><span>独立人员复核 · 完整留痕</span>
-            </div>
-          </div>
+          <span class="eyebrow">ACTION CENTER</span>
+          <h2>待办事项</h2>
+          <p>当前工作空间的处理进度</p>
+          <router-link to="/refunds?status=PENDING_REVIEW" class="work-item"><span><b>退款待审批</b><small>查看申请与可退余额</small></span><strong>{{data.pendingRefunds||0}}</strong><span>↗</span></router-link>
+          <router-link to="/cases?status=PENDING_REVIEW" class="work-item"><span><b>工单待复核</b><small>查看处理结论</small></span><strong>{{data.pendingReviews||0}}</strong><span>↗</span></router-link>
+          <router-link to="/orders?status=WAITING_PAYMENT" class="work-item"><span><b>支付待确认</b><small>跟进付款与查询</small></span><strong>{{data.pendingPayments||0}}</strong><span>↗</span></router-link>
+          <div class="overdue-strip"><span>逾期未结工单</span><strong>{{data.overdueCases||0}} <small>件</small></strong></div>
           <el-button @click="router.push('/reconciliation')"
-            >进入对账工作台 <span>→</span></el-button
+            >导入账单并核对 <span>→</span></el-button
           >
         </section>
       </div>

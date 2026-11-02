@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { api, post, query, money, time, action, type Row } from "../api";
 import { useSession } from "../stores/session";
 import StatusTag from "../components/StatusTag.vue";
 const router = useRouter(),
+  route = useRoute(),
   session = useSession(),
   list = ref<Row>({ items: [], total: 0 }),
-  filters = reactive({ q: "", status: "", page: 1 }),
+  filters = reactive({ q: "", status: String(route.query.status || ""), page: 1 }),
   busy = ref(false);
 async function load() {
   busy.value = true;

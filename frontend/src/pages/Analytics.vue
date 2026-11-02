@@ -254,7 +254,7 @@ async function loadDetails(page = 1) {
       </div>
       <el-alert
         v-if="filtersChanged"
-        title="筛选条件尚未应用；当前图表、明细及导出仍使用上次更新的范围。"
+        title="筛选已修改，点击“更新分析”查看。"
         type="info"
         :closable="false"
         style="margin-bottom: 12px"
@@ -511,7 +511,7 @@ async function loadDetails(page = 1) {
     <div class="help-note">
       {{ data.definition }}。{{
         reconciliation.definition
-      }}。明细在服务器分页，单次导出最多100000条；超过上限会提示缩小范围，不会截断文件。
+      }}。单次最多导出100000条。
     </div>
   </div>
 </template>

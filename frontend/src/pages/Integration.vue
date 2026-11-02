@@ -126,7 +126,7 @@ onUnmounted(() => { if (refreshTimer) clearInterval(refreshTimer); });
         <el-checkbox v-model="daily">每天继续获取后续账期</el-checkbox>
         <el-button type="primary" :loading="taskBusy" @click="action(createTasks)">创建获取任务</el-button>
       </div>
-      <p class="help-note">{{ tasks.scheduleTime }}。一次最多补跑31天；同一天重复提交复用任务。失败最多自动尝试4次，原件及已完成结果保留。</p>
+      <p class="help-note">{{ tasks.scheduleTime }}。单次可获取31天账单，失败后自动重试。</p>
       <el-table :data="tasks.items" empty-text="尚未创建自动对账任务">
         <el-table-column label="账期" width="125"><template #default="{ row }">{{ new Date(row.periodStart).toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' }) }}</template></el-table-column>
         <el-table-column label="进度" width="130"><template #default="{ row }"><el-tag :type="row.acquisitionState === 'SUCCEEDED' ? 'success' : retryable.includes(row.acquisitionState) ? 'warning' : 'info'">{{ stateNames[row.acquisitionState] || row.acquisitionState }}</el-tag></template></el-table-column>
