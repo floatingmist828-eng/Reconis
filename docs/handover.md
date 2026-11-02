@@ -11,7 +11,7 @@
 | 答辩文件 | docs/presentation/final/Reconis-课程答辩.pptx、.pdf |
 | 源程序与建库文件 | backend、frontend、database、scripts、samples |
 | 课程交付压缩包 | artifacts/delivery/Reconis-课程交付包.zip |
-| 本机运行程序 | artifacts/releases/20261102-closeout/reconis-server.jar |
+| 本机运行程序 | artifacts/releases/20261102-delivery-final/reconis-server.jar |
 | 数据库备份 | SQL Server 默认 Backup 目录中的 ReconisDemo-20261102-204830.bak |
 | 证据原件 | artifacts/delivery/private-database/ReconisDemo-files.zip |
 | 业务运行记录 | artifacts/validation/V202611021226132e11a7.json |

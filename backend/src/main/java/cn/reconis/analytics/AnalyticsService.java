@@ -285,15 +285,13 @@ public class AnalyticsService {
         + " event_version FROM reconciliation_result r JOIN versions b ON b.id=r.batch_id AND"
         + " b.period_version=1), effective AS(SELECT r.*,COALESCE(f.store_id,o.store_id)"
         + " store_id,COALESCE(f.store_name,st.name,N'渠道待定位') store_name,m.name"
-        + " merchant_name,COALESCE(f.order_id,o.id) order_id,f.amount_cent local_cent,s.amount_cent"
-        + " channel_cent,COALESCE(f.amount_cent,s.amount_cent,0)"
+        + " merchant_name,COALESCE(f.order_id,o.id) order_id,f.amount_cent local_cent,s.amount_cent channel_cent,COALESCE(f.amount_cent,s.amount_cent,0)"
         + " amount_cent,COALESCE(f.channel_occurred_at,s.channel_occurred_at) event_at FROM"
-        + " observations r LEFT JOIN v_transaction_fact f ON f.id=r.entry_id AND"
-        + " f.recorded_at<=#{p.asOf} LEFT JOIN statement_line s ON s.id=r.statement_line_id LEFT"
-        + " JOIN refund_request rr ON rr.out_request_no=s.out_request_no AND s.event_type='REFUND'"
-        + " AND rr.created_at<=#{p.asOf} LEFT JOIN payment_attempt pay ON (pay.id=rr.payment_id OR"
-        + " (s.event_type='RECEIPT' AND pay.out_trade_no=s.out_trade_no)) AND"
-        + " pay.created_at<=#{p.asOf} LEFT JOIN v_order o ON o.id=pay.order_id AND"
+        + " observations r LEFT JOIN v_transaction_fact f ON f.id=r.entry_id AND f.recorded_at<=#{p.asOf} LEFT JOIN"
+        + " statement_line s ON s.id=r.statement_line_id LEFT JOIN refund_request rr ON"
+        + " rr.out_request_no=s.out_request_no AND s.event_type='REFUND' AND rr.created_at<=#{p.asOf} LEFT JOIN payment_attempt"
+        + " pay ON (pay.id=rr.payment_id OR (s.event_type='RECEIPT' AND"
+        + " pay.out_trade_no=s.out_trade_no)) AND pay.created_at<=#{p.asOf} LEFT JOIN v_order o ON o.id=pay.order_id AND"
         + " o.merchant_id=r.merchant_id LEFT JOIN store st ON st.id=o.store_id LEFT JOIN merchant m"
         + " ON m.id=r.merchant_id WHERE r.event_version=1), selected AS(SELECT * FROM effective"
         + " WHERE event_at>=#{p.start} AND event_at<#{p.end}"
@@ -352,11 +350,9 @@ public class AnalyticsService {
         access.scope("c.merchant_id", p)
             + " AND c.created_at<=#{p.asOf} AND"
             + " COALESCE(f.channel_occurred_at,s.channel_occurred_at)>=#{p.start} AND"
-            + " COALESCE(f.channel_occurred_at,s.channel_occurred_at)<#{p.end} AND EXISTS(SELECT 1"
-            + " FROM reconciliation_batch ob WHERE ob.id=origin.batch_id AND "
-            + (source.equals("TRADE_QUERY")
-                ? "ob.source_type='TRADE_QUERY'"
-                : "ob.source_type<>'TRADE_QUERY'")
+            + " COALESCE(f.channel_occurred_at,s.channel_occurred_at)<#{p.end} AND EXISTS(SELECT 1 FROM reconciliation_batch ob"
+            + " WHERE ob.id=origin.batch_id AND "
+            + (source.equals("TRADE_QUERY") ? "ob.source_type='TRADE_QUERY'" : "ob.source_type<>'TRADE_QUERY'")
             + ")";
     if (p.containsKey("merchantId")) where += " AND c.merchant_id=#{p.merchantId}";
     if (p.containsKey("storeId")) where += " AND COALESCE(f.store_id,o.store_id)=#{p.storeId}";
@@ -364,34 +360,31 @@ public class AnalyticsService {
       where += " AND COALESCE(f.amount_cent,s.amount_cent,0)>=#{p.minCent}";
     if (p.containsKey("maxCent"))
       where += " AND COALESCE(f.amount_cent,s.amount_cent,0)<=#{p.maxCent}";
-    return "WITH case_source AS(SELECT c.*,origin.classification"
-               + " origin_classification,origin.batch_id origin_batch_id,"
-               + " COALESCE(f.store_id,o.store_id) store_id,COALESCE(f.store_name,st.name,N'渠道待定位')"
-               + " store_name, COALESCE(f.order_id,o.id)"
-               + " order_id,COALESCE(f.amount_cent,s.amount_cent,0) amount_cent,"
-               + " COALESCE(f.channel_occurred_at,s.channel_occurred_at) event_at,h.after_json FROM"
-               + " v_case c JOIN reconciliation_result origin ON origin.id=c.origin_result_id LEFT"
-               + " JOIN v_transaction_fact f ON f.id=origin.entry_id AND f.recorded_at<=#{p.asOf}"
-               + " LEFT JOIN statement_line s ON s.id=origin.statement_line_id LEFT JOIN"
-               + " refund_request rr ON rr.out_request_no=s.out_request_no AND"
-               + " s.event_type='REFUND' AND rr.created_at<=#{p.asOf} LEFT JOIN payment_attempt pay"
-               + " ON (pay.id=rr.payment_id OR (s.event_type='RECEIPT' AND"
-               + " pay.out_trade_no=s.out_trade_no)) AND pay.created_at<=#{p.asOf} LEFT JOIN"
-               + " v_order o ON o.id=pay.order_id AND o.merchant_id=c.merchant_id LEFT JOIN store"
-               + " st ON st.id=o.store_id OUTER APPLY(SELECT TOP 1 a.after_json FROM audit_log a"
-               + " WHERE a.object_type='CASE' AND a.object_id=c.id AND a.event_category='DB_CHANGE'"
-               + " AND a.occurred_at<=#{p.asOf} AND ISJSON(a.after_json)=1 ORDER BY a.occurred_at"
-               + " DESC,a.id DESC) h WHERE "
-        + where
-        + "), snapshots AS(SELECT *,COALESCE(JSON_VALUE(after_json,'$.status'),CASE WHEN"
-        + " updated_at<=#{p.asOf} THEN status ELSE 'HISTORY_UNAVAILABLE' END)"
-        + " snapshot_status,CASE WHEN EXISTS(SELECT 1 FROM OPENJSON(COALESCE(after_json,N'{}'))"
-        + " j WHERE j.[key]='closed_at') THEN"
-        + " TRY_CONVERT(DATETIME2(3),JSON_VALUE(after_json,'$.closed_at'),126) WHEN"
-        + " updated_at<=#{p.asOf} THEN closed_at END snapshot_closed_at,CASE WHEN EXISTS(SELECT"
-        + " 1 FROM OPENJSON(COALESCE(after_json,N'{}')) j WHERE j.[key]='due_at') THEN"
-        + " TRY_CONVERT(DATETIME2(3),JSON_VALUE(after_json,'$.due_at'),126) WHEN"
-        + " updated_at<=#{p.asOf} THEN due_at END snapshot_due_at FROM case_source) ";
+    return
+        "WITH case_source AS(SELECT c.*,origin.classification origin_classification,origin.batch_id origin_batch_id,"
+            + " COALESCE(f.store_id,o.store_id) store_id,COALESCE(f.store_name,st.name,N'渠道待定位') store_name,"
+            + " COALESCE(f.order_id,o.id) order_id,COALESCE(f.amount_cent,s.amount_cent,0) amount_cent,"
+            + " COALESCE(f.channel_occurred_at,s.channel_occurred_at) event_at,h.after_json"
+            + " FROM v_case c JOIN reconciliation_result origin ON origin.id=c.origin_result_id"
+            + " LEFT JOIN v_transaction_fact f ON f.id=origin.entry_id AND f.recorded_at<=#{p.asOf} LEFT JOIN statement_line s"
+            + " ON s.id=origin.statement_line_id LEFT JOIN refund_request rr ON"
+            + " rr.out_request_no=s.out_request_no AND s.event_type='REFUND' AND rr.created_at<=#{p.asOf} LEFT JOIN"
+            + " payment_attempt pay ON (pay.id=rr.payment_id OR (s.event_type='RECEIPT' AND"
+            + " pay.out_trade_no=s.out_trade_no)) AND pay.created_at<=#{p.asOf} LEFT JOIN v_order o ON o.id=pay.order_id AND"
+            + " o.merchant_id=c.merchant_id LEFT JOIN store st ON st.id=o.store_id OUTER APPLY(SELECT TOP 1 a.after_json FROM audit_log a"
+            + " WHERE a.object_type='CASE' AND a.object_id=c.id AND a.event_category='DB_CHANGE'"
+            + " AND a.occurred_at<=#{p.asOf} AND ISJSON(a.after_json)=1 ORDER BY a.occurred_at"
+            + " DESC,a.id DESC) h WHERE "
+            + where
+            + "), snapshots AS(SELECT *,COALESCE(JSON_VALUE(after_json,'$.status'),CASE WHEN"
+            + " updated_at<=#{p.asOf} THEN status ELSE 'HISTORY_UNAVAILABLE' END)"
+            + " snapshot_status,CASE WHEN EXISTS(SELECT 1 FROM OPENJSON(COALESCE(after_json,N'{}'))"
+            + " j WHERE j.[key]='closed_at') THEN"
+            + " TRY_CONVERT(DATETIME2(3),JSON_VALUE(after_json,'$.closed_at'),126) WHEN"
+            + " updated_at<=#{p.asOf} THEN closed_at END snapshot_closed_at,CASE WHEN EXISTS(SELECT"
+            + " 1 FROM OPENJSON(COALESCE(after_json,N'{}')) j WHERE j.[key]='due_at') THEN"
+            + " TRY_CONVERT(DATETIME2(3),JSON_VALUE(after_json,'$.due_at'),126) WHEN"
+            + " updated_at<=#{p.asOf} THEN due_at END snapshot_due_at FROM case_source) ";
   }
 
   public Object cases(Map<String, String> input) {
