@@ -1,125 +1,276 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted } from 'vue';
-import { ArrowRight, ArrowDown, Check, Document, CreditCard, Tickets, DataAnalysis, CircleCheck } from '@element-plus/icons-vue';
-import BrandMark from '../components/BrandMark.vue';
-import GithubLink from '../components/GithubLink.vue';
-import ReconciliationDemo from '../components/landing/ReconciliationDemo.vue';
-import CapabilityChapters from '../components/landing/CapabilityChapters.vue';
-import { useSession } from '../stores/session';
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { ArrowDown, ArrowRight } from "@element-plus/icons-vue";
+import BrandMark from "../components/BrandMark.vue";
+import GithubLink from "../components/GithubLink.vue";
+import ReconciliationDemo from "../components/landing/ReconciliationDemo.vue";
+import CapabilityChapters from "../components/landing/CapabilityChapters.vue";
+import coffeePhoto from "../assets/campus/haitang.webp";
+import claypotPhoto from "../assets/campus/chengdu.webp";
+import printPhoto from "../assets/campus/songfeng.webp";
+import bakeryPhoto from "../assets/campus/bailu.webp";
+import { useSession } from "../stores/session";
 
 const session = useSession();
-const destination = computed(() => session.user ? '/' : '/login');
-const actionLabel = computed(() => session.user ? '进入工作台' : '开始使用');
-const rows = [
-  { id: '001', type: '收款', local: '36.00', channel: '36.00', matched: true },
-  { id: '002', type: '收款', local: '24.00', channel: '24.50', matched: false },
-  { id: '003', type: '收款', local: '18.00', channel: '18.00', matched: true },
-  { id: 'R001', type: '退款', local: '−12.00', channel: '−12.00', matched: true },
+const destination = computed(() => session.user ? "/" : "/login");
+const actionLabel = computed(() => session.user ? "进入工作台" : "开始使用");
+const home = ref<HTMLElement>();
+const shops = [
+  {
+    name: "老成都砂锅店",
+    location: "宿舍区",
+    photo: claypotPhoto,
+    alt: "傍晚的宿舍区步道旁，砂锅店窗口亮着暖灯",
+    description: "晚市收款 28 元，次日退回 8 元。两天分别入账，退款关联原订单。",
+  },
+  {
+    name: "松风文印社",
+    location: "教学楼旁",
+    photo: printPhoto,
+    alt: "教学楼旁的文印社，店员正在为学生装订资料",
+    description: "取消一份装订后退回差价，店员在原订单里查看退款进度。",
+  },
+  {
+    name: "白露烘焙坊",
+    location: "宿舍楼下",
+    photo: bakeryPhoto,
+    alt: "宿舍楼下的烘焙坊，店员将面包递给学生",
+    description: "闭店后核对当天收款。发现渠道多记一笔时，财务分派工单复核。",
+  },
 ];
+
 let observer: IntersectionObserver | undefined;
 function jump(event: Event, id: string) {
-  event.preventDefault();
   const target = document.getElementById(id);
   if (!target) return;
+  event.preventDefault();
   target.focus({ preventScroll: true });
-  target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+  target.scrollIntoView({
+    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+    block: "start",
+  });
 }
 onMounted(() => {
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
-    observer = new IntersectionObserver(entries => entries.forEach(entry => {
-      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer?.unobserve(entry.target); }
-    }), { threshold: .1 });
-    document.querySelectorAll('.product-home .reveal-section').forEach(el => observer?.observe(el));
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+    observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add("in-view");
+        observer?.unobserve(entry.target);
+      }
+    }, { threshold: 0.1 });
+    home.value?.querySelectorAll(".reveal-section").forEach((element) => observer?.observe(element));
   }
 });
 onBeforeUnmount(() => observer?.disconnect());
 </script>
 
 <template>
-  <div class="product-home">
-    <a href="#product-content" class="home-skip" @click="jump($event, 'product-content')">跳至产品介绍</a>
+  <div ref="home" class="product-home public-theme">
+    <a href="#product-content" class="home-skip" @click="jump($event, 'product-content')">跳至正文</a>
     <header class="home-header">
-      <div class="nav-inner">
-        <router-link class="home-brand" to="/welcome" aria-label="Reconis 产品首页"><BrandMark /><span>Reconis</span></router-link>
-        <nav class="home-nav" aria-label="产品介绍"><a href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">对账流程</a><a href="#capabilities" @click="jump($event, 'capabilities')">产品能力</a></nav>
-        <div class="header-actions"><GithubLink /><span class="nav-divider" /><router-link class="home-button nav-button" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link></div>
+      <div class="home-container nav-inner">
+        <router-link class="home-brand" to="/welcome" aria-label="Reconis 产品首页">
+          <BrandMark /><span>Reconis</span>
+        </router-link>
+        <nav class="home-nav" aria-label="产品介绍">
+          <a href="#campus-shops" @click="jump($event, 'campus-shops')">校园门店</a>
+          <a href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">对账演示</a>
+          <a href="#capabilities" @click="jump($event, 'capabilities')">功能介绍</a>
+        </nav>
+        <div class="header-actions">
+          <GithubLink />
+          <router-link class="home-button nav-button" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link>
+        </div>
       </div>
     </header>
 
     <main id="product-content" tabindex="-1">
-      <section class="home-hero" aria-labelledby="hero-title">
-        <div class="hero-grid" aria-hidden="true"><i /><i /><i /></div>
-        <div class="hero-inner">
-          <div class="hero-copy">
-            <p class="hero-kicker"><span />校园支付对账工作空间</p>
-            <h1 id="hero-title"><span>让每一笔</span><span>校园收支，</span><span class="hero-final-line">都有清楚的来处。</span></h1>
-            <p class="hero-description">把订单、退款和渠道账单逐笔核对。<br />发现差异后，直接分派工单。</p>
-            <div class="hero-actions"><router-link class="home-button primary" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link><a class="home-text-link" href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">试用对账示例<el-icon><ArrowDown /></el-icon></a></div>
-          </div>
-
-          <div class="hero-visual" role="img" aria-label="对账工作区示例：四笔资金记录，三笔匹配，一笔金额差异。本地 24 元与渠道 24.50 元相差 0.50 元，已生成差错工单。">
-            <div class="visual-coordinate" aria-hidden="true"><span>RECONCILIATION / 01</span><span>LOCAL ↔ CHANNEL</span></div>
-            <div class="hero-workspace">
-              <aside class="visual-rail" aria-hidden="true"><BrandMark /><el-icon><CreditCard /></el-icon><el-icon class="selected"><Document /></el-icon><el-icon><Tickets /></el-icon><el-icon><DataAnalysis /></el-icon><span class="rail-avatar">财</span></aside>
-              <div class="visual-main">
-                <div class="visual-toolbar"><span>资金管理 <i>/</i> <strong>账单核对</strong></span><span class="scene-example">示例</span></div>
-                <div class="visual-heading"><div><p>校园咖啡店 · 图书馆店</p><h2>10 月 20 日对账</h2></div><span class="visual-complete"><el-icon><CircleCheck /></el-icon>核对完成</span></div>
-                <div class="visual-metrics"><div><span>渠道净额</span><strong><small>¥</small>66.50</strong></div><div class="metric-summary"><span><i class="status-dot matched" />3 笔匹配</span><span><i class="status-dot difference" />1 笔差异</span></div></div>
-                <div class="visual-table" aria-hidden="true">
-                  <div class="visual-table-head"><span>交易记录</span><span>本地 / 元</span><span>渠道 / 元</span><span>核对结果</span></div>
-                  <div v-for="row in rows" :key="row.id" class="visual-row" :class="{'is-different': !row.matched}"><span><i class="record-symbol">{{ row.type === '退款' ? '↗' : '↙' }}</i><b>{{ row.id }}<small>{{ row.type }}</small></b></span><span>{{ row.local }}</span><span>{{ row.channel }}</span><span class="result"><el-icon v-if="row.matched"><Check /></el-icon><i v-else class="difference-dot" />{{ row.matched ? '匹配' : '金额差异' }}</span></div>
-                </div>
-                <div class="visual-bottom"><span><i />保留原始记录</span><span>4 笔资金记录 · · ·</span></div>
-              </div>
-            </div>
-            <div class="difference-inspector">
-              <div class="inspector-top"><span><i />金额差异 · 002</span><span class="inspector-badge">待处理</span></div>
-              <div class="inspector-amount"><span>差额</span><strong><small>¥</small>0.50</strong><svg viewBox="0 0 68 24" fill="none" aria-hidden="true"><path d="M1 19h18l9-14 12 14H67" stroke="currentColor" stroke-width="1.5"/><circle cx="28" cy="5" r="3" fill="currentColor"/></svg></div>
-              <div class="inspector-bottom"><el-icon><Tickets /></el-icon><span>已生成差错工单</span><span class="inspector-path">→</span></div>
-            </div>
+      <section class="home-container home-hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="public-kicker"><i />校园支付对账</p>
+          <h1 id="hero-title">给校园小店的<span>收款对账台</span></h1>
+          <p class="hero-description">图书馆旁的咖啡店、宿舍区的砂锅店，白天收款，打烊后要对账。Reconis 把订单、退款和渠道账单放在一起，差额可以交给财务复核。</p>
+          <div class="hero-actions">
+            <router-link class="home-button primary" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link>
+            <a class="home-text-link" href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">试用对账示例<el-icon><ArrowDown /></el-icon></a>
           </div>
         </div>
-        <div class="hero-caption"><span class="caption-index">01 — 04</span><span>图书馆咖啡店 · 日账单</span><span class="sample-disclosure">演示账单 · 4 笔交易</span></div>
+        <figure class="hero-scene">
+          <div class="hero-photo">
+            <img :src="coffeePhoto" width="1536" height="1024" fetchpriority="high" alt="雨后傍晚，图书馆旁的咖啡店亮着暖灯，学生沿校园步道走过" />
+            <div class="scene-caption">
+              <span>图书馆旁</span>
+              <strong>海棠咖啡店</strong>
+            </div>
+          </div>
+          <a class="hero-ledger-link" href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">
+            <span><i />演示账单 · 4 笔交易</span>
+            <span class="hero-ledger-result">3 笔匹配 <i />1 笔差异</span>
+            <el-icon><ArrowRight /></el-icon>
+          </a>
+        </figure>
       </section>
 
-      <section id="reconciliation-demo-section" class="demo-section" tabindex="-1" aria-labelledby="demo-title">
-        <div class="section-heading reveal-section"><div><p class="section-kicker">对账演示</p><h2 id="demo-title">一笔差错如何处理</h2></div><p>按步骤查看账单、核对结果和工单。</p></div>
-        <div class="demo-wrap reveal-section"><ReconciliationDemo /></div>
+      <section id="campus-shops" class="home-container campus-section" tabindex="-1" aria-labelledby="shops-title">
+        <div class="section-heading reveal-section">
+          <div><p class="public-kicker">校园门店</p><h2 id="shops-title">从午餐到晚自习</h2></div>
+          <p>餐饮、文印和烘焙，三种常见的收退款场景。</p>
+        </div>
+        <div class="campus-shops reveal-section">
+          <article v-for="shop in shops" :key="shop.name" class="campus-shop">
+            <div class="shop-photo"><img :src="shop.photo" width="1536" height="1024" :alt="shop.alt" loading="lazy" decoding="async" /></div>
+            <div class="shop-copy"><span>{{ shop.location }}</span><h3>{{ shop.name }}</h3><p>{{ shop.description }}</p></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="reconciliation-demo-section" class="home-container demo-section" tabindex="-1" aria-labelledby="demo-title">
+        <div class="section-heading reveal-section">
+          <div><p class="public-kicker">对账演示</p><h2 id="demo-title">海棠咖啡店的日账单</h2></div>
+          <p>导入四笔记录，看看 0.50 元差额如何进入复核。</p>
+        </div>
+        <div class="reveal-section"><ReconciliationDemo /></div>
       </section>
 
       <CapabilityChapters />
 
-      <section class="closing-section" aria-labelledby="closing-title">
-        <div class="closing-rule" aria-hidden="true"><span /><BrandMark /><span /></div>
-        <div class="closing-content reveal-section"><p class="section-kicker">Reconis · 校园支付对账</p><h2 id="closing-title">进入账务工作台</h2><router-link class="home-button primary" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link></div>
+      <section class="home-container closing-section" aria-labelledby="closing-title">
+        <div class="closing-content reveal-section">
+          <div><p class="public-kicker">Reconis</p><h2 id="closing-title">进入账务工作台</h2></div>
+          <router-link class="home-button primary" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link>
+        </div>
       </section>
     </main>
-    <footer class="home-footer"><router-link class="footer-brand" to="/welcome">Reconis<span>校园支付对账</span></router-link><GithubLink label /></footer>
+    <footer class="home-container home-footer">
+      <router-link class="footer-brand" to="/welcome">Reconis<span>校园支付对账</span></router-link>
+      <GithubLink label />
+    </footer>
   </div>
 </template>
 
 <style scoped>
-.product-home{--home-bg:#0e1014;--home-surface:#171a20;--home-line:#ffffff12;--home-text:#eef0f5;--home-muted:#9aa2b0;--home-blue:#86a8ff;background:var(--home-bg);color:var(--home-text);overflow:clip}
-.product-home :deep(button),.product-home a{-webkit-tap-highlight-color:transparent}.product-home :deep(a:focus-visible),.product-home :deep(button:focus-visible){outline:2px solid #83a8ff;outline-offset:5px}.product-home :deep(section[tabindex='-1']:focus),#product-content:focus{outline:none}.home-skip{position:fixed;left:20px;top:12px;z-index:1000;padding:12px 20px;background:white;color:#152035;transform:translateY(-150%);border-radius:6px}.home-skip:focus{transform:none}
-.home-header{height:76px;border-bottom:1px solid var(--home-line);position:relative;z-index:10;background:#0e1014}.nav-inner{max-width:1440px;margin:auto;height:100%;padding:0 64px;display:flex;align-items:center;gap:64px}.home-brand{display:flex;align-items:center;gap:10px;font-size:21px;letter-spacing:-.7px;font-weight:650}.home-brand :deep(.brand-mark){width:30px;height:30px;color:#4478ee}.home-nav{display:flex;gap:32px;font-size:13px;color:#a8afbb}.home-nav a{transition:color .18s}.home-nav a:hover{color:white}.header-actions{margin-left:auto;display:flex;align-items:center;gap:16px;color:#b8c0ce}.nav-divider{width:1px;height:20px;background:#ffffff17}
-.home-button{display:inline-flex;align-items:center;justify-content:center;gap:16px;padding:13px 22px;border:1px solid #ffffff22;border-radius:6px;font-size:14px;font-weight:550;background:#22262f;color:#f8faff;transition:background .18s,box-shadow .18s,transform .18s}.home-button .el-icon{font-size:15px;transition:transform .18s}.home-button:hover{background:#303642;box-shadow:0 4px 20px #0002}.home-button:hover .el-icon{transform:translateX(3px)}.home-button:active{transform:translateY(1px)}.home-button.primary{background:#4779ed;border-color:#7198ff;box-shadow:inset 0 1px #ffffff23,0 3px 10px #0002}.home-button.primary:hover{background:#5b88f2;box-shadow:0 5px 26px #2758bb38}.nav-button{padding:8px 13px;font-size:12px;gap:13px}
-.home-hero{position:relative;isolation:isolate;padding-top:80px}.hero-grid{position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 81% 43%,#28466e24 0,transparent 53%)}.hero-grid i{position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(transparent,#ffffff06 40%,#ffffff04)}.hero-grid i:nth-child(1){left:4.44%}.hero-grid i:nth-child(2){left:38%}.hero-grid i:nth-child(3){right:4.44%}.hero-inner{max-width:1440px;margin:auto;padding:0 64px 70px;display:grid;grid-template-columns:minmax(365px,.85fr) minmax(0,1.4fr);gap:32px;align-items:center;min-height:590px}.hero-copy{padding:0 0 20px;position:relative;z-index:2}.hero-kicker{display:flex;align-items:center;gap:10px;font-size:12px;color:#aeb8c9;letter-spacing:1px;margin-bottom:24px}.hero-kicker>span{width:6px;height:6px;background:#7c9eed;border-radius:50%;box-shadow:0 0 0 4px #7999e810}.hero-copy h1{font-weight:520;font-size:clamp(40px,3.55vw,52px);line-height:1.38;letter-spacing:-1.9px;color:#f4f5f8}.hero-copy h1 span{display:block;white-space:nowrap}.hero-copy h1 .hero-final-line{color:#b4bccb;font-size:.9em;margin-top:4px}.hero-description{font-size:15px;line-height:1.9;color:#a1a9b7;margin-top:24px}.hero-actions{display:flex;gap:25px;align-items:center;margin-top:30px}.home-text-link{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#b9c3d4;padding:12px 0;transition:color .18s}.home-text-link:hover{color:white}.home-text-link .el-icon{font-size:13px;transition:transform .18s}.home-text-link:hover .el-icon{transform:translateY(2px)}
-.hero-visual{position:relative;min-width:0;padding-bottom:54px;perspective:1400px;animation:hero-scene-in .8s .15s both}.visual-coordinate{display:flex;justify-content:space-between;padding:0 10px 20px;color:#738095;font:10px/1.5 Consolas,monospace;letter-spacing:1.2px}.hero-workspace{display:flex;border:1px solid #5461746b;border-bottom-color:#ffffff12;border-radius:12px;background:#171a20;box-shadow:0 42px 60px -35px #000b,0 1px 0 #ffffff08 inset;transform:rotateY(-4deg) rotateX(2deg);transform-origin:center;overflow:hidden;position:relative}.hero-workspace:before{content:'';position:absolute;top:0;left:5%;right:0;height:1px;background:linear-gradient(90deg,transparent,#a4b6d84d,transparent)}.visual-rail{width:52px;flex:none;background:#12151b;border-right:1px solid #ffffff0a;display:flex;align-items:center;gap:23px;flex-direction:column;padding:21px 8px;color:#657083}.visual-rail :deep(.brand-mark){width:25px;height:25px;margin-bottom:9px;color:#4c77d3}.visual-rail>.el-icon{font-size:16px;padding:8px;width:32px;height:32px;flex:none}.visual-rail>.selected{background:#34599935;border:1px solid #688bcb2b;color:#92b0ff;border-radius:6px}.rail-avatar{margin-top:auto;background:#2b303a;border:1px solid #ffffff0c;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;font-size:9px;color:#c0c7d2}.visual-main{flex:1;min-width:0}.visual-toolbar{padding:16px 22px;display:flex;justify-content:space-between;border-bottom:1px solid #ffffff0c;font-size:10px;color:#828d9e;align-items:center}.visual-toolbar i{font-style:normal;margin:0 10px;color:#4d5768}.visual-toolbar strong{font-weight:500;color:#bfc8d7}.scene-example{font-size:9px;border:1px solid #ffffff19;padding:1px 6px;border-radius:3px;letter-spacing:1px;color:#a1abbb}.visual-heading{padding:24px 24px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}.visual-heading p{font-size:10px;letter-spacing:.3px;color:#8994a6;margin-bottom:5px}.visual-heading h2{font-size:20px;letter-spacing:-.4px;font-weight:550;color:#e8edf7}.visual-complete{display:flex;align-items:center;gap:5px;color:#adc0b7;border:1px solid #89b4a125;background:#304b3d21;border-radius:4px;padding:4px 6px;font-size:9px;white-space:nowrap}.visual-metrics{display:flex;align-items:end;justify-content:space-between;margin:25px 24px 20px}.visual-metrics>div>span{font-size:10px;color:#8e9bae}.visual-metrics strong{display:block;font-size:35px;font-weight:500;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.5}.visual-metrics strong small{font-size:18px;color:#8291a8;margin-right:4px}.metric-summary{display:flex;gap:15px;padding-bottom:8px}.metric-summary>span{display:flex;align-items:center;gap:5px;white-space:nowrap}.status-dot{width:5px;height:5px;border-radius:50%;display:inline-block}.status-dot.matched{background:#7ba99a}.status-dot.difference{background:#d0a46f}
-.visual-table{padding:0 12px}.visual-table-head,.visual-row{display:grid;grid-template-columns:1.15fr .85fr .85fr 1fr;align-items:center;gap:8px;padding:0 12px}.visual-table-head{font-size:9px;color:#7e899b;padding-bottom:10px;border-bottom:1px solid #ffffff0d}.visual-table-head>span:not(:first-child){text-align:right}.visual-row{height:49px;border-bottom:1px solid #ffffff08;font-size:12px;font-variant-numeric:tabular-nums;color:#b3bfd0}.visual-row>span:not(:first-child){text-align:right}.visual-row>span:first-child{display:flex;align-items:center;gap:8px}.record-symbol{font-size:13px;font-style:normal;background:#ffffff06;border:1px solid #ffffff0b;border-radius:4px;width:25px;height:25px;display:grid;place-items:center;color:#7e8b9e}.visual-row b{font-size:10px;font-weight:500}.visual-row b small{display:block;font-size:8px;font-weight:400;color:#8491a3;margin-top:2px}.visual-row.is-different{background:#334f7e29;border:1px solid #749bdb38;margin:-1px -1px 0;border-radius:5px;position:relative;color:#dce8ff}.visual-row.is-different:before{content:'';position:absolute;left:-1px;top:14px;bottom:14px;width:2px;background:#7eabff}.visual-row .result{font-size:9px;display:flex;align-items:center;gap:5px;justify-content:flex-end;color:#97b5a8;white-space:nowrap}.visual-row.is-different .result{color:#e2ba80}.difference-dot{border:1px solid currentColor;width:8px;height:8px;border-radius:50%}.visual-bottom{padding:15px 24px;display:flex;align-items:center;justify-content:space-between;color:#8290a6;font-size:9px}.visual-bottom>span{display:flex;align-items:center;gap:7px}.visual-bottom i{width:4px;height:4px;background:#698573;border-radius:50%}
-.difference-inspector{position:absolute;bottom:0;right:26px;width:262px;background:linear-gradient(130deg,#232b38,#1b222d);border:1px solid #697a945e;border-top-color:#8497b570;border-radius:9px;padding:16px 18px 0;box-shadow:0 18px 35px #0007,0 1px #c7d7ff07 inset;animation:inspector-in .65s .4s both}.inspector-top{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#bdc9dd}.inspector-top>span:first-child{display:flex;align-items:center;gap:6px}.inspector-top i{width:5px;height:5px;background:#e0b679;border-radius:50%}.inspector-badge{font-size:8px;border:1px solid #a4b4d02b;border-radius:3px;padding:2px 5px;color:#9daec6}.inspector-amount{display:flex;align-items:baseline;gap:10px;margin:14px 0 13px}.inspector-amount>span{font-size:10px;color:#97a7be}.inspector-amount strong{font-size:28px;line-height:1.2;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.5px}.inspector-amount small{font-size:15px;color:#94a4bd;margin-right:3px}.inspector-amount svg{width:62px;height:24px;margin-left:auto;color:#83a6df;align-self:center}.inspector-bottom{padding:11px 0;border-top:1px solid #ffffff0c;display:flex;align-items:center;gap:6px;font-size:9px;color:#a5b7d3}.inspector-bottom .el-icon{font-size:11px}.inspector-path{margin-left:auto;color:#758caf}.hero-caption{max-width:1312px;margin:auto;padding:22px 0 23px;border-top:1px solid #ffffff0b;display:flex;align-items:center;gap:18px;font-size:11px;color:#8b97a9}.caption-index{font:10px Consolas,monospace;letter-spacing:1px;color:#7e8b9c}.sample-disclosure{margin-left:auto;color:#8792a3;font-size:10px}
-.demo-section{max-width:1280px;padding:100px 32px 112px;margin:auto;scroll-margin-top:32px}.section-heading{display:flex;align-items:end;justify-content:space-between;gap:32px;margin-bottom:42px}.section-kicker{font-size:11px;letter-spacing:1.3px;color:#8999b0;margin-bottom:20px}.section-heading h2{font-size:34px;font-weight:500;line-height:1.5;letter-spacing:-1px}.section-heading>p{color:#8f9bab;font-size:13px;line-height:1.9;padding-bottom:3px}.mobile-break{display:none}.demo-wrap{position:relative}
-.closing-section{padding:0 32px 100px;max-width:1280px;margin:auto}.closing-rule{display:flex;align-items:center;gap:30px;padding:62px 0 60px}.closing-rule>span{height:1px;background:linear-gradient(90deg,transparent,#8198be24);flex:1}.closing-rule>span:last-child{transform:rotate(180deg)}.closing-rule :deep(.brand-mark){width:42px;height:42px;color:#2f4c7c}.closing-content{text-align:center}.closing-content h2{font-size:42px;line-height:1.5;font-weight:500;letter-spacing:-1.5px}.closing-content>p:not(.section-kicker){font-size:14px;color:#909aab;margin:17px 0 28px}.closing-content .section-kicker{margin-bottom:14px}.closing-content .home-button{min-width:145px}.home-footer{border-top:1px solid #ffffff0b;max-width:1312px;margin:auto;padding:28px 0;display:flex;align-items:center;justify-content:space-between;color:#8795aa}.footer-brand{color:#b8c3d5;font-size:17px;font-weight:600;letter-spacing:-.5px}.footer-brand>span{font-size:10px;color:#8d9aaf;margin-left:14px;font-weight:400;letter-spacing:.2px}.footer-note{font-size:11px}.home-footer :deep(.github-link){font-size:11px}
-.hero-kicker{animation:copy-in .55s both}.hero-copy h1{animation:copy-in .6s .06s both}.hero-description{animation:copy-in .6s .13s both}.hero-actions{animation:copy-in .6s .2s both}.product-home :deep(.reveal-section.in-view){animation:section-in .65s both}.product-home :deep(.github-link:hover),.product-home :deep(.github-link:focus-visible){color:#a8c1ff;background:#91adff12}
-@keyframes copy-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@keyframes hero-scene-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}@keyframes inspector-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@keyframes section-in{from{opacity:.35;transform:translateY(14px)}to{opacity:1;transform:none}}
-/* The website scene is composed at reading size, rather than scaled from the app. */
-@media(min-width:801px){.home-hero{padding-top:56px}.hero-inner{padding-bottom:48px;min-height:590px}.hero-visual{padding-bottom:104px}.visual-toolbar{font-size:12px}.visual-heading p{font-size:12px}.visual-heading h2{font-size:23px}.visual-complete{font-size:11px}.visual-metrics>div>span{font-size:12px}.visual-metrics strong{font-size:39px}.visual-table-head{font-size:11px}.visual-row{font-size:15px}.visual-row b{font-size:12px}.visual-row b small{font-size:10px}.visual-row .result{font-size:11px}.visual-bottom{font-size:10px}.scene-example{font-size:10px}.inspector-top{font-size:12px}.inspector-badge{font-size:10px}.inspector-amount>span{font-size:12px}.inspector-amount strong{font-size:30px}.inspector-bottom{font-size:11px}.difference-inspector{width:270px}.sample-disclosure{font-size:11px}}
-@media(min-width:1550px){.hero-inner{gap:62px;padding-bottom:70px}.home-hero{padding-top:80px}}
-@media(max-width:1400px){.hero-caption,.home-footer{margin-left:64px;margin-right:64px}.hero-inner{grid-template-columns:minmax(340px,.86fr) minmax(0,1.4fr);gap:24px}.visual-heading{padding-left:20px;padding-right:20px}.visual-complete{font-size:8px}.visual-metrics{margin-left:20px;margin-right:20px}.metric-summary{gap:10px}.hero-copy h1{font-size:44px}.visual-heading h2{font-size:18px}.visual-table-head,.visual-row{gap:5px;padding-left:8px;padding-right:8px}}
-@media(max-width:1100px){.nav-inner{padding:0 36px}.hero-inner{padding-left:36px;padding-right:36px;grid-template-columns:minmax(300px,.8fr) minmax(0,1.2fr);gap:18px}.hero-copy h1{font-size:38px}.hero-caption,.home-footer{margin-left:36px;margin-right:36px}.visual-rail{display:none}.visual-toolbar{padding:14px 18px}.hero-visual{padding-bottom:70px;perspective:none}.visual-coordinate{font-size:8px}.visual-complete{display:none}.difference-inspector{right:12px;width:240px}.hero-description{font-size:13px}.hero-actions{gap:18px}.hero-actions .home-button{padding:12px 17px}.hero-workspace{transform:none}.metric-summary>span{font-size:9px!important}.visual-table-head{font-size:8px}.section-heading h2{font-size:30px}.section-heading>p{font-size:12px}}
-@media(max-width:800px){.home-header{height:66px}.nav-inner{padding:0 24px;gap:32px}.home-nav{gap:20px;font-size:12px}.header-actions{gap:10px}.home-hero{padding-top:54px}.hero-inner{grid-template-columns:1fr;padding:0 28px 50px;gap:45px;max-width:650px}.hero-copy{padding:0}.hero-copy h1{font-size:46px}.hero-copy h1 span:first-child,.hero-copy h1 span:nth-child(2){display:inline}.hero-copy h1 .hero-final-line{font-size:.94em;margin-top:5px}.hero-kicker{margin-bottom:20px}.hero-description{font-size:14px;margin-top:20px}.hero-visual{padding-bottom:50px}.visual-rail{display:flex;width:46px}.visual-heading{padding-top:22px}.visual-heading h2{font-size:20px}.visual-complete{display:flex}.visual-metrics{margin-top:22px}.visual-table-head{font-size:9px}.visual-row{height:49px}.visual-row .result{font-size:10px}.visual-row b{font-size:11px}.visual-row b small{font-size:9px}.visual-coordinate{font-size:9px;padding-bottom:14px}.difference-inspector{right:20px;width:250px}.hero-caption{margin:0 28px;flex-wrap:wrap;gap:12px}.sample-disclosure{margin-left:0;flex-basis:100%;font-size:10px}.demo-section{padding:70px 28px 80px}.section-heading{display:block;margin-bottom:30px}.section-heading>p{margin-top:17px;font-size:13px}.section-heading h2{font-size:32px}.closing-section{padding-bottom:80px}.closing-content h2{font-size:34px}.closing-rule{padding:45px 0}.home-footer{margin:0 28px}.footer-note{display:none}}
-@media(max-width:520px){.nav-inner{padding:0 20px;gap:12px}.home-brand{font-size:20px}.home-brand :deep(.brand-mark){width:28px;height:28px}.home-nav{display:none}.header-actions{gap:8px}.nav-divider{display:none}.header-actions :deep(.github-link){min-width:34px;min-height:38px;padding:7px}.header-actions :deep(.github-link svg){width:18px;height:18px}.nav-button{font-size:11px;padding:8px 10px;gap:8px}.home-hero{padding-top:42px}.hero-inner{padding:0 20px 38px;gap:34px}.hero-copy h1{font-size:40px;letter-spacing:-1.6px;line-height:1.42}.hero-copy h1 span:first-child,.hero-copy h1 span:nth-child(2){display:block}.hero-copy h1 .hero-final-line{font-size:.9em}.hero-kicker{font-size:10px;letter-spacing:.8px;margin-bottom:17px}.hero-description{font-size:13px;line-height:1.9;margin-top:17px}.hero-actions{margin-top:23px;gap:24px}.hero-actions .home-button{padding:12px 19px}.hero-visual{padding-bottom:0}.visual-coordinate{font-size:8px;letter-spacing:.8px;padding:0 0 12px}.visual-rail{display:none}.hero-workspace{border-radius:9px}.visual-toolbar{padding:12px 16px;font-size:9px}.visual-heading{padding:18px 16px 0}.visual-heading h2{font-size:18px}.visual-heading p{font-size:9px}.visual-complete{font-size:8px}.visual-metrics{margin:18px 16px 16px}.visual-metrics strong{font-size:29px}.visual-metrics strong small{font-size:16px}.metric-summary{gap:10px;padding-bottom:6px}.visual-metrics>div>span{font-size:9px}.visual-table{padding:0 7px}.visual-table-head,.visual-row{grid-template-columns:1fr .85fr .85fr .95fr;gap:4px;padding-left:8px;padding-right:8px}.visual-table-head{font-size:8px}.visual-row{height:45px;font-size:11px}.visual-row>span:first-child{gap:6px}.record-symbol{display:none}.visual-row .result{font-size:8px;gap:4px}.visual-row b{font-size:10px}.visual-row b small{font-size:8px}.visual-bottom{padding:12px 16px;font-size:8px}.difference-inspector{position:relative;right:auto;bottom:auto;margin:-1px 12px 0;padding:12px 15px 0;width:auto;border-radius:0 0 8px 8px;box-shadow:0 15px 22px #0003}.inspector-top{font-size:9px}.inspector-amount{margin:10px 0}.inspector-amount strong{font-size:24px}.inspector-bottom{padding:10px 0;font-size:9px}.hero-caption{margin:0 20px;padding:18px 0;font-size:10px;gap:9px}.caption-index{font-size:9px}.sample-disclosure{font-size:9px}.demo-section{padding:60px 20px 66px}.section-heading h2{font-size:29px;line-height:1.5;letter-spacing:-.9px}.section-kicker{font-size:10px;margin-bottom:15px}.section-heading>p{font-size:12px;margin-top:15px}.mobile-break{display:block}.closing-section{padding:0 20px 64px}.closing-rule{padding:40px 0}.closing-content h2{font-size:32px}.closing-content>p:not(.section-kicker){font-size:12px}.home-footer{margin:0 20px;padding:24px 0}.footer-brand>span{display:block;margin:5px 0 0;font-size:9px}.home-footer :deep(.github-link){font-size:10px}.hero-workspace,.difference-inspector{animation:none}.hero-visual{animation:copy-in .5s .14s both}}
-@media(max-width:350px){.hero-copy h1{font-size:35px}.header-actions{gap:2px}.nav-inner{padding:0 16px}.home-brand{font-size:18px}.home-brand :deep(.brand-mark){width:24px;height:24px}.hero-inner{padding-left:16px;padding-right:16px}.visual-heading h2{font-size:16px}.visual-complete{font-size:7px}.metric-summary{gap:7px}.section-heading h2{font-size:26px}.hero-actions{gap:17px}}
-@media(max-width:520px){.visual-toolbar,.visual-heading p,.visual-complete,.visual-metrics>div>span,.visual-table-head,.scene-example{font-size:10px}.visual-row{font-size:12px}.visual-row b{font-size:11px}.visual-row b small{font-size:9px}.visual-row .result{font-size:10px}.visual-bottom{font-size:9px}.inspector-top,.inspector-bottom{font-size:11px}.inspector-badge,.inspector-amount>span{font-size:10px}.sample-disclosure{font-size:10px;line-height:1.8}}
-@media(max-width:350px){.visual-table-head,.visual-row .result{font-size:9px}.visual-complete{font-size:9px}.visual-row{font-size:11px}}
-@media(prefers-reduced-motion:reduce){.product-home *,.product-home :deep(*){animation:none!important;transition:none!important;scroll-behavior:auto!important}.hero-workspace{transform:none}}
+.product-home {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at 80% 6%, #283345 0, transparent 28%), var(--public-bg);
+  overflow: clip;
+}
+.home-container { width: min(1240px, calc(100% - 96px)); margin-inline: auto; }
+.home-skip {
+  position: fixed; top: 12px; left: 16px; z-index: 50;
+  padding: 10px 16px; border-radius: 6px; background: var(--public-accent); color: var(--public-bg);
+  transform: translateY(-160%);
+}
+.home-skip:focus { transform: none; }
+#product-content:focus, section[tabindex="-1"]:focus { outline: none; }
+section[tabindex="-1"] { scroll-margin-top: 36px; }
+.home-header { border-bottom: 1px solid var(--public-line); background: #11161ed9; }
+.nav-inner { min-height: 76px; display: flex; align-items: center; gap: 60px; }
+.home-brand, .footer-brand { display: flex; align-items: center; gap: 11px; font-size: 22px; font-weight: 650; letter-spacing: -.04em; }
+.home-brand :deep(.brand-mark) { width: 34px; height: 34px; color: #a16f48; }
+.home-nav, .header-actions { display: flex; align-items: center; gap: 26px; }
+.home-nav { color: var(--public-muted); font-size: 14px; }
+.home-nav a { padding-block: 10px; transition: color .18s; }
+.home-nav a:hover { color: var(--public-text); }
+.header-actions { margin-left: auto; gap: 12px; color: var(--public-muted); }
+.home-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  min-height: 46px; padding: 0 17px; border-radius: 8px; border: 1px solid var(--public-line);
+  background: var(--public-panel); color: var(--public-text); white-space: nowrap;
+  font-size: 14px; font-weight: 600; transition: background .18s, border-color .18s, transform .18s;
+}
+.home-button:hover { border-color: #e2c4a275; background: var(--public-raised); }
+.home-button.primary { border-color: #e5bd91; background: #e5bd91; color: #241c18; }
+.home-button.primary:hover { background: #f1ceab; border-color: #f1ceab; transform: translateY(-2px); }
+.nav-button { min-height: 37px; padding-inline: 12px; font-size: 13px; }
+.home-hero { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); align-items: center; gap: clamp(36px, 5vw, 76px); padding-block: 78px 90px; }
+.hero-copy { animation: home-entry .55s ease both; }
+.hero-copy h1 {
+  margin-top: 20px; font-family: var(--font-display); font-size: clamp(38px, 4.5vw, 68px);
+  font-weight: 650; letter-spacing: -.055em; line-height: 1.25;
+}
+.hero-copy h1 > span { display: block; color: var(--public-accent); }
+.hero-description { max-width: 31em; margin-top: 22px; color: var(--public-muted); font-size: clamp(15px, 1.2vw, 17px); line-height: 1.9; }
+.hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; margin-top: 26px; }
+.home-text-link { display: inline-flex; align-items: center; gap: 7px; min-height: 42px; color: var(--public-muted); font-size: 14px; }
+.home-text-link:hover { color: var(--public-accent); }
+.hero-scene {
+  min-width: 0; margin: 0; overflow: hidden; border-radius: 17px; border: 1px solid #f3d6b934;
+  box-shadow: 0 24px 68px #06091080; background: var(--public-panel);
+  animation: home-entry .65s .12s ease both;
+}
+.hero-photo, .shop-photo { position: relative; overflow: hidden; background: var(--public-raised); }
+.hero-photo { aspect-ratio: 1.52; }
+.hero-photo::after { content: ""; position: absolute; inset: 40% 0 0; background: linear-gradient(transparent, #0d111bdc); pointer-events: none; }
+.hero-photo img, .shop-photo img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.75,.25,1); }
+.hero-scene:hover img, .campus-shop:hover img { transform: scale(1.04); }
+.scene-caption { position: absolute; left: 24px; bottom: 22px; z-index: 1; display: grid; gap: 5px; }
+.scene-caption span { color: #e2c4a2; font-size: 12px; }
+.scene-caption strong { font-family: var(--font-display); font-size: clamp(22px, 2.3vw, 31px); line-height: 1.25; font-weight: 600; }
+.hero-ledger-link { display: flex; align-items: center; gap: 14px; justify-content: space-between; padding: 16px 22px; font-size: 13px; color: var(--public-muted); transition: color .2s, background .2s; }
+.hero-ledger-link:hover { color: var(--public-text); background: var(--public-raised); }
+.hero-ledger-link:focus-visible { outline-offset: -4px; }
+.hero-ledger-link > span { display: flex; gap: 8px; align-items: center; }
+.hero-ledger-link > span > i { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--public-accent); flex: none; }
+.hero-ledger-link .hero-ledger-result { margin-left: auto; }
+.hero-ledger-link > .hero-ledger-result > i { background: #ffffff3d; width: 3px; height: 3px; }
+.campus-section, .demo-section { padding-block: 58px 74px; border-top: 1px solid var(--public-line); }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px 36px; margin-bottom: 28px; }
+.section-heading h2, .closing-section h2 { margin-top: 9px; font-family: var(--font-display); font-size: clamp(29px, 3.4vw, 46px); font-weight: 650; letter-spacing: -.036em; line-height: 1.3; }
+.section-heading > p { color: var(--public-muted); max-width: 32em; font-size: 15px; }
+.campus-shops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.campus-shop { overflow: hidden; border: 1px solid var(--public-line); border-radius: 13px; background: var(--public-panel); transition: border-color .22s, transform .22s; }
+.campus-shop:hover { border-color: #e2c4a265; transform: translateY(-3px); }
+.shop-photo { aspect-ratio: 1.75; }
+.shop-copy { padding: 18px 20px 21px; }
+.shop-copy > span { color: var(--public-accent); font-size: 12px; }
+.shop-copy h3 { margin-top: 5px; font-size: 21px; line-height: 1.4; letter-spacing: -.025em; }
+.shop-copy p { color: var(--public-muted); margin-top: 8px; font-size: 14px; line-height: 1.8; }
+.closing-section { padding-block: 46px; }
+.closing-content { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 30px 36px; border: 1px solid var(--public-line); border-radius: 14px; background: linear-gradient(112deg, var(--public-panel), #28272e); }
+.home-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--public-line); padding-block: 20px; color: var(--public-muted); }
+.footer-brand { font-size: 17px; color: var(--public-text); }
+.footer-brand span { font-size: 12px; color: var(--public-muted); font-weight: 400; letter-spacing: normal; }
+:deep(.reveal-section.in-view) { animation: home-reveal .42s ease both; }
+@keyframes home-reveal { from { opacity: .75; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@keyframes home-entry { from { opacity: .15; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 980px) {
+  .home-container { width: calc(100% - 64px); }
+  .nav-inner { gap: 30px; }
+  .home-hero { gap: 28px; padding-block: 56px 60px; }
+  .hero-ledger-result { display: none !important; }
+  .campus-section, .demo-section { padding-block: 44px 56px; }
+  .shop-copy { padding: 15px; }
+}
+@media (max-width: 740px) {
+  .home-container { width: calc(100% - 36px); }
+  .nav-inner { min-height: 62px; }
+  .home-nav { display: none; }
+  .home-hero { grid-template-columns: 1fr; padding-block: 35px 42px; gap: 24px; }
+  .hero-description { max-width: 34em; margin-top: 16px; }
+  .hero-copy h1 { margin-top: 12px; font-size: clamp(38px, 8vw, 56px); }
+  .hero-actions { margin-top: 18px; }
+  .section-heading { align-items: flex-start; flex-direction: column; gap: 9px; margin-bottom: 20px; }
+  .campus-shops { grid-template-columns: 1fr; gap: 13px; }
+  .campus-shop { display: grid; grid-template-columns: minmax(0, .83fr) minmax(0, 1.17fr); }
+  .shop-photo { aspect-ratio: auto; min-height: 134px; }
+  .shop-photo img { position: absolute; inset: 0; }
+  .shop-copy h3 { font-size: 18px; }
+  .shop-copy p { font-size: 13px; }
+  .closing-content { padding: 22px; flex-wrap: wrap; }
+}
+@media (max-width: 370px) {
+  .home-brand { font-size: 19px; gap: 8px; }
+  .home-brand :deep(.brand-mark) { width: 28px; height: 28px; }
+  .nav-inner { gap: 8px; }
+  .header-actions { gap: 4px; }
+  .hero-ledger-link { padding-inline: 13px; }
+  .shop-copy { padding: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy, .hero-scene, :deep(.reveal-section.in-view) { animation: none; }
+  .home-button, .hero-photo img, .shop-photo img, .campus-shop { transition: none; }
+  .home-button:hover, .hero-scene:hover img, .campus-shop:hover, .campus-shop:hover img { transform: none; }
+}
 </style>

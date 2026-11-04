@@ -4,10 +4,10 @@ import { computed, nextTick, ref } from "vue";
 const step = ref(0);
 const stepControls = ref<HTMLElement | null>(null);
 const steps = [
-  { title: "导入账单", description: "人员上传并确认，系统校验账单记录。", action: "核对记录" },
-  { title: "核对记录", description: "人员发起核对，系统逐笔比对交易与金额。", action: "查看差异" },
-  { title: "发现差异", description: "系统保留核对结果，并生成差错工单。", action: "查看处理进度" },
-  { title: "分派与复核", description: "人员记录处理依据，再交由其他人员独立复核。", action: "重新浏览" },
+  { title: "导入账单", description: "上传渠道账单，预览并校验原始记录。", action: "核对记录" },
+  { title: "核对记录", description: "按交易标识匹配，再逐笔比对金额。", action: "查看差异" },
+  { title: "发现差异", description: "本地 24 元，渠道 24.50 元，生成金额差异工单。", action: "查看处理进度" },
+  { title: "分派与复核", description: "经办人提交依据，由另一人复核。", action: "重新浏览" },
 ] as const;
 const current = computed(() => steps[step.value]!);
 const entries = [
@@ -41,7 +41,7 @@ async function inspectDifference() {
     <div class="demo-scene" data-testid="demo-scene" :data-step="step">
       <div class="demo-ledger">
         <div class="ledger-heading">
-          <div class="ledger-title"><svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M4 6h14M4 11h14M4 16h8"/><path d="m15 15 2 2 3-4"/></svg><div><strong>校园咖啡店<span class="context-divider">/</span>图书馆店</strong><span class="ledger-subtitle">10 月 20 日 · {{ summary }}</span></div></div>
+          <div class="ledger-title"><svg viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M4 6h14M4 11h14M4 16h8"/><path d="m15 15 2 2 3-4"/></svg><div><strong>海棠咖啡店<span class="context-divider">/</span>图书馆旁</strong><span class="ledger-subtitle">10 月 20 日 · {{ summary }}</span></div></div>
           <span class="sample-marker">示例</span>
         </div>
 
@@ -63,17 +63,17 @@ async function inspectDifference() {
       </div>
 
       <aside class="demo-inspector" :aria-label="current.title + '详情'">
-        <div class="inspector-top"><span>记录检查器</span><span class="inspector-indicator" /></div>
+        <div class="inspector-top"><span>账单明细</span><span class="inspector-indicator" /></div>
         <div :key="step" class="inspector-content">
           <template v-if="step === 0">
             <svg class="inspector-symbol" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 4h10l6 6v18H9z"/><path d="M19 4v7h6M5 10v16M13 16h8M13 21h6"/></svg>
             <h3>账单已准备好</h3><p class="inspector-intro">预览原始记录，再开始核对。</p>
-            <div class="file-detail"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 2h7l3 3v11H4zM10 2v4h4M6.5 9h5M6.5 12h5"/></svg><span>校园咖啡店_1020.xlsx<small>4 笔有效记录 · 0 行错误</small></span></div>
+            <div class="file-detail"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 2h7l3 3v11H4zM10 2v4h4M6.5 9h5M6.5 12h5"/></svg><span>海棠咖啡店_1020.xlsx<small>4 笔有效记录 · 0 行错误</small></span></div>
             <div class="inspector-note"><span class="check-circle">✓</span>商户与退款关联已校验</div>
           </template>
           <template v-else-if="step === 1">
             <svg class="inspector-symbol" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 10h24M4 22h24M21 5l5 5-5 5M11 17l-5 5 5 5"/></svg>
-            <h3>四笔记录，逐一核对</h3><p class="inspector-intro">按交易标识匹配，再比较金额。</p>
+            <h3>逐笔核对</h3><p class="inspector-intro">按交易标识匹配，再比较金额。</p>
             <dl class="inspection-counts"><div><dt><i class="matched-dot" />匹配</dt><dd>3 <span>笔</span></dd></div><div><dt><i class="difference-dot" />金额差异</dt><dd>1 <span>笔</span></dd></div></dl>
             <div class="inspector-note">核对结果已保存，可查看差异。</div>
           </template>
@@ -98,19 +98,19 @@ async function inspectDifference() {
 </template>
 
 <style scoped>
-.recon-demo { --demo-ink:#f4f6fa; --demo-muted:#929ba9; --demo-blue:#7d9fff; --demo-line:rgba(222,231,249,.09); color:var(--demo-ink); background:#101216; border:1px solid rgba(222,231,249,.14); border-radius:15px; overflow:hidden; box-shadow:0 20px 70px #0003,0 1px 0 #ffffff08 inset; font-size:13px; text-align:left; }
+.recon-demo { --demo-ink:var(--public-text); --demo-muted:var(--public-muted); --demo-blue:var(--public-accent); --demo-line:var(--public-line); color:var(--demo-ink); background:var(--public-panel); border:1px solid rgba(222,231,249,.14); border-radius:15px; overflow:hidden; box-shadow:0 20px 70px #0003,0 1px 0 #ffffff08 inset; font-size:13px; text-align:left; }
 .recon-demo *, .recon-demo *::before, .recon-demo *::after { box-sizing:border-box; }
 .recon-demo button { font:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
 .recon-demo button:focus-visible { outline:2px solid var(--demo-blue); outline-offset:-4px; }
 .recon-demo svg { stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
-.demo-steps { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); background:#14171c; border-bottom:1px solid var(--demo-line); }
+.demo-steps { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); background:#151c26; border-bottom:1px solid var(--demo-line); }
 .demo-steps button { position:relative; min-height:64px; display:flex; align-items:center; justify-content:center; gap:10px; border:0; background:transparent; color:var(--demo-muted); font-size:14px; transition:color .18s,background .18s; }
 .demo-steps button + button { border-left:1px solid var(--demo-line); }
 .demo-steps button::after { content:""; position:absolute; bottom:-1px; inset-inline:22px; height:2px; background:var(--demo-blue); transform:scaleX(0); transition:transform .2s; }
-.demo-steps button.active { color:var(--demo-ink); background:#7d9fff08; }
+.demo-steps button.active { color:var(--demo-ink); background:#e7bd910f; }
 .demo-steps button.active::after { transform:scaleX(1); }
 .demo-steps button:hover { color:var(--demo-ink); background:#ffffff05; }
-.step-number { color:#687383; font-size:11px; font-variant-numeric:tabular-nums; }
+.step-number { color:#9caabd; font-size:11px; font-variant-numeric:tabular-nums; }
 .active .step-number { color:var(--demo-blue); }
 .demo-steps svg { width:13px; height:13px; color:#8598b0; }
 .demo-scene { display:grid; grid-template-columns:minmax(0,1fr) 30%; }

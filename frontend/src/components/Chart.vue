@@ -16,7 +16,7 @@ const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const chartTheme = {
   color: ["#325ddb", "#d89536", "#23958b", "#8094cf", "#c66c72", "#75aabd", "#b6a0ce", "#7e8fa6"],
   backgroundColor: "transparent",
-  textStyle: { fontFamily: '"Segoe UI Variable", "Segoe UI", "Microsoft YaHei", sans-serif', fontSize: 12, color: "#64748b" },
+  textStyle: { fontFamily: getComputedStyle(document.documentElement).getPropertyValue("--font-ui").trim(), fontSize: 12, color: "#64748b" },
   legend: { itemWidth: 12, itemHeight: 8, itemGap: 18, textStyle: { color: "#64748b", fontSize: 12 } },
   tooltip: {
     confine: true,
