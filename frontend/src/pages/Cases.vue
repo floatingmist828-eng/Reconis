@@ -30,8 +30,8 @@ onMounted(() => action(load));
 <template>
   <div class="cases-page">
     <div class="page-heading cases-heading">
-      <div><h1>差错工作台</h1><p>分派任务、核查差异与独立复核</p></div>
-      <el-button :icon="Reading" class="case-knowledge" @click="router.push('/search')">检索历史解决案例</el-button>
+      <h1>差错工单</h1>
+      <el-button :icon="Reading" class="case-knowledge" @click="router.push('/search')">案例检索</el-button>
     </div>
       <div class="case-status-nav" role="group" aria-label="工单状态">
         <button v-for="status in statuses" :key="status.value" type="button" :class="{ active: filters.status === status.value }" :aria-pressed="filters.status === status.value" :aria-disabled="busy" @click="!busy && action(() => selectStatus(status.value))">{{ status.label }}</button>
@@ -97,7 +97,7 @@ onMounted(() => action(load));
 .case-results :deep(.el-table td.el-table__cell) { height: 82px; }
 .case-identity { display: flex; align-items: center; gap: 13px; }
 .case-record-icon { display: grid; place-items: center; flex: none; width: 35px; height: 39px; border-radius: 8px; border: 1px solid #e3eaf7; background: #f1f5fd; color: #758db7; font-size: 18px; }
-.case-record-icon.overdue { border-color: #f0e3d3; background: #fff7ed; color: #bc8b52; }
+.case-record-icon.overdue { border-color: #f2dfe6; background: #fbf0f3; color: #a56477; }
 .case-identity > div { min-width: 0; }
 .case-identity b { color: #253956; font-size: 14px; font-weight: 600; }
 .case-no { font-size: 11px; color: #75849c; }
@@ -106,9 +106,9 @@ onMounted(() => action(load));
 .case-assignee .el-icon { flex: none; color: #8495ae; font-size: 14px; }
 .case-assignee.unassigned { color: #8793a5; }
 .case-deadline { color: #64748b; font-size: 12px; font-variant-numeric: tabular-nums; }
-.case-deadline.overdue > span { color: #9c6b2b; }
-.case-deadline small { display: flex; align-items: center; gap: 5px; margin-top: 5px; font-size: 11px; color: #a67331; }
-.case-deadline i { width: 4px; height: 4px; border-radius: 50%; background: #c4934d; }
+.case-deadline.overdue > span { color: #99586a; }
+.case-deadline small { display: flex; align-items: center; gap: 5px; margin-top: 5px; font-size: 11px; color: #99586a; }
+.case-deadline i { width: 4px; height: 4px; border-radius: 50%; background: #b57282; }
 .cases-pagination { margin: 0; padding: 21px 26px; border-top: 1px solid var(--line); }
 .empty-guidance { color: var(--muted); font-size: 12px; }
 .case-mobile-list { display: none; padding: 0 20px; }
@@ -124,7 +124,7 @@ onMounted(() => action(load));
 .case-mobile-card .case-assignee { min-width: 0; overflow-wrap: anywhere; }
 .case-mobile-deadline { display: flex; align-items: center; gap: 6px; margin-top: 15px; padding-top: 12px; border-top: 1px dashed var(--line); color: #75839a; font-size: 11px; font-variant-numeric: tabular-nums; }
 .case-mobile-deadline > .el-icon { flex: none; }
-.case-mobile-deadline.overdue { color: #9c6b2b; }
+.case-mobile-deadline.overdue { color: #99586a; }
 .case-mobile-deadline b { margin-left: auto; flex: none; font-size: 11px; font-weight: 500; }
 @media (max-width: 1150px) { .case-search { flex-wrap: wrap; } .case-keyword { max-width: none; } .case-mine { padding-left: 12px; } }
 @media (max-width: 760px) {

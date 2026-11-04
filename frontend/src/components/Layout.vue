@@ -8,16 +8,13 @@ import {
   RefreshLeft,
   DocumentChecked,
   Warning,
-  Search,
   DataAnalysis,
   Lock,
   User,
   Connection,
   ArrowRight,
   SwitchButton,
-  Bell,
   Fold,
-  School,
   Close,
 } from "@element-plus/icons-vue";
 import { api, action } from "../api";
@@ -78,21 +75,21 @@ const items = computed(() =>
   [
     {
       path: "/",
-      text: session.consumer ? "我的概览" : "总览工作台",
+      text: session.consumer ? "我的概览" : "总览",
       icon: Grid,
-      group: "工作空间",
+      group: "",
       show: true,
     },
     {
       path: "/orders",
       text: session.consumer ? "我的订单" : "收款订单",
       icon: Tickets,
-      group: "交易管理",
+      group: "交易",
       show: !session.admin,
     },
     {
       path: "/refunds",
-      text: session.consumer ? "我的退款" : "退款工作台",
+      text: session.consumer ? "我的退款" : "退款",
       icon: RefreshLeft,
       group: "",
       show: !session.admin,
@@ -101,57 +98,50 @@ const items = computed(() =>
       path: "/merchants",
       text: "商户与门店",
       icon: Shop,
-      group: session.admin ? "经营管理" : "",
+      group: session.admin ? "管理" : "",
       show: true,
     },
     {
       path: "/reconciliation",
       text: "账单与对账",
       icon: DocumentChecked,
-      group: "对账协作",
+      group: "对账",
       show: !session.admin && !session.consumer,
     },
     {
       path: "/cases",
-      text: "差错工作台",
+      text: "差错工单",
       icon: Warning,
       group: "",
       show: !session.admin && !session.consumer,
     },
     {
-      path: "/search",
-      text: "案例知识库",
-      icon: Search,
-      group: "",
-      show: !session.admin && !session.consumer,
-    },
-    {
       path: "/analytics",
-      text: "经营与差错分析",
+      text: "经营分析",
       icon: DataAnalysis,
-      group: "数据洞察",
+      group: "",
       show: !session.admin && !session.consumer,
     },
     {
       path: "/users",
       text: "账号审核",
       icon: User,
-      group: "系统管理",
+      group: "",
       show: session.admin,
     },
     {
       path: "/audit",
       text: "审计中心",
       icon: Lock,
-      group: session.admin ? "" : "系统管理",
+      group: session.admin ? "" : "管理",
       show: session.admin || session.auditor,
     },
     {
       path: "/integration",
-      text: "支付接入",
+      text: "渠道状态",
       icon: Connection,
-      group: !session.admin && !session.auditor ? "系统管理" : "",
-      show: !session.consumer,
+      group: "",
+      show: session.admin,
     },
   ].filter((i) => i.show),
 );
@@ -181,12 +171,8 @@ async function logout() {
       <el-button class="sidebar-close" text :icon="Close" aria-label="关闭导航" @click="collapsed = false" />
       <router-link to="/" class="brand" aria-label="Reconis 工作台">
         <BrandMark />
-        <span class="brand-name">Reconis<small>校园支付对账协作</small></span>
+        <span class="brand-name">Reconis<small>校园账务</small></span>
       </router-link>
-      <div class="workspace-chip">
-        <span class="workspace-icon"><el-icon><School /></el-icon></span>
-        <div>{{ session.consumer ? '我的校园消费' : '校园支付对账' }}</div>
-      </div>
       <nav>
         <template v-for="item in items" :key="item.path"
           ><div v-if="item.group" class="nav-group">{{ item.group }}</div>
@@ -199,28 +185,17 @@ async function logout() {
               active:
                 item.path === '/'
                   ? route.path === '/'
-                  : route.path.startsWith(item.path),
+                  : route.path.startsWith(item.path)
+                    || (item.path === '/cases' && route.path === '/search')
+                    || (item.path === '/reconciliation' && route.path === '/integration'),
             }"
             @click="collapsed = false"
             ><el-icon><component :is="item.icon" /></el-icon
-            ><span class="nav-label">{{ item.text }}</span
-            ><span v-if="item.path === '/cases'" class="nav-pill"
-              >协作</span
-            ></router-link
+            ><span class="nav-label">{{ item.text }}</span></router-link
           ></template
         >
       </nav>
       <div class="sidebar-bottom">
-        <div class="environment-mini">
-          <span class="online-dot"></span
-          >{{
-            session.integration.environment === "DEMO"
-              ? "DEMO · 教学演示"
-              : session.integration.environment === "ALIPAY_SANDBOX"
-                ? "支付宝沙箱"
-                : "服务连接中"
-          }}
-        </div>
         <div class="sidebar-links"><router-link to="/welcome">了解 Reconis</router-link><GithubLink /></div>
       </div>
     </aside>
@@ -236,24 +211,18 @@ async function logout() {
             :aria-expanded="mobile ? collapsed : !compact"
             aria-controls="workspace-navigation"
             @click="toggleNavigation"
-          /><span>工作空间</span><el-icon><ArrowRight /></el-icon
+          /><span v-if="route.meta.section !== '工作空间'">{{ route.meta.section }}</span><el-icon v-if="route.meta.section !== '工作空间'"><ArrowRight /></el-icon
           ><strong>{{ session.consumer && route.path === '/' ? '我的概览' : route.meta.title }}</strong>
         </div>
         <div class="topbar-right">
           <span class="environment-badge">{{
             session.integration.environment === "DEMO"
-              ? "教学演示环境"
+              ? "教学演示"
               : session.integration.environment === "ALIPAY_SANDBOX"
                 ? "支付宝沙箱"
                 : "后端连接中"
           }}</span
-          ><el-button
-            v-if="!session.admin && !session.consumer"
-            text
-            :icon="Bell"
-            aria-label="我的待办"
-            @click="router.push('/cases?mine=true')"
-          />
+          >
           <div class="avatar">{{ session.user?.displayName?.slice(-1) }}</div>
           <div class="user-caption">
             <b>{{ session.user?.displayName }}</b
@@ -274,9 +243,6 @@ async function logout() {
           </Transition>
         </router-view>
       </main>
-      <footer class="page-footer">
-        <span>Reconis 校园支付对账</span><GithubLink label />
-      </footer>
     </div>
   </div>
 </template>

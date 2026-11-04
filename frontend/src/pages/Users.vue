@@ -36,7 +36,7 @@ async function save() {
   <div>
     <div class="page-heading">
       <div>
-        <h1>账号审核与平台权限</h1>
+        <h1>账号审核</h1>
         <p>审核账号，分配平台权限。</p>
       </div>
     </div>

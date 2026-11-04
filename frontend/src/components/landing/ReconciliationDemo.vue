@@ -107,7 +107,7 @@ async function inspectDifference() {
 .demo-steps button { position:relative; min-height:64px; display:flex; align-items:center; justify-content:center; gap:10px; border:0; background:transparent; color:var(--demo-muted); font-size:14px; transition:color .18s,background .18s; }
 .demo-steps button + button { border-left:1px solid var(--demo-line); }
 .demo-steps button::after { content:""; position:absolute; bottom:-1px; inset-inline:22px; height:2px; background:var(--demo-blue); transform:scaleX(0); transition:transform .2s; }
-.demo-steps button.active { color:var(--demo-ink); background:#e7bd910f; }
+.demo-steps button.active { color:var(--demo-ink); background:var(--public-accent-soft); }
 .demo-steps button.active::after { transform:scaleX(1); }
 .demo-steps button:hover { color:var(--demo-ink); background:#ffffff05; }
 .step-number { color:#9caabd; font-size:11px; font-variant-numeric:tabular-nums; }

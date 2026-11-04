@@ -42,7 +42,7 @@ onMounted(() => action(async () => {
 <template>
   <div class="orders-page">
     <div class="page-heading orders-heading">
-      <div><h1>{{ session.consumer ? '我的订单' : '收款订单' }}</h1><p>{{ session.consumer ? '查看付款与退款进度' : '收款、付款状态与订单明细' }}</p></div>
+      <div><h1>{{ session.consumer ? '我的订单' : '收款订单' }}</h1></div>
       <el-button v-if="session.canAny(['OWNER', 'CASHIER', 'FINANCE'])" type="primary" :icon="Plus" @click="dialog = true">新建收款订单</el-button>
     </div>
       <div class="order-status-nav" role="group" aria-label="订单状态">

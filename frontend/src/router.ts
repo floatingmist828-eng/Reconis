@@ -21,7 +21,7 @@ export const router = createRouter({
         {
           path: "",
           component: () => import("./pages/Dashboard.vue"),
-          meta: { title: "总览工作台", section: "工作空间" },
+          meta: { title: "总览", section: "工作空间" },
         },
         {
           path: "merchants",
@@ -41,7 +41,7 @@ export const router = createRouter({
         {
           path: "refunds",
           component: () => import("./pages/Refunds.vue"),
-          meta: { title: "退款工作台", section: "交易管理" },
+          meta: { title: "退款", section: "交易管理" },
         },
         {
           path: "reconciliation",
@@ -51,7 +51,7 @@ export const router = createRouter({
         {
           path: "cases",
           component: () => import("./pages/Cases.vue"),
-          meta: { title: "差错工作台", section: "对账协作" },
+          meta: { title: "差错工单", section: "对账协作" },
         },
         {
           path: "cases/:id",
@@ -66,7 +66,7 @@ export const router = createRouter({
         {
           path: "analytics",
           component: () => import("./pages/Analytics.vue"),
-          meta: { title: "经营与差错分析", section: "数据洞察" },
+          meta: { title: "经营分析", section: "数据洞察" },
         },
         {
           path: "audit",
@@ -81,7 +81,7 @@ export const router = createRouter({
         {
           path: "integration",
           component: () => import("./pages/Integration.vue"),
-          meta: { title: "支付接入", section: "系统管理" },
+          meta: { title: "渠道管理", section: "对账协作" },
         },
       ],
     },

@@ -327,7 +327,7 @@ async function submitRefund() {
               :key="e.id"
               :timestamp="time(e.channelOccurredAt)"
               placement="top"
-              :color="e.entryType === 'RECEIPT' ? '#325ddb' : '#d89536'"
+              :color="e.entryType === 'RECEIPT' ? '#325ddb' : '#8295b8'"
               ><b
                 >{{ e.entryType === "RECEIPT" ? "确认收款" : "确认退款" }} ¥
                 {{ money(e.amountCent) }}</b

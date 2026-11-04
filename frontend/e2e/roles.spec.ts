@@ -323,12 +323,13 @@ test('bill import and comparison, analytics drilldown, risk details, reports and
     await expect(page.getByRole('heading',{name:'交易明细',exact:true})).toBeVisible();
     await expect(page.locator('.filter-breadcrumb').filter({hasText:'全部范围'})).toContainText('页面验收一店');
     for(const [label,filename] of [['PDF 图文统计报告','report.pdf'],['Word 图文统计报告','report.docx'],['Excel 交易明细','transactions.xlsx'],['XML 标准账单','transactions.xml']]) {
-      await page.getByRole('button',{name:'导出分析 / 流水 ↓',exact:true}).hover();
+      await page.getByRole('button',{name:'导出',exact:true}).hover();
       const downloading = page.waitForEvent('download');
       await page.getByRole('menuitem',{name:label,exact:true}).click();
       const file=await downloading; await file.saveAs(path.join(output,filename!));
       expect((await readFile(path.join(output,filename!))).length).toBeGreaterThan(100);
     }
+    await page.getByRole('button',{name:'差错分析',exact:true}).click();
     await page.getByRole('button',{name:/^差错率/}).click();
     await expect(page.getByRole('dialog')).toContainText('有效差错事件');
     await expect(page.getByRole('dialog').locator('.el-table__row').first()).toBeVisible();

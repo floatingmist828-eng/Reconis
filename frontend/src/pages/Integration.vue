@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { api, post, time, action, type Row } from "../api";
 import { useSession } from "../stores/session";
 import StatusTag from "../components/StatusTag.vue";
 const data = ref<Row>({ recentQueries: [] }),
   session = useSession(),
   busy = ref(false);
+const canAuto = computed(() => session.finance || session.auditor);
+const view = ref<"automatic" | "channel">(canAuto.value ? "automatic" : "channel");
 const tasks = ref<Row>({ items: [] }), page = ref(1), taskBusy = ref(false), selected = ref<Row | null>(null);
 const yesterday = new Date(Date.now() - 86400000).toLocaleDateString("sv-SE", { timeZone: "Asia/Shanghai" });
 const range = ref<[string, string]>([yesterday, yesterday]), daily = ref(false);
@@ -15,7 +17,7 @@ const eventNames: Record<string, string> = { BILL_ATTEMPT: "开始执行", BILL_
 let refreshTimer: ReturnType<typeof setInterval> | undefined;
 function parse(value: unknown): Row { try { return JSON.parse(String(value || "{}")); } catch { return {}; } }
 async function loadTasks() {
-  if (!session.finance && !session.auditor) return;
+  if (!canAuto.value) return;
   tasks.value = await api(`/reconciliation/automatic?page=${page.value}`);
   const id = selected.value?.id;
   if (id) {
@@ -54,32 +56,75 @@ onUnmounted(() => { if (refreshTimer) clearInterval(refreshTimer); });
 <template>
   <div v-loading="busy">
     <div class="page-heading">
-      <div>
-        <h1>支付接入与自动获取</h1>
-        <p>查看渠道连接和最近查询。</p>
+      <h1>{{ canAuto ? "渠道管理" : "渠道状态" }}</h1>
+      <div class="heading-actions">
+        <el-button v-if="!session.admin && !session.consumer" @click="$router.push('/reconciliation')">返回对账</el-button>
+        <el-button @click="action(view === 'automatic' ? loadTasks : load)">刷新</el-button>
       </div>
-      <el-button @click="action(load)">刷新接入状态</el-button>
     </div>
+    <div v-if="canAuto" class="section-switch" role="group" aria-label="渠道管理类别">
+      <button type="button" :aria-pressed="view === 'automatic'" @click="view = 'automatic'">自动对账</button>
+      <button type="button" :aria-pressed="view === 'channel'" @click="view = 'channel'">渠道状态</button>
+    </div>
+    <section v-if="view === 'automatic' && canAuto" class="panel auto-bill-panel">
+      <div class="panel-heading"><h2>账单获取任务</h2></div>
+      <p v-if="tasks.capabilityMessage" class="muted auto-bill-note">{{ tasks.capabilityMessage }}</p>
+      <div v-if="session.finance" class="auto-bill-form">
+        <el-date-picker v-model="range" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始账期" end-placeholder="结束账期" :disabled-date="(date: Date) => date.toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' }) > yesterday" />
+        <el-checkbox v-model="daily">每日获取</el-checkbox>
+        <el-button type="primary" :loading="taskBusy" @click="action(createTasks)">新建任务</el-button>
+      </div>
+      <p v-if="tasks.scheduleTime" class="muted auto-bill-note">{{ tasks.scheduleTime }} · 单次最多 31 天</p>
+      <el-table :data="tasks.items" empty-text="尚未创建自动对账任务">
+        <el-table-column label="账期" width="125"><template #default="{ row }">{{ new Date(row.periodStart).toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' }) }}</template></el-table-column>
+        <el-table-column label="进度" width="130"><template #default="{ row }"><el-tag :type="row.acquisitionState === 'SUCCEEDED' ? 'success' : retryable.includes(row.acquisitionState) ? 'warning' : 'info'">{{ stateNames[row.acquisitionState] || row.acquisitionState }}</el-tag></template></el-table-column>
+        <el-table-column label="执行次数" width="100"><template #default="{ row }">{{ row.acquisitionAttempts }} / 4</template></el-table-column>
+        <el-table-column label="处理说明" prop="acquisitionMessage" min-width="240" />
+        <el-table-column label="下次重试" width="175"><template #default="{ row }">{{ time(row.acquisitionNextAt) }}</template></el-table-column>
+        <el-table-column label="操作" width="120"><template #default="{ row }">
+          <el-button link type="primary" @click="action(() => showTask(row))">详情</el-button>
+          <el-button v-if="session.finance && retryable.includes(row.acquisitionState)" link type="primary" @click="action(() => retryTask(row))">补跑</el-button>
+        </template></el-table-column>
+      </el-table>
+      <div class="pagination"><el-pagination v-model:current-page="page" :page-size="20" :total="Number(tasks.total || 0)" layout="prev, pager, next, total" @current-change="action(loadTasks)" /></div>
+    </section>
+    <el-dialog :model-value="!!selected" title="自动对账任务" width="min(900px, 94vw)" @close="selected = null">
+      <template v-if="selected">
+        <p><strong>{{ stateNames[selected.acquisitionState] }}</strong> · {{ selected.acquisitionMessage || '等待处理' }}</p>
+        <p>第 {{ selected.acquisitionGeneration }} 轮 · 本轮 {{ selected.acquisitionAttempts }} 次尝试</p>
+        <div v-if="selected.sourceFileUri" class="help-note"><a :href="`/api/v1/reconciliation/automatic/${selected.id}/original`">下载原始账单</a><br /><span style="overflow-wrap:anywhere">SHA-256：{{ selected.fileSha256 }}</span></div>
+        <el-table v-if="parse(selected.acquisitionResult).batches" :data="parse(selected.acquisitionResult).batches">
+          <el-table-column label="对账批次"><template #default="{ row }"><router-link :to="`/reconciliation?batchId=${row.id}`">查看批次 {{ row.id }}</router-link></template></el-table-column><el-table-column label="商户" prop="merchantId" /><el-table-column label="处理状态"><template #default="{ row }"><StatusTag :value="row.status" /></template></el-table-column>
+        </el-table>
+        <el-table v-if="parse(selected.acquisitionResult).errors?.length" :data="parse(selected.acquisitionResult).errors"><el-table-column label="原件行号" prop="line" width="100" /><el-table-column label="校验问题" prop="reason" /></el-table>
+        <h3>执行记录</h3>
+        <el-timeline><el-timeline-item v-for="event in selected.events" :key="event.id" :timestamp="time(event.occurredAt)"><strong>{{ eventNames[event.action] || stateNames[event.action.replace('BILL_', '')] || '任务记录' }}</strong><p style="overflow-wrap:anywhere">{{ parse(event.afterJson).message || (event.action === 'BILL_ORIGINAL_SAVED' ? '原件已保留，散列已记录' : event.action === 'BILL_ATTEMPT' ? `开始第${parse(event.afterJson).attempt}次执行` : event.action === 'BILL_QUEUED' ? '账期任务已创建' : event.action === 'BILL_SCHEDULE' ? (parse(event.afterJson).enabled ? '已启用后续每日获取' : '已停止后续每日获取') : '任务状态已记录') }}</p></el-timeline-item></el-timeline>
+      </template>
+      <template v-if="session.finance && selected" #footer>
+        <el-button @click="action(() => schedule(selected!))">{{ selected.acquisitionDaily ? '停止每日获取' : '从此账期开始每日获取' }}</el-button>
+      </template>
+    </el-dialog>
+    <div v-if="view === 'channel'">
     <div class="kpi-grid two">
       <section class="kpi-card">
         <span>当前环境</span
         ><strong style="font-size: 24px">{{ data.environment || "—" }}</strong
         ><small>{{
           data.environment === "DEMO"
-            ? "隔离的教学模拟渠道"
+            ? "教学模拟渠道"
             : "支付宝官方测试网关"
         }}</small>
       </section>
       <section class="kpi-card">
-        <span>本地配置检查</span
+        <span>渠道配置</span
         ><strong style="font-size: 24px">{{
           data.configured ? "配置有效" : "待完善"
         }}</strong
         ><small>{{ data.configurationMessage || "正在检查配置" }}</small>
       </section>
     </div>
-    <section class="panel" style="margin-bottom: 23px">
-      <div class="panel-heading"><h2>接入说明</h2></div>
+    <details class="panel disclosure channel-details">
+      <summary>连接详情</summary>
       <div class="description-grid">
         <div><label>渠道</label><b>支付宝 · 人民币</b></div>
         <div>
@@ -109,50 +154,7 @@ onUnmounted(() => { if (refreshTimer) clearInterval(refreshTimer); });
           ><b>{{ data.callbackMessage || "正在检查通知配置" }}</b>
         </div>
       </div>
-      <div class="help-note">
-        {{
-          data.environment === "DEMO"
-            ? "演示模式：在付款页体验通知丢失、重复通知和查询恢复。"
-            : "支付宝沙箱：预下单、交易查询、退款及退款查询。"
-        }}<br />
-      </div>
-    </section>
-    <section v-if="session.finance || session.auditor" class="panel" style="margin-bottom: 23px">
-      <div class="panel-heading"><div><h2>自动对账中心</h2><p>获取原件、校验账单、按商户对账并生成差错。</p></div><el-button @click="action(loadTasks)">刷新任务</el-button></div>
-      <el-alert :closable="false" :title="tasks.capabilityMessage" :type="data.environment === 'DEMO' ? 'info' : 'warning'" style="margin-bottom: 18px" />
-      <div v-if="session.finance" class="auto-bill-form">
-        <el-date-picker v-model="range" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始账期" end-placeholder="结束账期" :disabled-date="(date: Date) => date.toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' }) > yesterday" />
-        <el-checkbox v-model="daily">每天继续获取后续账期</el-checkbox>
-        <el-button type="primary" :loading="taskBusy" @click="action(createTasks)">创建获取任务</el-button>
-      </div>
-      <p class="help-note">{{ tasks.scheduleTime }}。单次可获取31天账单，失败后自动重试。</p>
-      <el-table :data="tasks.items" empty-text="尚未创建自动对账任务">
-        <el-table-column label="账期" width="125"><template #default="{ row }">{{ new Date(row.periodStart).toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' }) }}</template></el-table-column>
-        <el-table-column label="进度" width="130"><template #default="{ row }"><el-tag :type="row.acquisitionState === 'SUCCEEDED' ? 'success' : retryable.includes(row.acquisitionState) ? 'warning' : 'info'">{{ stateNames[row.acquisitionState] || row.acquisitionState }}</el-tag></template></el-table-column>
-        <el-table-column label="执行次数" width="100"><template #default="{ row }">{{ row.acquisitionAttempts }} / 4</template></el-table-column>
-        <el-table-column label="处理说明" prop="acquisitionMessage" min-width="240" />
-        <el-table-column label="下次重试" width="175"><template #default="{ row }">{{ time(row.acquisitionNextAt) }}</template></el-table-column>
-        <el-table-column label="操作" min-width="220"><template #default="{ row }">
-          <el-button link type="primary" @click="action(() => showTask(row))">详情</el-button>
-          <el-button v-if="session.finance && retryable.includes(row.acquisitionState)" link type="primary" @click="action(() => retryTask(row))">补跑</el-button>
-          <el-button v-if="session.finance" link @click="action(() => schedule(row))">{{ row.acquisitionDaily ? '停止每日获取' : '设为每日获取起点' }}</el-button>
-        </template></el-table-column>
-      </el-table>
-      <el-pagination v-model:current-page="page" :page-size="20" :total="Number(tasks.total || 0)" layout="prev, pager, next, total" @current-change="action(loadTasks)" />
-    </section>
-    <el-dialog :model-value="!!selected" title="自动对账任务" width="min(900px, 94vw)" @close="selected = null">
-      <template v-if="selected">
-        <p><strong>{{ stateNames[selected.acquisitionState] }}</strong> · {{ selected.acquisitionMessage || '等待处理' }}</p>
-        <p>第 {{ selected.acquisitionGeneration }} 轮 · 本轮 {{ selected.acquisitionAttempts }} 次尝试</p>
-        <div v-if="selected.sourceFileUri" class="help-note"><a :href="`/api/v1/reconciliation/automatic/${selected.id}/original`">下载原始账单</a><br /><span style="overflow-wrap:anywhere">SHA-256：{{ selected.fileSha256 }}</span></div>
-        <el-table v-if="parse(selected.acquisitionResult).batches" :data="parse(selected.acquisitionResult).batches">
-          <el-table-column label="对账批次"><template #default="{ row }"><router-link :to="`/reconciliation?batchId=${row.id}`">查看批次 {{ row.id }}</router-link></template></el-table-column><el-table-column label="商户" prop="merchantId" /><el-table-column label="处理状态"><template #default="{ row }"><StatusTag :value="row.status" /></template></el-table-column>
-        </el-table>
-        <el-table v-if="parse(selected.acquisitionResult).errors?.length" :data="parse(selected.acquisitionResult).errors"><el-table-column label="原件行号" prop="line" width="100" /><el-table-column label="校验问题" prop="reason" /></el-table>
-        <h3>执行记录</h3>
-        <el-timeline><el-timeline-item v-for="event in selected.events" :key="event.id" :timestamp="time(event.occurredAt)"><strong>{{ eventNames[event.action] || stateNames[event.action.replace('BILL_', '')] || '任务记录' }}</strong><p style="overflow-wrap:anywhere">{{ parse(event.afterJson).message || (event.action === 'BILL_ORIGINAL_SAVED' ? '原件已保留，散列已记录' : event.action === 'BILL_ATTEMPT' ? `开始第${parse(event.afterJson).attempt}次执行` : event.action === 'BILL_QUEUED' ? '账期任务已创建' : event.action === 'BILL_SCHEDULE' ? (parse(event.afterJson).enabled ? '已启用后续每日获取' : '已停止后续每日获取') : '任务状态已记录') }}</p></el-timeline-item></el-timeline>
-      </template>
-    </el-dialog>
+    </details>
     <section class="panel">
       <div class="panel-heading">
         <div>
@@ -175,9 +177,13 @@ onUnmounted(() => { if (refreshTimer) clearInterval(refreshTimer); });
             ><StatusTag :value="row.result" /></template></el-table-column
       ></el-table>
     </section>
+    </div>
   </div>
 </template>
 <style scoped>
 .auto-bill-form { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.auto-bill-note { margin: 0 0 12px; font-size: 13px; }
+.auto-bill-form + .auto-bill-note { margin-top: 10px; }
+.channel-details { margin-bottom: 18px; }
 .auto-bill-form :deep(.el-date-editor) { max-width: 100%; }
 </style>

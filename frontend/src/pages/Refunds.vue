@@ -59,7 +59,7 @@ async function sync(row: Row) {
   <div class="refund-workspace">
     <div class="page-heading">
       <div>
-        <h1>{{ session.consumer ? '我的退款' : '退款工作台' }}</h1>
+        <h1>{{ session.consumer ? '我的退款' : '退款' }}</h1>
         <p>{{ session.consumer ? '查看退款申请与到账进度' : '审核申请，跟进退款结果' }}</p>
       </div>
       <el-button :icon="Refresh" @click="action(load)">刷新状态</el-button>

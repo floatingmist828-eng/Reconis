@@ -103,7 +103,6 @@ const chart = computed(() => ({
     <div class="page-heading">
       <div>
         <h1>审计中心</h1>
-        <p>访问记录、业务操作与数据变更</p>
       </div>
       <el-button @click="action(() => load(true))">刷新记录</el-button>
     </div>
@@ -115,7 +114,9 @@ const chart = computed(() => ({
         <span>{{ item.label }}</span><strong>{{ resultCounts[item.key] || 0 }}</strong>
       </button>
     </div>
-    <div class="overview-bottom audit-charts">
+    <details class="panel disclosure audit-charts">
+      <summary>统计分布</summary>
+      <div class="overview-bottom">
       <section class="panel">
         <div class="panel-heading"><h2>事件类别分布</h2></div>
         <Chart :option="chart" :height="210" />
@@ -132,7 +133,8 @@ const chart = computed(() => ({
           <el-table-column label="事件数" prop="count" align="right" />
         </el-table>
       </section>
-    </div>
+      </div>
+    </details>
     <section class="panel">
       <form @submit.prevent="action(search)">
       <div class="table-toolbar audit-filters">
@@ -152,33 +154,26 @@ const chart = computed(() => ({
             value="FAILED" /><el-option
             label="待确认"
             value="UNKNOWN" /></el-select
-        ><el-input
-          v-model="filters.actorId"
-          placeholder="用户 ID"
-          aria-label="用户 ID"
-          style="width: 100px"
-        /><el-input
-          v-model="filters.merchantId"
-          placeholder="商户 ID"
-          aria-label="商户 ID"
-          style="width: 100px"
-        />
-        <el-input v-model="filters.requestId" placeholder="请求关联号" aria-label="请求关联号" clearable />
+        >
+        <el-button type="primary" native-type="submit" :loading="busy">查询</el-button>
+        <el-button @click="action(resetFilters)">清除</el-button>
       </div>
-      <div class="table-toolbar audit-filters">
-        <el-date-picker
-          v-model="filters.start"
-          type="datetime"
-          value-format="YYYY-MM-DDTHH:mm:ss+08:00"
-          placeholder="开始时间"
-        /><el-date-picker
-          v-model="filters.end"
-          type="datetime"
-          value-format="YYYY-MM-DDTHH:mm:ss+08:00"
-          placeholder="结束时间"
-        />
-        <el-button type="primary" native-type="submit" :loading="busy">查询与统计</el-button>
-        <el-button @click="action(resetFilters)">清除筛选</el-button>
+      <details class="disclosure audit-advanced">
+        <summary>更多筛选</summary>
+        <div class="table-toolbar audit-filters">
+          <el-input v-model="filters.actorId" placeholder="用户 ID" aria-label="用户 ID" />
+          <el-input v-model="filters.merchantId" placeholder="商户 ID" aria-label="商户 ID" />
+          <el-input v-model="filters.requestId" placeholder="请求关联号" aria-label="请求关联号" clearable />
+          <el-date-picker v-model="filters.start" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss+08:00" placeholder="开始时间" />
+          <el-date-picker v-model="filters.end" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss+08:00" placeholder="结束时间" />
+        </div>
+      </details>
+      <div v-if="applied.actorId || applied.merchantId || applied.requestId || applied.start || applied.end" class="audit-applied muted">
+        <span v-if="applied.actorId">用户 {{ applied.actorId }}</span>
+        <span v-if="applied.merchantId">商户 {{ applied.merchantId }}</span>
+        <span v-if="applied.requestId">请求 {{ applied.requestId }}</span>
+        <span v-if="applied.start">{{ time(applied.start) }} 起</span>
+        <span v-if="applied.end">截至 {{ time(applied.end) }}</span>
       </div>
       </form>
       <el-table
@@ -284,9 +279,14 @@ const chart = computed(() => ({
 .audit-metric span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #6285d1; }
 .audit-metric[data-outcome="SUCCESS"] span::before { background: #3d9b83; }
 .audit-metric[data-outcome="FAILED"] span::before { background: #c56a70; }
-.audit-metric[data-outcome="UNKNOWN"] span::before { background: #ca9550; }
+.audit-metric[data-outcome="UNKNOWN"] span::before { background: #8295b8; }
 .audit-metric strong { display: block; margin-top: 9px; font-size: 26px; color: var(--ink); font-variant-numeric: tabular-nums; }
-.audit-charts { margin-bottom: 20px; }
+.audit-charts { margin-bottom: 18px; }
+.audit-charts > div > section { min-width: 0; }
+.audit-advanced { margin: 0 0 16px; }
+.audit-advanced .table-toolbar { margin-bottom: 0; }
+.audit-advanced .el-input { width: 155px; }
+.audit-applied { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 0 0 14px; font-size: 12px; overflow-wrap: anywhere; }
 .audit-snapshot { overflow-wrap: anywhere; white-space: pre-wrap; font-size: 12px; }
 @media (max-width: 650px) {
   .audit-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }

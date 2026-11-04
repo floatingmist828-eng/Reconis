@@ -103,7 +103,6 @@ const transactions = [
   --cap-ink: var(--public-text);
   --cap-muted: var(--public-muted);
   --cap-line: var(--public-line);
-  --cap-blue: var(--public-accent);
   color: var(--cap-ink);
   background: transparent;
   outline: none;
@@ -126,7 +125,7 @@ const transactions = [
 .cap-order-content { padding: 23px 28px 24px; }
 .cap-order-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--cap-muted); font-size: 11px; }
 .cap-title-separator { margin: 0 6px; color: var(--cap-muted); }
-.cap-tag { display: inline-flex; align-items: center; white-space: nowrap; color: var(--public-accent); background: #e7bd911f; font-size: 10px; border-radius: 4px; padding: 5px 7px; }
+.cap-tag { display: inline-flex; align-items: center; white-space: nowrap; color: var(--public-accent); background: var(--public-accent-soft); font-size: 10px; border-radius: 4px; padding: 5px 7px; }
 .cap-tag-neutral { background: var(--public-raised); color: var(--cap-muted); }
 .cap-order-amount { margin: 22px 0 21px; }
 .cap-order-amount > span { display: block; color: var(--cap-muted); font-size: 11px; margin-bottom: 4px; }
@@ -143,7 +142,7 @@ const transactions = [
 .cap-payment-history { display: grid; grid-template-columns: repeat(3, 1fr); padding: 0; margin: 26px 0 0; list-style: none; }
 .cap-payment-history li { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
 .cap-payment-history li:not(:last-child)::after { content: ""; position: absolute; top: 9px; left: 22px; width: calc(100% - 28px); height: 1px; background: var(--cap-line); }
-.cap-history-point { position: relative; display: flex; align-items: center; justify-content: center; width: 19px; height: 19px; background: #e7bd911f; border-radius: 50%; color: var(--public-accent); margin-bottom: 3px; }
+.cap-history-point { position: relative; display: flex; align-items: center; justify-content: center; width: 19px; height: 19px; background: var(--public-accent-soft); border-radius: 50%; color: var(--public-accent); margin-bottom: 3px; }
 .cap-history-point svg { width: 10px; height: 10px; }
 .cap-payment-history strong { font-size: 11px; font-weight: 500; }
 .cap-payment-history small { color: var(--cap-muted); font-size: 10px; }
@@ -173,7 +172,7 @@ const transactions = [
 .cap-review-route { display: grid; grid-template-columns: 1fr 24px 1fr; align-items: center; gap: 7px; margin-top: 24px; }
 .cap-review-route > div { display: flex; align-items: center; gap: 8px; padding: 9px; border: 1px solid var(--cap-line); border-radius: 6px; min-width: 0; }
 .cap-person { width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; flex: none; background: #2c394a; color: var(--cap-muted); border-radius: 50%; font-size: 10px; }
-.cap-person-review { background: #e7bd911f; color: var(--cap-muted); }
+.cap-person-review { background: var(--public-accent-soft); color: var(--cap-muted); }
 .cap-review-route > div > div { display: flex; flex-direction: column; gap: 3px; }
 .cap-review-route strong { font-size: 10px; font-weight: 500; }
 .cap-review-route small { font-size: 9px; color: var(--cap-muted); }
@@ -226,7 +225,7 @@ const transactions = [
 .cap-refund-bar { width: 15.3846%; background: #72849c; }
 .cap-drill-button { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 23px; color: var(--public-accent); background: var(--public-raised); border: 1px solid var(--cap-line); padding: 9px 12px; border-radius: 5px; font-size: 11px; transition: background .16s, border-color .16s, transform .16s; }
 .cap-drill-button svg { width: 12px; height: 12px; transition: transform .16s; }
-.cap-drill-button:hover { background: #29374a; border-color: #e7bd9166; }
+.cap-drill-button:hover { background: #29374a; border-color: #a7c8f066; }
 .cap-drill-button:hover svg { transform: translateX(2px); }
 .cap-drill-button:active { transform: translateY(1px); }
 .cap-transactions-head { display: flex; justify-content: space-between; padding-bottom: 9px; color: var(--cap-muted); font-size: 10px; }

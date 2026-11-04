@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { ArrowRight, Plus, Refresh, Wallet, Tickets, RefreshLeft, DocumentChecked, User, Shop, Calendar, Lock, Connection } from "@element-plus/icons-vue";
+import { ArrowRight, Plus, Refresh, Wallet, Tickets, RefreshLeft, DocumentChecked, User, Shop, Calendar, Connection } from "@element-plus/icons-vue";
 import { api, query, money, time, dateDays, action, type Row } from "../api";
 import { useSession } from "../stores/session";
 import Chart from "../components/Chart.vue";
@@ -45,7 +45,7 @@ onMounted(() => action(async()=>{
   if (!session.admin && !session.consumer) merchants.value=(await api('/merchants?status=ACTIVE&pageSize=100')).items;
 }));
 const option = computed(() => ({
-  color: ["#325ddb", "#d89536"],
+  color: ["#325ddb", "#8396b7"],
   tooltip: { trigger: "axis" },
   legend: { data: ["收款", "退款"], right: 2, top: 6 },
   grid: { left: 14, right: 16, top: 52, bottom: 12, containLabel: true },
@@ -110,14 +110,6 @@ const option = computed(() => ({
           <el-icon class="approval-arrow"><ArrowRight /></el-icon>
         </router-link>
       </div>
-      <section class="panel admin-navigation">
-        <div class="panel-heading"><h2>工作空间管理</h2></div>
-        <div class="admin-links">
-          <router-link to="/merchants"><span class="admin-link-icon"><el-icon><Shop /></el-icon></span><div><b>商户与门店</b><small>查看入驻商户与经营资料</small></div><el-icon><ArrowRight /></el-icon></router-link>
-          <router-link to="/audit"><span class="admin-link-icon"><el-icon><Lock /></el-icon></span><div><b>审计中心</b><small>追溯访问与关键操作</small></div><el-icon><ArrowRight /></el-icon></router-link>
-          <router-link to="/integration"><span class="admin-link-icon"><el-icon><Connection /></el-icon></span><div><b>支付接入</b><small>查看渠道配置与连接状态</small></div><el-icon><ArrowRight /></el-icon></router-link>
-        </div>
-      </section>
     </template>
 
     <template v-else-if="data.consumer">
@@ -166,51 +158,34 @@ const option = computed(() => ({
         <div class="ledger-breakdown">
           <router-link to="/analytics"><span><i class="receipt-dot"></i>成功收款</span><strong><em>¥</em>{{ money(data.summary?.receiptCent) }}</strong></router-link>
           <router-link to="/refunds"><span><i class="refund-dot"></i>成功退款</span><strong><em>¥</em>{{ money(data.summary?.refundCent) }}</strong></router-link>
-          <p>按资金发生日期统计，金额单位：元</p>
+          <p>按交易日期统计 · 元</p>
         </div>
         <span class="ledger-stamp" role="status">{{ loading ? '正在更新…' : lastUpdated ? lastUpdated + ' 已更新' : '等待数据' }}</span>
       </section>
       <div class="finance-workspace">
         <section class="panel financial-overview">
           <div class="trend-heading"><h2>收退款趋势</h2><el-button link type="primary" @click="router.push('/analytics')">查看分析<el-icon><ArrowRight /></el-icon></el-button></div>
-          <Chart v-if="data.trend?.length" :option="option" :height="375" />
+          <Chart v-if="data.trend?.length" :option="option" :height="328" />
           <el-empty v-else description="所选期间暂无已确认交易" :image-size="85" />
         </section>
-        <section class="dashboard-tasks">
+        <section class="panel dashboard-tasks">
           <div class="panel-heading"><h2>待办事项</h2><span class="task-heading-icon"><el-icon><DocumentChecked /></el-icon></span></div>
-          <router-link to="/cases" class="case-summary">
-            <div><span>待处理差错</span><strong>{{ data.openCases || '0' }}<small>件</small></strong></div>
-            <span class="case-entry">进入工作台<el-icon><ArrowRight /></el-icon></span>
-          </router-link>
           <div class="task-list">
+            <router-link to="/cases" class="task-row"><span class="task-icon review"><el-icon><DocumentChecked /></el-icon></span><span class="task-copy"><b>未结工单</b></span><strong>{{ data.openCases || 0 }}</strong><el-icon class="task-arrow"><ArrowRight /></el-icon></router-link>
             <router-link to="/refunds?status=PENDING_REVIEW" class="task-row"><span class="task-icon refund"><el-icon><RefreshLeft /></el-icon></span><span class="task-copy"><b>退款待审批</b></span><strong>{{data.pendingRefunds||0}}</strong><el-icon class="task-arrow"><ArrowRight /></el-icon></router-link>
             <router-link to="/cases?status=PENDING_REVIEW" class="task-row"><span class="task-icon review"><el-icon><DocumentChecked /></el-icon></span><span class="task-copy"><b>工单待复核</b></span><strong>{{data.pendingReviews||0}}</strong><el-icon class="task-arrow"><ArrowRight /></el-icon></router-link>
             <router-link to="/orders?status=WAITING_PAYMENT" class="task-row"><span class="task-icon payment"><el-icon><Wallet /></el-icon></span><span class="task-copy"><b>支付待确认</b></span><strong>{{data.pendingPayments||0}}</strong><el-icon class="task-arrow"><ArrowRight /></el-icon></router-link>
           </div>
-          <div class="queue-footer"><div class="overdue-strip"><span>逾期未结工单</span><strong>{{data.overdueCases||0}} <small>件</small></strong></div><el-button class="task-import" :icon="DocumentChecked" @click="router.push('/reconciliation')">导入账单并核对</el-button></div>
+          <div class="queue-footer"><div class="overdue-strip"><span>逾期未结工单</span><strong>{{data.overdueCases||0}} <small>件</small></strong></div><el-button class="task-import" :icon="DocumentChecked" @click="router.push('/reconciliation')">前往账单与对账</el-button></div>
         </section>
       </div>
-      <div class="overview-bottom">
-        <section class="panel">
-          <div class="panel-heading"><h2>待处理差错</h2><el-button link @click="router.push('/cases')">全部工单<el-icon><ArrowRight /></el-icon></el-button></div>
-          <el-table :data="data.recentCases" @row-click="(r: Row) => router.push('/cases/' + r.id)" class="clickable dashboard-desktop-table">
-            <el-table-column label="问题描述" prop="title" min-width="180" show-overflow-tooltip />
-            <el-table-column label="所属商户" prop="merchantName" min-width="110" show-overflow-tooltip />
-            <el-table-column label="处理状态" width="110"><template #default="{ row }"><StatusTag :value="row.status" /></template></el-table-column>
-          </el-table>
-          <div class="dashboard-mobile-list">
-            <router-link v-for="item in data.recentCases" :key="item.id" :to="'/cases/'+item.id" class="recent-case"><div><b>{{item.title}}</b><small>{{item.merchantName}}</small></div><StatusTag :value="item.status"/></router-link>
-            <el-empty v-if="!data.recentCases?.length" description="暂无待关注的差错" :image-size="70"/>
-          </div>
-        </section>
-        <section class="panel">
-          <div class="panel-heading"><h2>最近对账</h2><el-button link @click="router.push('/reconciliation')">查看全部<el-icon><ArrowRight /></el-icon></el-button></div>
-          <router-link v-for="b in data.recentBatches" :key="b.id" class="batch-mini" :to="'/reconciliation?batchId=' + b.id">
-            <span class="batch-icon"><el-icon><DocumentChecked /></el-icon></span><div><b>{{ b.merchantName }}</b><small>{{ time(b.createdAt) }}</small></div><StatusTag :value="b.status" />
-          </router-link>
-          <el-empty v-if="!data.recentBatches?.length" description="尚无对账批次" :image-size="60" />
-        </section>
-      </div>
+      <section class="panel">
+        <div class="panel-heading"><h2>最近对账批次</h2><el-button link @click="router.push('/reconciliation')">查看全部<el-icon><ArrowRight /></el-icon></el-button></div>
+        <router-link v-for="b in data.recentBatches" :key="b.id" class="batch-mini" :to="'/reconciliation?batchId=' + b.id">
+          <span class="batch-icon"><el-icon><DocumentChecked /></el-icon></span><div><b>{{ b.merchantName }}</b><small>{{ time(b.createdAt) }}</small></div><StatusTag :value="b.status" />
+        </router-link>
+        <el-empty v-if="!data.recentBatches?.length" description="尚无对账批次" :image-size="60" />
+      </section>
     </template>
   </div>
 </template>
@@ -251,7 +226,7 @@ const option = computed(() => ({
 .receipt-stat > span { display: flex; gap: 8px; align-items: center; color: #64748b; font-size: 12px; }
 .receipt-stat i { height: 6px; width: 6px; border-radius: 50%; flex: none; }
 .receipt-dot { background: #325ddb; }
-.refund-dot { background: #d89536; }
+.refund-dot { background: #8396b7; }
 .receipt-stat strong { font-size: clamp(23px, 1.8vw, 29px); font-weight: 600; line-height: 1.3; margin-top: 7px; letter-spacing: -.5px; color: #172b4d; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; max-width: calc(100% - 20px); }
 .receipt-stat em { font-size: 13px; margin-right: 4px; font-style: normal; font-weight: 400; }
 .receipt-stat > .el-icon { position: absolute; right: 6px; top: 28px; color: #8b9ab0; font-size: 12px; transition: transform .18s, color .18s; }
@@ -261,25 +236,17 @@ const option = computed(() => ({
 .trend-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 18px; padding-top: 0; }
 .trend-heading h2 { font-weight: 600; font-size: 17px; }
 .trend-heading .el-button { font-size: 12px; }
-.dashboard-tasks { display: flex; flex-direction: column; padding: 24px 0 10px 24px; border-left: 1px solid #dce3ef; }
+.dashboard-tasks { display: flex; flex-direction: column; }
+.dashboard-tasks .panel-heading { margin-bottom: 8px; }
 .task-heading-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; color: #6e7d98; background: #f4f6fa; font-size: 19px; flex: none; }
-.case-summary { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; background: #f3f6fc; padding: 15px 18px; border: 1px solid #e1e8f4; border-radius: 10px; transition: background .18s, border-color .18s; }
-.case-summary > div > span { display: block; font-size: 12px; color: #5a6a83; }
-.case-summary strong { display: block; margin-top: 10px; color: #172b4d; font-size: 34px; font-variant-numeric: tabular-nums; line-height: 1; font-weight: 600; }
-.case-summary strong small { font-size: 12px; color: #64748b; font-weight: 400; margin-left: 7px; }
-.case-entry { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #325ddb; flex: none; padding-bottom: 3px; }
-.case-entry .el-icon { transition: transform .18s; }
-.case-summary:hover { background: #edf2ff; border-color: #c7d5f7; }
-.case-summary:hover .case-entry .el-icon { transform: translateX(3px); }
-.task-list { margin-top: 12px; }
+.task-list { margin-top: 0; }
 .task-row { display: flex; align-items: center; gap: 11px; min-height: 61px; margin-inline: -8px; padding: 16px 8px; border-bottom: 1px solid #edf0f5; border-radius: 6px 6px 0 0; transition: background .18s; }
 .task-icon { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; font-size: 17px; flex: none; }
-.task-icon.refund { background: #fff5e7; color: #ad7021; }
+.task-icon.refund { background: #edf2fa; color: #526c9a; }
 .task-icon.review { background: #eef2fe; color: #4866b4; }
 .task-icon.payment { background: #eaf5f3; color: #26796c; }
 .task-copy { min-width: 0; flex: 1; }
 .task-copy b { display: block; color: #263753; font-size: 13px; font-weight: 500; }
-.task-copy small { display: block; margin-top: 4px; color: #64748b; font-size: 12px; line-height: 1.5; }
 .task-row strong { color: #263753; font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .task-arrow { color: #8d9ab0; font-size: 12px; transition: transform .18s; }
 .task-row:hover { background: #f8faff; }
@@ -287,9 +254,8 @@ const option = computed(() => ({
 .task-row:hover .task-arrow { color: #325ddb; transform: translateX(2px); }
 .queue-footer { margin-top: auto; padding-top: 12px; }
 .dashboard .overdue-strip { padding: 15px 0 18px; color: #64748b; }
-.dashboard .overdue-strip strong { font-size: 16px; color: #a96716; }
+.dashboard .overdue-strip strong { font-size: 16px; color: #985365; }
 .task-import { width: 100%; min-height: 40px; color: #325ddb; border-color: #d7e0f8; background: #f7f9ff; }
-.dashboard .overview-bottom { grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr); gap: 24px; }
 .dashboard .batch-mini { gap: 12px; min-height: 74px; padding: 16px 7px; margin-inline: -7px; border-top-color: #edf0f5; border-radius: 6px; transition: background .18s; }
 .dashboard .batch-mini:hover { background: #f7f9fe; }
 .dashboard .batch-mini > div { min-width: 0; }
@@ -307,16 +273,6 @@ const option = computed(() => ({
 .approval-arrow { color: #64748b; transition: transform .18s; }
 .approval-card:hover { border-color: #b4c6ed; box-shadow: 0 4px 16px #263d6c08; }
 .approval-card:hover .approval-arrow { transform: translateX(3px); color: #325ddb; }
-.admin-navigation { padding: 28px; }
-.admin-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.admin-links > a { display: flex; align-items: center; gap: 12px; padding: 20px 16px; border-left: 1px solid #edf0f5; transition: background .18s; }
-.admin-links > a:first-child { border-left: 0; }
-.admin-links > a:hover { background: #f7f9fe; }
-.admin-link-icon { color: #5774b7; font-size: 22px; flex: none; }
-.admin-links > a > div { flex: 1; min-width: 0; }
-.admin-links b { display: block; font-size: 14px; font-weight: 500; color: #172b4d; }
-.admin-links small { display: block; font-size: 12px; color: #64748b; margin-top: 6px; line-height: 1.7; }
-.admin-links > a > .el-icon { font-size: 12px; color: #8a9ab3; }
 .consumer-overview { display: grid; grid-template-columns: minmax(250px, 1fr) minmax(0, 2fr); gap: 24px; margin-bottom: 24px; }
 .consumer-overview .net-summary { padding: 27px; }
 .consumer-overview .net-summary strong { font-size: 44px; }
@@ -340,14 +296,9 @@ const option = computed(() => ({
   .net-summary { padding: 21px 18px; }
   .net-summary strong { font-size: 29px; }
   .receipt-stat strong { font-size: 23px; }
-  .dashboard-tasks { padding: 24px 0 10px 20px; }
-  .dashboard .overview-bottom { gap: 18px; }
-  .admin-links { grid-template-columns: 1fr; }
-  .admin-links > a { border-left: 0; border-top: 1px solid #edf0f5; }
 }
 @media (max-width: 1050px) {
-  .finance-workspace, .dashboard .overview-bottom { grid-template-columns: minmax(0, 1fr); }
-  .dashboard-tasks { padding: 8px 0 0; border: 0; }
+  .finance-workspace { grid-template-columns: minmax(0, 1fr); }
   .financial-summary { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 24px; }
   .net-summary strong { font-size: 34px; }
   .receipt-stat strong { font-size: 28px; }
@@ -366,7 +317,6 @@ const option = computed(() => ({
   .overview-period { max-width: 100%; padding: 3px; }
   .overview-period :deep(.el-radio-button__inner) { padding: 8px 10px; }
   .financial-overview { padding: 22px 18px; }
-  .dashboard-tasks { padding: 8px 0 0; border: 0; }
   .financial-summary { grid-template-columns: 1fr; gap: 16px; }
   .net-summary { min-height: 154px; padding: 22px; }
   .net-summary strong { font-size: 34px; }
@@ -380,7 +330,7 @@ const option = computed(() => ({
   .dashboard .panel-heading h2 { font-size: 16px; }
   .dashboard .panel-heading .el-button { flex: none; }
   .updated-time { font-size: 12px; }
-  .finance-workspace, .dashboard .overview-bottom { gap: 18px; margin-bottom: 18px; }
+  .finance-workspace { gap: 18px; margin-bottom: 18px; }
   .dashboard-desktop-table { display: none; }
   .dashboard-mobile-list { display: block; min-width: 0; }
   .recent-order { display: block; border-top: 1px solid #edf0f5; padding: 18px 0; min-width: 0; }
@@ -390,16 +340,9 @@ const option = computed(() => ({
   .recent-order p { color: #64748b; font-size: 12px; margin: 6px 0 12px; overflow-wrap: anywhere; }
   .recent-order small { color: #64748b; font-size: 12px; min-width: 0; overflow-wrap: anywhere; }
   .recent-order strong { color: #172b4d; font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 0; max-width: 55%; overflow-wrap: anywhere; text-align: right; }
-  .recent-order :deep(.el-tag), .recent-case :deep(.el-tag) { flex: none; }
-  .recent-case { display: flex; align-items: center; gap: 12px; padding: 18px 0; border-top: 1px solid #edf0f5; min-width: 0; }
-  .recent-case:last-child { padding-bottom: 0; }
-  .recent-case > div { flex: 1; min-width: 0; }
-  .recent-case b { display: block; font-size: 14px; line-height: 1.6; color: #263753; font-weight: 500; overflow-wrap: anywhere; }
-  .recent-case small { display: block; color: #64748b; font-size: 12px; margin-top: 5px; overflow-wrap: anywhere; }
+  .recent-order :deep(.el-tag) { flex: none; }
   .approval-grid { grid-template-columns: 1fr; gap: 14px; }
   .approval-card { padding: 24px; }
-  .admin-navigation { padding: 22px 18px; }
-  .admin-links > a { padding: 18px 4px; }
   .consumer-overview { grid-template-columns: 1fr; gap: 16px; }
   .consumer-overview .net-summary { padding: 22px; }
   .consumer-overview .net-summary strong { font-size: 36px; }
