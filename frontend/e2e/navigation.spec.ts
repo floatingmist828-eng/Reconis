@@ -12,7 +12,7 @@ test('public introduction, illustrative reconciliation and login entry', async (
   await page.goto('/');
   await expect(page).toHaveURL(/\/welcome$/);
   await expect(page.locator('h1')).toHaveText(/让每一笔\s*校园收支，\s*都有清楚的来处。/);
-  await expect(page.getByText('页面中的商户、金额和处理记录均为功能示例。', {exact:true})).toBeVisible();
+  await expect(page.getByText('演示账单 · 4 笔交易', {exact:true})).toBeVisible();
   const demo = page.getByTestId('reconciliation-demo');
   const scene = demo.getByTestId('demo-scene');
   const steps = ['01 导入账单', '02 核对记录', '03 发现差异', '04 分派与复核'];

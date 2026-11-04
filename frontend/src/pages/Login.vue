@@ -87,7 +87,7 @@ async function submit() {
         <Transition name="mode-heading" mode="out-in">
           <div :key="register ? 'register' : 'login'" class="login-heading">
             <h2 id="login-form-title">{{ register ? "申请账号" : "登录 Reconis" }}</h2>
-            <p class="login-subtitle">{{ register ? "提交后由管理员审核。" : "进入你的校园支付工作台。" }}</p>
+            <p class="login-subtitle">{{ register ? "提交后由管理员审核。" : "使用已审核的账号登录。" }}</p>
           </div>
         </Transition>
 

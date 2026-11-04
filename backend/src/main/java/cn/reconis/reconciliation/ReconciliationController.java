@@ -158,6 +158,22 @@ public class ReconciliationController {
     return Api.ok(response);
   }
 
+  @GetMapping("/reconciliation/batches/{id}/baselines")
+  Object baselines(@PathVariable long id, @RequestParam(defaultValue = "") String q) {
+    var batch = access.batch(id);
+    return Api.ok(
+        db.list(
+            "SELECT TOP 25 id,batch_no,period_start FROM reconciliation_batch WHERE"
+                + " id<>#{p.id} AND status='COMPLETED' AND source_type<>'AUTO_JOB'"
+                + " AND scope_type=#{p.scope} AND (merchant_id=#{p.merchant}"
+                + " OR (merchant_id IS NULL AND #{p.merchant} IS NULL))"
+                + " AND (#{p.q}='' OR CHARINDEX(#{p.q},batch_no)>0)"
+                + " ORDER BY CASE WHEN id=#{p.baseline} THEN 0 ELSE 1 END,id DESC",
+            Api.params(
+                "id", id, "scope", batch.get("scopeType"), "merchant", batch.get("merchantId"),
+                "q", q.trim(), "baseline", batch.get("baselineBatchId"))));
+  }
+
   @GetMapping("/reconciliation/compare")
   Object compare(@RequestParam long baseline, @RequestParam long current) {
     var a = access.batch(baseline);
@@ -165,6 +181,10 @@ public class ReconciliationController {
     if (!Objects.equals(a.get("merchantId"), b.get("merchantId"))
         || !Objects.equals(a.get("scopeType"), b.get("scopeType")))
       throw Api.fail(422, "请选择同一商户或同一平台待核验范围的批次");
+    if (baseline == current
+        || !"COMPLETED".equals(a.get("status"))
+        || !"COMPLETED".equals(b.get("status")))
+      throw Api.fail(422, "请选择两个已完成的不同批次");
     return Api.ok(
         db.list(
             "WITH a AS(SELECT source_event_key,classification,ROW_NUMBER() OVER(PARTITION BY"
@@ -175,7 +195,8 @@ public class ReconciliationController {
                 + " event_key,a.classification before_classification,b.classification"
                 + " after_classification,CASE WHEN a.classification=b.classification THEN"
                 + " 'UNCHANGED' WHEN a.classification IS NULL THEN 'NEW' WHEN"
-                + " b.classification='MATCHED' THEN 'RESOLVED' ELSE 'CHANGED' END change_type FROM"
+                + " b.classification IS NULL THEN 'REMOVED' WHEN b.classification='MATCHED'"
+                + " THEN 'RESOLVED' ELSE 'CHANGED' END change_type FROM"
                 + " a FULL OUTER JOIN b ON a.source_event_key=b.source_event_key AND a.n=b.n ORDER"
                 + " BY event_key",
             Api.params("a", baseline, "b", current)));

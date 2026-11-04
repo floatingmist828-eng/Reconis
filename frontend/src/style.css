@@ -93,7 +93,7 @@ small { font-size: 12px; }
 .sidebar .github-link:hover, .sidebar .github-link:focus-visible { color: white; }
 .environment-mini { display: flex; align-items: center; gap: 9px; color: #b5c4d8; font-size: 11px; }
 .sidebar-bottom p { color: #8da1be; font-size: 11px; margin-top: 8px; padding-left: 15px; }
-.main-shell { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); min-width: 0; transition: margin-left .24s cubic-bezier(.2,.8,.2,1), width .24s; }
+.main-shell { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); min-width: 0; background: radial-gradient(ellipse 74% 440px at 88% 0, #e7eeff 0%, transparent 100%), var(--canvas); transition: margin-left .24s cubic-bezier(.2,.8,.2,1), width .24s; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 72px; padding: 0 32px; background: #ffffffed; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 15; backdrop-filter: blur(12px); }
 .breadcrumbs { display: flex; align-items: center; gap: 13px; color: var(--muted); font-size: 12px; min-width: 0; }
 .breadcrumbs > .el-icon { font-size: 11px; color: #8996a9; }
@@ -132,14 +132,21 @@ small { font-size: 12px; }
 }
 
 /* Reusable surfaces, financial figures, and list hierarchy */
-.panel { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 26px; box-shadow: 0 2px 4px #162b4c02; }
+.panel { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 26px; box-shadow: 0 1px 2px #162b4c06, 0 12px 32px -25px #34497238; }
 .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
 .panel-heading p { color: var(--muted); font-size: 12px; margin-top: 5px; }
 .panel-heading .el-button { font-size: 12px; flex-shrink: 0; }
 .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
 .kpi-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .kpi-card { display: block; position: relative; min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 22px; transition: border-color .15s; }
-.kpi-card:hover { border-color: #b6c8ef; }
+.kpi-card:hover, .kpi-card:focus-visible {
+  border-color: #b6c8ef;
+  box-shadow: 0 12px 25px -18px #325ddb69;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .kpi-card { transition: border-color .18s, box-shadow .18s, transform .18s; }
+  .kpi-card:hover { transform: translateY(-3px); }
+}
 .kpi-card > span, .kpi-label { color: var(--muted); font-size: 13px; }
 .kpi-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .kpi-label > span:not(.status-dot) { font-size: 11px; color: #65758b; }

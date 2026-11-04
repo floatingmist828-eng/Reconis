@@ -46,7 +46,7 @@ public class AnalyticsController {
   private String auditWhere(Map<String, Object> p, Map<String, String> f) {
     access.role("ADMIN", "AUDITOR");
     String where = "1=1";
-    for (String k : List.of("category", "actorId", "merchantId", "result")) {
+    for (String k : List.of("category", "actorId", "merchantId", "result", "requestId")) {
       if (!f.getOrDefault(k, "").isBlank()) {
         p.put(k, f.get(k));
         where +=
@@ -59,15 +59,19 @@ public class AnalyticsController {
                         "merchantId",
                         "scope_merchant_id",
                         "result",
-                        "result")
+                        "result",
+                        "requestId",
+                        "request_id")
                     .get(k)
                 + "=#{p."
                 + k
                 + "}";
       }
     }
-    p.put("q", "%" + f.getOrDefault("q", "") + "%");
-    where += " AND (action LIKE #{p.q} OR summary LIKE #{p.q})";
+    if (!f.getOrDefault("q", "").isBlank()) {
+      p.put("q", "%" + f.get("q").trim() + "%");
+      where += " AND (action LIKE #{p.q} OR summary LIKE #{p.q})";
+    }
     if (!f.getOrDefault("start", "").isBlank()) {
       p.put("start", Api.utc(f.get("start")));
       where += " AND occurred_at>=#{p.start}";
@@ -107,7 +111,14 @@ public class AnalyticsController {
   @GetMapping("/audit/statistics")
   Object stats(@RequestParam Map<String, String> f) {
     var p = new HashMap<String, Object>();
-    String where = auditWhere(p, f);
+    var scope = new HashMap<>(f);
+    String result = scope.remove("result");
+    String allResults = auditWhere(p, scope);
+    String where = allResults;
+    if (result != null && !result.isBlank()) {
+      p.put("result", result);
+      where += " AND result=#{p.result}";
+    }
     return Api.ok(
         Map.of(
             "categories",
@@ -129,7 +140,7 @@ public class AnalyticsController {
             "results",
             db.list(
                 "SELECT result,COUNT_BIG(*) count FROM audit_log WHERE "
-                    + where
+                    + allResults
                     + " GROUP BY result",
                 p)));
   }

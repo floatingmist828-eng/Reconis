@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, watch, ref } from "vue";
-import * as echarts from "echarts";
+import { init, use, type ECharts } from "echarts/core";
+import { BarChart, LineChart, PieChart } from "echarts/charts";
+import { GridComponent, LegendComponent, TooltipComponent } from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
+
+use([BarChart, LineChart, PieChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer]);
 const props = withDefaults(defineProps<{ option: any; height?: number }>(), {
   height: 300,
 });
 const element = ref<HTMLElement>();
-let instance: echarts.ECharts | undefined;
+let instance: ECharts | undefined;
 let observer: ResizeObserver;
 const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const chartTheme = {
@@ -42,7 +47,7 @@ function render() {
 }
 onMounted(() => {
   if (element.value) {
-    instance = echarts.init(element.value, chartTheme);
+    instance = init(element.value, chartTheme);
     render();
     observer = new ResizeObserver(() => instance?.resize());
     observer.observe(element.value);

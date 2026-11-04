@@ -9,6 +9,7 @@ const filters = reactive({
     actorId: "",
     merchantId: "",
     result: "",
+    requestId: "",
     start: "",
     end: "",
     page: 1,
@@ -17,19 +18,64 @@ const filters = reactive({
   stats = ref<Row>({ categories: [], actors: [], results: [] }),
   busy = ref(false),
   detail = ref<Row | null>(null);
-async function load() {
+const categories: Record<string, string> = {
+  ACCESS: "访问",
+  AUTH: "账号认证",
+  BUSINESS: "业务操作",
+  DB_CHANGE: "数据变更",
+  CHANNEL_QUERY: "渠道查询",
+  IMPORT_EXPORT: "导入与导出",
+};
+const outcomes = [
+  { key: "SUCCESS", label: "成功" },
+  { key: "FAILED", label: "失败" },
+  { key: "UNKNOWN", label: "待确认" },
+];
+const resultCounts = computed(() => Object.fromEntries(
+  stats.value.results.map((r: Row) => [r.result, r.count]),
+));
+const totalEvents = computed(() => stats.value.results.reduce(
+  (sum: bigint, row: Row) => sum + BigInt(row.count), 0n,
+).toLocaleString("zh-CN"));
+const applied = ref({ ...filters });
+let request = 0;
+async function load(paginate = false) {
+  const current = ++request;
+  const snapshot = paginate ? { ...applied.value, page: filters.page } : { ...filters };
   busy.value = true;
   try {
-    const q = query(filters);
-    [list.value, stats.value] = await Promise.all([
+    const q = query(snapshot);
+    const [events, statistics] = await Promise.all([
       api("/audit/events?" + q),
-      api("/audit/statistics?" + q),
+      paginate ? stats.value : api("/audit/statistics?" + q),
     ]);
+    if (current !== request) return;
+    list.value = events;
+    stats.value = statistics;
+    applied.value = snapshot;
   } finally {
-    busy.value = false;
+    if (current === request) busy.value = false;
   }
 }
-onMounted(() => action(load));
+async function search() {
+  filters.page = 1;
+  await load();
+}
+async function resetFilters() {
+  Object.assign(filters, { q: "", category: "", actorId: "", merchantId: "", result: "", requestId: "", start: "", end: "" });
+  await search();
+}
+async function drill(key: "result" | "actorId" | "requestId", value: string) {
+  Object.assign(filters, applied.value);
+  filters[key] = filters[key] === value ? "" : value;
+  if (key === "requestId") {
+    filters.requestId = value;
+    Object.assign(filters, { q: "", category: "", actorId: "", merchantId: "", result: "", start: "", end: "" });
+    detail.value = null;
+  }
+  await search();
+}
+onMounted(() => action(search));
 const chart = computed(() => ({
   color: ["#325ddb"],
   tooltip: { trigger: "axis" },
@@ -37,7 +83,7 @@ const chart = computed(() => ({
   xAxis: { type: "value", splitLine: { lineStyle: { color: "#edf0f5", type: "dashed" } } },
   yAxis: {
     type: "category",
-    data: stats.value.categories.map((r: Row) => r.eventCategory),
+    data: stats.value.categories.map((r: Row) => categories[r.eventCategory] || r.eventCategory),
     axisTick: { show: false },
     axisLine: { show: false },
     axisLabel: { fontSize: 12 },
@@ -53,48 +99,53 @@ const chart = computed(() => ({
 }));
 </script>
 <template>
-  <div v-loading="busy">
+  <div class="audit-page" v-loading="busy" :aria-busy="busy">
     <div class="page-heading">
       <div>
         <h1>审计中心</h1>
-        <p>查询操作记录与业务变更。</p>
+        <p>访问记录、业务操作与数据变更</p>
       </div>
-      <el-button @click="action(load)">刷新审计</el-button>
+      <el-button @click="action(() => load(true))">刷新记录</el-button>
     </div>
-    <div class="overview-bottom" style="margin-bottom: 23px">
+    <div class="audit-summary" aria-label="按结果筛选审计事件">
+      <button class="audit-metric" type="button" :aria-pressed="!applied.result" @click="action(() => drill('result', ''))">
+        <span>事件总数</span><strong>{{ totalEvents }}</strong>
+      </button>
+      <button v-for="item in outcomes" :key="item.key" type="button" class="audit-metric" :data-outcome="item.key" :aria-pressed="applied.result === item.key" @click="action(() => drill('result', item.key))">
+        <span>{{ item.label }}</span><strong>{{ resultCounts[item.key] || 0 }}</strong>
+      </button>
+    </div>
+    <div class="overview-bottom audit-charts">
       <section class="panel">
         <div class="panel-heading"><h2>事件类别分布</h2></div>
         <Chart :option="chart" :height="210" />
       </section>
       <section class="panel">
         <div class="panel-heading"><h2>操作人员统计</h2></div>
-        <el-table :data="stats.actors" max-height="210"
-          ><el-table-column label="人员" prop="actorName" /><el-table-column
-            label="事件数"
-            prop="count"
-            align="right"
-        /></el-table>
+        <el-table :data="stats.actors" max-height="210" empty-text="暂无记录">
+          <el-table-column label="人员">
+            <template #default="{ row }">
+              <el-button v-if="row.actorUserId" link type="primary" @click="action(() => drill('actorId', String(row.actorUserId)))">{{ row.actorName }}</el-button>
+              <span v-else>{{ row.actorName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="事件数" prop="count" align="right" />
+        </el-table>
       </section>
     </div>
     <section class="panel">
-      <div class="table-toolbar">
+      <form @submit.prevent="action(search)">
+      <div class="table-toolbar audit-filters">
         <el-input
           v-model="filters.q"
           placeholder="动作路径 / 操作摘要"
           clearable
         /><el-select v-model="filters.category" placeholder="全部类别" clearable
           ><el-option
-            v-for="v in [
-              'ACCESS',
-              'AUTH',
-              'BUSINESS',
-              'DB_CHANGE',
-              'CHANNEL_QUERY',
-              'IMPORT_EXPORT',
-            ]"
-            :key="v"
-            :value="v"
-            :label="v" /></el-select
+            v-for="(label, key) in categories"
+            :key="key"
+            :value="key"
+            :label="label" /></el-select
         ><el-select v-model="filters.result" placeholder="全部结果" clearable
           ><el-option label="成功" value="SUCCESS" /><el-option
             label="失败"
@@ -103,15 +154,18 @@ const chart = computed(() => ({
             value="UNKNOWN" /></el-select
         ><el-input
           v-model="filters.actorId"
-          placeholder="用户ID"
+          placeholder="用户 ID"
+          aria-label="用户 ID"
           style="width: 100px"
         /><el-input
           v-model="filters.merchantId"
-          placeholder="商户ID"
+          placeholder="商户 ID"
+          aria-label="商户 ID"
           style="width: 100px"
         />
+        <el-input v-model="filters.requestId" placeholder="请求关联号" aria-label="请求关联号" clearable />
       </div>
-      <div class="table-toolbar">
+      <div class="table-toolbar audit-filters">
         <el-date-picker
           v-model="filters.start"
           type="datetime"
@@ -122,19 +176,15 @@ const chart = computed(() => ({
           type="datetime"
           value-format="YYYY-MM-DDTHH:mm:ss+08:00"
           placeholder="结束时间"
-        /><el-button
-          type="primary"
-          @click="
-            filters.page = 1;
-            action(load);
-          "
-          >查询与统计</el-button
-        ><span class="grow"></span
-        ><span class="muted">{{ list.total }} 条事件</span>
+        />
+        <el-button type="primary" native-type="submit" :loading="busy">查询与统计</el-button>
+        <el-button @click="action(resetFilters)">清除筛选</el-button>
       </div>
+      </form>
       <el-table
         :data="list.items"
         class="clickable"
+        empty-text="没有符合条件的事件"
         @row-click="(r: Row) => (detail = r)"
         ><el-table-column label="发生时间" width="160"
           ><template #default="{ row }"
@@ -142,7 +192,7 @@ const chart = computed(() => ({
           ></el-table-column
         ><el-table-column label="类别 / 人员" width="140"
           ><template #default="{ row }"
-            >{{ row.eventCategory
+            >{{ categories[row.eventCategory] || row.eventCategory
             }}<span class="subline">{{
               row.actorName || "系统 / 未登录"
             }}</span></template
@@ -165,14 +215,14 @@ const chart = computed(() => ({
           :total="Number(list.total)"
           :page-size="30"
           layout="total,prev,pager,next"
-          @current-change="action(load)"
+          @current-change="action(() => load(true))"
         />
       </div>
     </section>
     <el-dialog
       :model-value="!!detail"
       title="审计事件详情"
-      width="700"
+      width="min(740px, calc(100vw - 28px))"
       @close="detail = null"
       ><template v-if="detail"
         ><div class="description-grid">
@@ -180,8 +230,9 @@ const chart = computed(() => ({
             <label>动作</label><b>{{ detail.action }}</b>
           </div>
           <div>
-            <label>请求关联号</label
-            ><b class="mono">{{ detail.requestId || "系统任务" }}</b>
+            <label>请求关联号</label>
+            <b class="mono">{{ detail.requestId || "—" }}</b>
+            <el-button v-if="detail.requestId" link type="primary" @click="action(() => drill('requestId', detail!.requestId))">查看同一请求</el-button>
           </div>
           <div>
             <label>人员 / 商户</label
@@ -199,13 +250,13 @@ const chart = computed(() => ({
         <div class="comparison">
           <section>
             <h3>变更前快照</h3>
-            <pre style="white-space: pre-wrap; font-size: 11px">{{
+            <pre class="audit-snapshot">{{
               detail.beforeJson || "无"
             }}</pre>
           </section>
           <section>
             <h3>变更后快照</h3>
-            <pre style="white-space: pre-wrap; font-size: 11px">{{
+            <pre class="audit-snapshot">{{
               detail.afterJson || "无"
             }}</pre>
           </section>
@@ -214,3 +265,36 @@ const chart = computed(() => ({
     >
   </div>
 </template>
+
+
+<style scoped>
+.audit-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 20px; }
+.audit-metric {
+  text-align: left;
+  padding: 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--muted);
+  transition: border-color .18s, background .18s, transform .18s;
+}
+.audit-metric:hover { transform: translateY(-2px); }
+.audit-metric:hover, .audit-metric[aria-pressed="true"] { background: #f3f6ff; border-color: #bdcaf1; }
+.audit-metric span { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.audit-metric span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #6285d1; }
+.audit-metric[data-outcome="SUCCESS"] span::before { background: #3d9b83; }
+.audit-metric[data-outcome="FAILED"] span::before { background: #c56a70; }
+.audit-metric[data-outcome="UNKNOWN"] span::before { background: #ca9550; }
+.audit-metric strong { display: block; margin-top: 9px; font-size: 26px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.audit-charts { margin-bottom: 20px; }
+.audit-snapshot { overflow-wrap: anywhere; white-space: pre-wrap; font-size: 12px; }
+@media (max-width: 650px) {
+  .audit-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .audit-metric { padding: 13px 16px; }
+  .audit-filters > .el-input, .audit-filters > .el-select { flex: 1 1 125px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .audit-metric { transition: none; }
+  .audit-metric:hover { transform: none; }
+}
+</style>

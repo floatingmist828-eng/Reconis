@@ -53,8 +53,8 @@ onBeforeUnmount(() => observer?.disconnect());
           <div class="hero-copy">
             <p class="hero-kicker"><span />校园支付对账工作空间</p>
             <h1 id="hero-title"><span>让每一笔</span><span>校园收支，</span><span class="hero-final-line">都有清楚的来处。</span></h1>
-            <p class="hero-description">连接收款、退款与渠道账单，<br />让核对有结果，处理有依据。</p>
-            <div class="hero-actions"><router-link class="home-button primary" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link><a class="home-text-link" href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">浏览功能<el-icon><ArrowDown /></el-icon></a></div>
+            <p class="hero-description">把订单、退款和渠道账单逐笔核对。<br />发现差异后，直接分派工单。</p>
+            <div class="hero-actions"><router-link class="home-button primary" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link><a class="home-text-link" href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">试用对账示例<el-icon><ArrowDown /></el-icon></a></div>
           </div>
 
           <div class="hero-visual" role="img" aria-label="对账工作区示例：四笔资金记录，三笔匹配，一笔金额差异。本地 24 元与渠道 24.50 元相差 0.50 元，已生成差错工单。">
@@ -79,11 +79,11 @@ onBeforeUnmount(() => observer?.disconnect());
             </div>
           </div>
         </div>
-        <div class="hero-caption"><span class="caption-index">01 — 04</span><span>从交易记录，到处理依据。</span><span class="sample-disclosure">页面中的商户、金额和处理记录均为功能示例。</span></div>
+        <div class="hero-caption"><span class="caption-index">01 — 04</span><span>图书馆咖啡店 · 日账单</span><span class="sample-disclosure">演示账单 · 4 笔交易</span></div>
       </section>
 
       <section id="reconciliation-demo-section" class="demo-section" tabindex="-1" aria-labelledby="demo-title">
-        <div class="section-heading reveal-section"><div><p class="section-kicker">工作如何衔接</p><h2 id="demo-title">一笔差异，<br class="mobile-break" />沿着记录找到答案。</h2></div><p>从导入到复核，留住每一步的依据。<br />选择一个步骤，看看记录如何流转。</p></div>
+        <div class="section-heading reveal-section"><div><p class="section-kicker">对账演示</p><h2 id="demo-title">一笔差错如何处理</h2></div><p>按步骤查看账单、核对结果和工单。</p></div>
         <div class="demo-wrap reveal-section"><ReconciliationDemo /></div>
       </section>
 
@@ -91,10 +91,10 @@ onBeforeUnmount(() => observer?.disconnect());
 
       <section class="closing-section" aria-labelledby="closing-title">
         <div class="closing-rule" aria-hidden="true"><span /><BrandMark /><span /></div>
-        <div class="closing-content reveal-section"><p class="section-kicker">Reconis · 校园支付对账</p><h2 id="closing-title">账目清楚，<br class="mobile-break" />下一步也清楚。</h2><p>从一笔收款开始，连接完整的处理记录。</p><router-link class="home-button primary" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link></div>
+        <div class="closing-content reveal-section"><p class="section-kicker">Reconis · 校园支付对账</p><h2 id="closing-title">进入账务工作台</h2><router-link class="home-button primary" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link></div>
       </section>
     </main>
-    <footer class="home-footer"><router-link class="footer-brand" to="/welcome">Reconis<span>校园支付对账</span></router-link><span class="footer-note">每一笔，都有据可查。</span><GithubLink label /></footer>
+    <footer class="home-footer"><router-link class="footer-brand" to="/welcome">Reconis<span>校园支付对账</span></router-link><GithubLink label /></footer>
   </div>
 </template>
 
