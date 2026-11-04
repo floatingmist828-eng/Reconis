@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, onBeforeUnmount, nextTick, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
   Grid,
@@ -17,14 +17,63 @@ import {
   SwitchButton,
   Bell,
   Fold,
+  School,
+  Close,
 } from "@element-plus/icons-vue";
 import { api, action } from "../api";
 import { useSession } from "../stores/session";
 import { ref } from "vue";
+import BrandMark from "./BrandMark.vue";
+import GithubLink from "./GithubLink.vue";
 const route = useRoute(),
   router = useRouter(),
   session = useSession(),
-  collapsed = ref(false);
+  collapsed = ref(false),
+  compact = ref(false),
+  mobile = ref(window.matchMedia("(max-width: 760px)").matches);
+const mobileQuery = window.matchMedia("(max-width: 760px)");
+const workspace = ref<HTMLElement>();
+let focusAfterNavigation = false;
+const originalOverflow = document.body.style.overflow;
+watch(() => route.path, () => { collapsed.value = false; focusAfterNavigation = true; });
+function focusWorkspace() {
+  if (focusAfterNavigation) workspace.value?.focus({ preventScroll: true });
+  focusAfterNavigation = false;
+}
+watch([mobile, collapsed], ([isMobile, open]) => {
+  document.body.style.overflow = isMobile && open ? "hidden" : originalOverflow;
+});
+function resizeNavigation(event: MediaQueryListEvent) {
+  mobile.value = event.matches;
+  if (!event.matches) collapsed.value = false;
+}
+function toggleNavigation() {
+  if (mobile.value) collapsed.value = !collapsed.value;
+  else compact.value = !compact.value;
+}
+function closeNavigation(event: KeyboardEvent) {
+  if (event.key === "Escape") collapsed.value = false;
+  if (event.key === "Tab" && mobile.value && collapsed.value) {
+    const focusable = Array.from(document.querySelectorAll<HTMLElement>(".sidebar a[href], .sidebar button:not([disabled])"));
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  }
+}
+watch(collapsed, async (open) => {
+  if (!mobile.value) return;
+  await nextTick();
+  document.querySelector<HTMLButtonElement>(open ? ".sidebar-close" : ".nav-toggle")?.focus();
+});
+onMounted(() => {
+  mobileQuery.addEventListener("change", resizeNavigation);
+  window.addEventListener("keydown", closeNavigation);
+});
+onBeforeUnmount(() => {
+  document.body.style.overflow = originalOverflow;
+  mobileQuery.removeEventListener("change", resizeNavigation);
+  window.removeEventListener("keydown", closeNavigation);
+});
 const items = computed(() =>
   [
     {
@@ -126,22 +175,25 @@ async function logout() {
 }
 </script>
 <template>
-  <div class="app-shell" :class="{ 'nav-collapsed': collapsed }">
-    <aside class="sidebar">
-      <router-link to="/" class="brand"
-        ><span class="brand-symbol">R<span></span></span
-        ><span>Reconis<small>校园支付对账协作</small></span></router-link
-      >
+  <div class="app-shell" :class="{ 'nav-collapsed': collapsed, 'sidebar-compact': compact && !mobile }">
+    <a class="skip-link" href="#workspace-content" :inert="mobile && collapsed">跳到主要内容</a>
+    <aside id="workspace-navigation" class="sidebar" aria-label="工作空间导航" :inert="mobile && !collapsed">
+      <el-button class="sidebar-close" text :icon="Close" aria-label="关闭导航" @click="collapsed = false" />
+      <router-link to="/" class="brand" aria-label="Reconis 工作台">
+        <BrandMark />
+        <span class="brand-name">Reconis<small>校园支付对账协作</small></span>
+      </router-link>
       <div class="workspace-chip">
-        <span class="workspace-icon">校</span>
-        <div>{{ session.consumer ? '我的校园消费' : '校园商户工作空间' }}<small>Campus workspace</small></div>
-        <span class="online-dot"></span>
+        <span class="workspace-icon"><el-icon><School /></el-icon></span>
+        <div>{{ session.consumer ? '我的校园消费' : '校园支付对账' }}</div>
       </div>
       <nav>
         <template v-for="item in items" :key="item.path"
           ><div v-if="item.group" class="nav-group">{{ item.group }}</div>
           <router-link
             :to="item.path"
+            :aria-label="item.text"
+            :title="compact && !mobile ? item.text : undefined"
             class="nav-item"
             :class="{
               active:
@@ -151,7 +203,7 @@ async function logout() {
             }"
             @click="collapsed = false"
             ><el-icon><component :is="item.icon" /></el-icon
-            ><span>{{ item.text }}</span
+            ><span class="nav-label">{{ item.text }}</span
             ><span v-if="item.path === '/cases'" class="nav-pill"
               >协作</span
             ></router-link
@@ -169,20 +221,22 @@ async function logout() {
                 : "服务连接中"
           }}
         </div>
-        <p>每一笔，都有据可循。</p>
+        <div class="sidebar-links"><router-link to="/welcome">了解 Reconis</router-link><GithubLink /></div>
       </div>
     </aside>
-    <div v-if="collapsed" class="mobile-mask" @click="collapsed = false"></div>
-    <div class="main-shell">
+    <button v-if="collapsed" class="mobile-mask" aria-label="收起导航" @click="collapsed = false"></button>
+    <div class="main-shell" :inert="mobile && collapsed">
       <header class="topbar">
         <div class="breadcrumbs">
           <el-button
-            class="mobile-toggle"
+            class="nav-toggle"
             text
             :icon="Fold"
             aria-label="切换导航"
-            @click="collapsed = !collapsed"
-          /><span>Reconis</span><el-icon><ArrowRight /></el-icon
+            :aria-expanded="mobile ? collapsed : !compact"
+            aria-controls="workspace-navigation"
+            @click="toggleNavigation"
+          /><span>工作空间</span><el-icon><ArrowRight /></el-icon
           ><strong>{{ session.consumer && route.path === '/' ? '我的概览' : route.meta.title }}</strong>
         </div>
         <div class="topbar-right">
@@ -213,9 +267,15 @@ async function logout() {
           />
         </div>
       </header>
-      <main class="workspace"><router-view :key="route.path" /></main>
+      <main id="workspace-content" ref="workspace" class="workspace" tabindex="-1">
+        <router-view v-slot="{ Component }">
+          <Transition name="page-switch" mode="out-in" @after-enter="focusWorkspace">
+            <component :is="Component" :key="route.path" />
+          </Transition>
+        </router-view>
+      </main>
       <footer class="page-footer">
-        <span>© 2026 Reconis</span><span>校园收款与对账</span>
+        <span>Reconis 校园支付对账</span><GithubLink label />
       </footer>
     </div>
   </div>

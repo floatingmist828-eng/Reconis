@@ -49,6 +49,9 @@ export function codeName(value: unknown) {
   return names[String(value)] || String(value || "—");
 }
 let token = "";
+let sessionRevision = 0;
+let signingOut = false;
+let signOutPending = false;
 async function csrf() {
   const r = await fetch("/api/v1/auth/csrf", { credentials: "same-origin" });
   if (!r.ok) throw new Error("服务尚未就绪，请确认后端和 SQL Server 已启动");
@@ -58,6 +61,9 @@ export async function api<T = any>(
   path: string,
   options: { method?: string; body?: any; quiet?: boolean } = {},
 ): Promise<T> {
+  const revision = sessionRevision;
+  const startedDuringSignOut = signingOut;
+  const startedDuringSignOutRequest = signOutPending;
   try {
     const method = options.method || "GET";
     if (method !== "GET" && !token) await csrf();
@@ -79,6 +85,9 @@ export async function api<T = any>(
     });
     const raw = await r.text();
     if (r.status === 401 && !path.startsWith('/auth/')) {
+      if (signingOut || startedDuringSignOut || revision !== sessionRevision) {
+        throw Object.assign(new Error('会话已退出'), { reported: true, obsoleteSession: true });
+      }
       token = '';
       window.location.replace('/login?expired=1');
       throw new Error('登录已失效，请重新登录');
@@ -94,9 +103,14 @@ export async function api<T = any>(
       const trace = r.status >= 500 && result.requestId ? `（请求编号：${result.requestId}）` : "";
       throw new Error((result.message || `请求未完成 (${r.status})`) + trace);
     }
+    if ((path === '/auth/login' && method === 'POST') ||
+        (path === '/auth/me' && result.data && signingOut && !startedDuringSignOutRequest && revision === sessionRevision)) {
+      signingOut = false;
+      sessionRevision++;
+    }
     return result.data as T;
   } catch (e: any) {
-    if (!options.quiet) {
+    if (!options.quiet && !e.obsoleteSession) {
       ElMessage.error(e.message || "网络连接失败");
       e.reported = true;
     }
@@ -105,6 +119,20 @@ export async function api<T = any>(
 }
 export const post = (path: string, body: any = {}) =>
   api(path, { method: "POST", body });
+export async function signOut() {
+  signingOut = true;
+  signOutPending = true;
+  sessionRevision++;
+  try {
+    await post('/auth/logout');
+    token = '';
+  } catch (error) {
+    signingOut = false;
+    throw error;
+  } finally {
+    signOutPending = false;
+  }
+}
 export const patch = (path: string, body: any) =>
   api(path, { method: "PATCH", body });
 export function query(values: Row) {

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6.3in" height="5.27778in" viewBox="0 0 453.6 380">
+<rect width="453.6" height="380" fill="white"/>
+<rect x="10" y="12" width="433" height="56" rx="3" fill="#f2f5f8" stroke="#1d4876" stroke-width="0.8"/>
+<text x="20" y="28" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">浏览器 · Vue 3 单页应用</text>
+<text x="20" y="47" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">公开首页 / 登录 / 角色工作台 / 业务页面 / 分析图表</text>
+<polyline points="226,68 226,94" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="226,94 223.7802594651724,89.51973751237237 228.2197405348276,89.51973751237237" fill="#1d4876"/>
+<rect x="166.478125" y="74.6" width="119.04374999999999" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="226" y="81" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">同源 HTTP · Session / CSRF</text>
+<rect x="10" y="96" width="433" height="96" rx="3" fill="#f2f5f8" stroke="#1d4876" stroke-width="0.8"/>
+<text x="20" y="112" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">Spring Boot 模块化单体</text>
+<text x="20" y="131" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">身份与权限     商户与订单     支付与退款</text>
+<text x="20" y="145" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">导入与对账     差错与证据     分析与报告</text>
+<text x="20" y="159" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">MyBatis 数据访问   ·   定时查询与账单任务</text>
+<polyline points="90,192 90,222" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="90,222 87.7802594651724,217.5197375123724 92.2197405348276,217.5197375123724" fill="#1d4876"/>
+<polyline points="226,192 226,222" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="226,222 223.7802594651724,217.5197375123724 228.2197405348276,217.5197375123724" fill="#1d4876"/>
+<polyline points="365,192 365,222" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="365,222 362.7802594651724,217.5197375123724 367.2197405348276,217.5197375123724" fill="#1d4876"/>
+<rect x="10" y="224" width="137" height="99" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="240" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">SQL Server 2022</text>
+<text x="20" y="259" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">15 张关系表</text>
+<text x="20" y="273" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">过程 / 函数 / 触发器</text>
+<text x="20" y="287" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">视图 / 索引 / 中文全文</text>
+<rect x="158" y="224" width="137" height="99" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="168" y="240" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">环境文件目录</text>
+<text x="168" y="259" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">原账单 / 渠道响应</text>
+<text x="168" y="273" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">证据附件 / 导出文件</text>
+<text x="168" y="287" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">SHA256 + 范围授权</text>
+<rect x="306" y="224" width="137" height="99" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="316" y="240" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">渠道适配</text>
+<text x="316" y="259" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">DEMO 教学模拟</text>
+<text x="316" y="273" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">支付宝沙箱 SDK</text>
+<text x="316" y="287" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">主动查询 / 退款</text>
+<text x="10" y="345" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">DEMO 与沙箱使用独立数据库和文件目录。</text>
+<text x="10" y="359" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">真实公网签名回调尚未联调；沙箱账单模板不进入业务对账。</text>
+</svg>

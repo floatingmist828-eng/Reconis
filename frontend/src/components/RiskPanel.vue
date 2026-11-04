@@ -98,11 +98,11 @@ function closedMinutes(row: Row): string {
 <style scoped>
 .risk-panel { margin: 23px 0; }
 .risk-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.risk-metric { display:flex; flex-direction:column; align-items:flex-start; text-align:left; gap:10px; padding:18px; background:#f5f8f3; border:1px solid #e1e8df; border-radius:12px; cursor:pointer; color:inherit; font:inherit; }
-.risk-metric:hover { border-color:#3b8b71; }
-.risk-metric:focus-visible { outline:2px solid #3b8b71; outline-offset:2px; }
+.risk-metric { display:flex; flex-direction:column; align-items:flex-start; text-align:left; gap:10px; padding:20px; background:var(--canvas); border:1px solid var(--line); border-radius:10px; cursor:pointer; color:inherit; font:inherit; transition:border-color .15s, background-color .15s; }
+.risk-metric:hover { border-color:#aabfea; background:#f0f4ff; }
+.risk-metric:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
 .risk-metric strong { font-size:23px; overflow-wrap:anywhere; }
-.risk-metric small { color:#68766a; line-height:1.5; }
+.risk-metric small { color:var(--muted); line-height:1.5; }
 .risk-columns { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:24px; }
 h3 { margin-top:24px; }
 @media(max-width:900px) { .risk-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } .risk-columns { grid-template-columns:minmax(0,1fr); } }

@@ -1,0 +1,102 @@
+{
+  "schema_captured_at": "2026-11-04T17:55:41.2063506+08:00",
+  "font": "Microsoft YaHei",
+  "figures": [
+    {
+      "name": "architecture",
+      "width_inches": 6.3,
+      "height_inches": 5.278,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 1583
+    },
+    {
+      "name": "function-map",
+      "width_inches": 6.3,
+      "height_inches": 5.375,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 1613
+    },
+    {
+      "name": "er-overview",
+      "width_inches": 6.3,
+      "height_inches": 7.528,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 2258
+    },
+    {
+      "name": "er-identity",
+      "width_inches": 6.3,
+      "height_inches": 7.083,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 2125
+    },
+    {
+      "name": "er-funds",
+      "width_inches": 6.3,
+      "height_inches": 8.611,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 2583
+    },
+    {
+      "name": "er-reconciliation",
+      "width_inches": 6.3,
+      "height_inches": 8.361,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 2508
+    },
+    {
+      "name": "payment-flow",
+      "width_inches": 6.3,
+      "height_inches": 7.236,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 2171
+    },
+    {
+      "name": "refund-flow",
+      "width_inches": 6.3,
+      "height_inches": 7.403,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 2221
+    },
+    {
+      "name": "reconciliation-flow",
+      "width_inches": 6.3,
+      "height_inches": 8.028,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 2408
+    },
+    {
+      "name": "case-state",
+      "width_inches": 6.3,
+      "height_inches": 6.083,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 1825
+    },
+    {
+      "name": "analytics-lineage",
+      "width_inches": 6.3,
+      "height_inches": 6.556,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 1967
+    },
+    {
+      "name": "two-clock-timeline",
+      "width_inches": 6.3,
+      "height_inches": 4.583,
+      "dpi": 300,
+      "width_px": 1890,
+      "height_px": 1375
+    }
+  ]
+}

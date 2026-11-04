@@ -2,6 +2,7 @@
 import { ref, reactive, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import { Upload, DocumentChecked, User, ArrowRight, Search } from "@element-plus/icons-vue";
 import {
   codeName,
   api,
@@ -16,12 +17,14 @@ import {
 } from "../api";
 import { useSession } from "../stores/session";
 import StatusTag from "../components/StatusTag.vue";
+import ListFeedback from "../components/ListFeedback.vue";
 const route = useRoute(),
   router = useRouter(),
   session = useSession(),
   list = ref<Row>({ items: [], total: 0 }),
   filters = reactive({ q: "", page: 1 }),
   busy = ref(false),
+  failed = ref(false),
   importing = ref(false),
   merchants = ref<Row[]>([]),
   file = ref<File>(),
@@ -99,8 +102,12 @@ const classifications = [
 ];
 async function load() {
   busy.value = true;
+  failed.value = false;
   try {
     list.value = await api("/reconciliation/batches?" + query(filters));
+  } catch (error) {
+    failed.value = true;
+    throw error;
   } finally {
     busy.value = false;
   }
@@ -183,41 +190,50 @@ async function compare() {
 }
 </script>
 <template>
-  <div>
+  <div class="reconciliation-workspace">
     <div class="page-heading">
       <div>
-        <div class="eyebrow">RECONCILIATION WORKSPACE</div>
         <h1>账单与对账</h1>
-        <p>导入账单，核对差异，查看每次结果。</p>
+        <p>导入渠道账单，核对收款与退款</p>
       </div>
-      <el-button v-if="canImport" type="primary" @click="startImport"
-        >＋ 导入渠道账单</el-button
+      <el-button v-if="canImport" type="primary" :icon="Upload" @click="startImport"
+        >导入渠道账单</el-button
       >
     </div>
-    <section class="panel" v-loading="busy">
+    <div class="reconciliation-flow" aria-label="对账处理流程">
+      <div class="flow-step"><span class="flow-icon"><el-icon><Upload /></el-icon></span><div><b>导入账单</b><small>预览并校验</small></div></div>
+      <el-icon class="flow-arrow"><ArrowRight /></el-icon>
+      <div class="flow-step"><span class="flow-icon"><el-icon><DocumentChecked /></el-icon></span><div><b>逐笔核对</b><small>查看两侧差异</small></div></div>
+      <el-icon class="flow-arrow"><ArrowRight /></el-icon>
+      <router-link to="/cases" class="flow-step flow-link"><span class="flow-icon"><el-icon><User /></el-icon></span><div><b>处理差错</b><small>分派与复核</small></div><el-icon class="flow-link-arrow"><ArrowRight /></el-icon></router-link>
+    </div>
+    <section class="panel reconciliation-list" v-loading="busy" :aria-busy="busy">
       <div class="table-toolbar">
+        <h2>对账批次 <span class="reconciliation-count">{{ list.total }}</span></h2><span class="grow"></span>
         <el-input
           v-model="filters.q"
+          :prefix-icon="Search"
           placeholder="搜索批次编号"
           clearable
-          @keyup.enter="action(load)"
-        /><el-button
+          aria-label="批次编号"
+          @keyup.enter="filters.page = 1; action(load)"
+        /><el-button type="primary"
           @click="
             filters.page = 1;
             action(load);
           "
           >查询批次</el-button
-        ><span class="grow"></span
-        ><span class="muted">{{ list.total }} 个历史批次</span>
+        >
       </div>
-      <el-table :data="list.items"
+      <ListFeedback :failed="failed" :busy="busy" :has-previous="!!list.items.length" noun="对账批次" @retry="action(load)" />
+      <el-table :data="list.items" class="reconciliation-desktop"
         ><el-table-column label="对账批次" min-width="230"
           ><template #default="{ row }"
             ><b class="mono">{{ row.batchNo }}</b
             ><span class="subline">{{
               row.statementSourceBatchId
-                ? "复用原始输入 · 历史重跑"
-                : "首次导入 · " + codeName(row.sourceType)
+                ? "历史重跑"
+                : codeName(row.sourceType)
             }}</span></template
           ></el-table-column
         ><el-table-column label="归属范围" min-width="135"
@@ -257,8 +273,18 @@ async function compare() {
               >
             </div></template
           ></el-table-column
-        ></el-table
+        ><template #empty><el-empty :description="busy ? '正在加载批次' : failed ? '批次暂不可用' : filters.q ? '没有找到该批次' : '尚未导入账单'" :image-size="68"><el-button v-if="filters.q && !busy && !failed" @click="filters.q = ''; filters.page = 1; action(load)">清除筛选</el-button><el-button v-else-if="canImport && !busy && !failed" @click="startImport">导入渠道账单</el-button></el-empty></template></el-table
       >
+      <div class="reconciliation-mobile">
+        <article v-for="row in list.items" :key="row.id" class="batch-mobile-row">
+          <header><b>{{ row.merchantName || '平台待核验归属' }}</b><StatusTag :value="row.status" /></header>
+          <p class="batch-mobile-period">{{ time(row.periodStart).split(' ')[0] }} — {{ time(new Date(new Date(row.periodEnd).getTime() - 1).toISOString()).split(' ')[0] }}</p>
+          <p class="batch-mobile-number">{{ row.batchNo }}</p>
+          <div class="batch-mobile-tags"><StatusTag :value="row.completeness" /><span>{{ row.statementSourceBatchId ? '历史重跑' : codeName(row.sourceType) }}</span></div>
+          <footer><el-button type="primary" plain @click="action(() => open(row))">查看结果</el-button><el-button v-if="canRun(row) && ['READY', 'FAILED'].includes(row.status)" @click="action(() => run(row))">执行对账</el-button><el-button v-if="canRun(row) && row.status === 'COMPLETED'" @click="action(() => run(row, true))">重新核对</el-button></footer>
+        </article>
+        <el-empty v-if="!list.items.length" :description="busy ? '正在加载批次' : failed ? '批次暂不可用' : filters.q ? '没有找到该批次' : '尚未导入账单'" :image-size="68"><el-button v-if="filters.q && !busy && !failed" @click="filters.q = ''; filters.page = 1; action(load)">清除筛选</el-button><el-button v-else-if="canImport && !busy && !failed" @click="startImport">导入渠道账单</el-button></el-empty>
+      </div>
       <div class="pagination">
         <el-pagination
           v-model:current-page="filters.page"
@@ -281,7 +307,7 @@ async function compare() {
         >
       </div>
       <div v-if="identifyBatch" class="help-note">
-        重新读取原件并核对当前交易关联，创建或复用独立输入批次；历史账单、对账结果与工单保持可追溯。
+        按当前交易信息重新识别账单归属，保留原始账单与历史结果。
       </div>
       <div v-else class="help-note">
         支持标准 XLSX/XML（金额为分、时间带时区），以及支付宝中文交易明细
@@ -659,3 +685,36 @@ async function compare() {
     >
   </div>
 </template>
+<style scoped>
+.reconciliation-flow { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 24px; padding: 10px 0 28px; margin-bottom: 4px; }
+.flow-step { display: flex; align-items: center; gap: 13px; min-width: 0; }
+.flow-icon { display: grid; place-items: center; background: #e8eefb; color: #5478c6; width: 42px; height: 42px; border-radius: 50%; font-size: 20px; flex: none; }
+.flow-step b { display: block; font-weight: 550; font-size: 14px; }
+.flow-step small { display: block; font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+.flow-arrow { color: #a4b6d7; }
+.flow-link { border-radius: 8px; }
+.flow-link-arrow { margin-left: auto; color: #8da7d7; transition: transform .18s; }
+.flow-link:hover b { color: var(--brand); }
+.flow-link:hover .flow-link-arrow { transform: translateX(3px); }
+.reconciliation-count { color: #5d7399; background: #f2f5fc; padding: 6px 10px; border-radius: 6px; font-size: 12px; white-space: nowrap; }
+.reconciliation-list { padding: 0; overflow: hidden; }
+.reconciliation-list > .table-toolbar { padding: 24px 26px; margin: 0; }
+.reconciliation-list > .table-toolbar h2 { font-size: 17px; display: flex; align-items: center; gap: 10px; }
+.reconciliation-list > .table-toolbar :deep(.el-input) { width: 250px; }
+.reconciliation-list > .pagination { margin: 0; padding: 20px 26px; border-top: 1px solid var(--line); }
+.reconciliation-desktop :deep(.cell) { padding-inline: 22px; }
+.reconciliation-desktop :deep(td.el-table__cell) { height: 86px; }
+.reconciliation-desktop :deep(.el-table__header-wrapper) { border-radius: 0; }
+.reconciliation-mobile { display: none; }
+.batch-mobile-row { padding: 22px 20px; border-top: 1px solid var(--line); }
+.batch-mobile-row header { display: flex; gap: 12px; align-items: flex-start; }
+.batch-mobile-row header b { min-width: 0; flex: 1; overflow-wrap: anywhere; font-size: 15px; line-height: 1.7; }
+.batch-mobile-row header :deep(.el-tag) { flex: none; }
+.batch-mobile-period { font-size: 14px; font-weight: 500; margin: 13px 0 7px; font-variant-numeric: tabular-nums; }
+.batch-mobile-number { margin: 0; font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
+.batch-mobile-tags { margin-top: 16px; display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--muted); }
+.batch-mobile-row footer { display: flex; gap: 8px; margin-top: 19px; flex-wrap: wrap; }
+@media (max-width: 1100px) { .reconciliation-flow { gap: 12px; } .flow-step { gap: 10px; align-items: flex-start; } .flow-step b { font-size: 13px; } .flow-icon { width: 34px; height: 34px; font-size: 17px; } .flow-step small { font-size: 11px; } }
+@media (max-width: 760px) { .reconciliation-flow { gap: 8px; padding: 0 0 22px; } .flow-step { flex-direction: column; gap: 8px; } .flow-arrow { font-size: 12px; } .flow-step small, .flow-link-arrow { display: none; } .flow-step b { font-size: 12px; } .flow-icon { width: 32px; height: 32px; font-size: 16px; } .reconciliation-desktop { display: none; } .reconciliation-mobile { display: block; } .reconciliation-list > .table-toolbar { padding: 20px; } .reconciliation-list > .table-toolbar h2 { flex-basis: 100%; margin-bottom: 5px; } .reconciliation-list > .table-toolbar :deep(.el-input) { width: auto; flex: 1; min-width: 0; } .reconciliation-list > .table-toolbar > .grow { display: none; } .reconciliation-list > .pagination { padding: 20px 14px; } }
+@media (prefers-reduced-motion: reduce) { .flow-link-arrow { transition: none; } }
+</style>

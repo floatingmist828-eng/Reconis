@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6.3in" height="7.52778in" viewBox="0 0 453.6 542">
+<rect width="453.6" height="542" fill="white"/>
+<text x="79" y="14" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="700" fill="#1d4876">身份与组织</text>
+<text x="227" y="14" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="700" fill="#1d4876">交易与资金</text>
+<text x="375" y="14" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="700" fill="#1d4876">对账与协作</text>
+<rect x="10" y="32" width="137" height="51" rx="3" fill="#f2f5f8" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="18" y="47" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">商户</text>
+<text x="18" y="66" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">merchant</text>
+<rect x="10" y="109" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="18" y="124" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">门店</text>
+<text x="18" y="143" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">store</text>
+<rect x="10" y="186" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="18" y="201" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">用户</text>
+<text x="18" y="220" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">app_user</text>
+<rect x="10" y="263" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="18" y="278" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">成员关系</text>
+<text x="18" y="297" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">merchant_member</text>
+<rect x="10" y="340" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="18" y="355" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">审计日志</text>
+<text x="18" y="374" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">audit_log</text>
+<rect x="158" y="32" width="137" height="51" rx="3" fill="#f2f5f8" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="166" y="47" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">订单</text>
+<text x="166" y="66" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">business_order</text>
+<rect x="158" y="109" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="166" y="124" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">支付尝试</text>
+<text x="166" y="143" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">payment_attempt</text>
+<rect x="158" y="186" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="166" y="201" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">退款申请</text>
+<text x="166" y="220" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">refund_request</text>
+<rect x="158" y="263" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="166" y="278" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">资金事实</text>
+<text x="166" y="297" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">transaction_entry</text>
+<rect x="158" y="340" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="166" y="355" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">订单明细</text>
+<text x="166" y="374" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">order_item</text>
+<rect x="158" y="417" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="166" y="432" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">支付通知</text>
+<text x="166" y="451" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">payment_notification</text>
+<rect x="306" y="32" width="137" height="51" rx="3" fill="#f2f5f8" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="314" y="47" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">对账批次 / 任务</text>
+<text x="314" y="66" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">reconciliation_batch</text>
+<rect x="306" y="109" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="314" y="124" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">账单原始行</text>
+<text x="314" y="143" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">statement_line</text>
+<rect x="306" y="186" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="314" y="201" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">对账结果</text>
+<text x="314" y="220" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">reconciliation_result</text>
+<rect x="306" y="263" width="137" height="51" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="314" y="278" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">差错工单</text>
+<text x="314" y="297" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">exception_task</text>
+<polyline points="78,83 78,109" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="78,109 75.7802594651724,104.51973751237237 80.2197405348276,104.51973751237237" fill="#1d4876"/>
+<rect x="92.16" y="89.6" width="19.68" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="102" y="96.0" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.5" font-weight="400" fill="#526174">1:N</text>
+<polyline points="78,237 78,263" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="78,263 75.7802594651724,258.5197375123724 80.2197405348276,258.5197375123724" fill="#1d4876"/>
+<rect x="92.16" y="243.6" width="19.68" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="102" y="250.0" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.5" font-weight="400" fill="#526174">1:N</text>
+<polyline points="226,83 226,109" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="226,109 223.7802594651724,104.51973751237237 228.2197405348276,104.51973751237237" fill="#1d4876"/>
+<rect x="240.16" y="89.6" width="19.68" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="250" y="96.0" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.5" font-weight="400" fill="#526174">1:N</text>
+<polyline points="226,160 226,186" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="226,186 223.7802594651724,181.5197375123724 228.2197405348276,181.5197375123724" fill="#1d4876"/>
+<rect x="240.16" y="166.6" width="19.68" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="250" y="173.0" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.5" font-weight="400" fill="#526174">1:N</text>
+<polyline points="226,237 226,263" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="226,263 223.7802594651724,258.5197375123724 228.2197405348276,258.5197375123724" fill="#1d4876"/>
+<rect x="232.12" y="243.6" width="35.76" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="250" y="250.0" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.5" font-weight="400" fill="#526174">0..1:0..1</text>
+<polyline points="374,83 374,109" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="374,109 371.7802594651724,104.51973751237237 376.2197405348276,104.51973751237237" fill="#1d4876"/>
+<rect x="388.16" y="89.6" width="19.68" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="398" y="96.0" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.5" font-weight="400" fill="#526174">1:N</text>
+<polyline points="374,160 374,186" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="374,186 371.7802594651724,181.5197375123724 376.2197405348276,181.5197375123724" fill="#1d4876"/>
+<rect x="383.72" y="166.6" width="28.56" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="398" y="173.0" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.5" font-weight="400" fill="#526174">0..1:N</text>
+<polyline points="374,237 374,263" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="374,263 371.7802594651724,258.5197375123724 376.2197405348276,258.5197375123724" fill="#1d4876"/>
+<rect x="388.16" y="243.6" width="19.68" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="398" y="250.0" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.5" font-weight="400" fill="#526174">1:N</text>
+<polyline points="147,134 152,134 152,57 158,57" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="158,57 153.5197375123724,59.2197405348276 153.5197375123724,54.7802594651724" fill="#1d4876"/>
+<rect x="142.28" y="89.6" width="19.439999999999998" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="152" y="96" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.2" font-weight="400" fill="#526174">1:N</text>
+<text x="10" y="500" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">展示 15 张真实表及核心关系；箭头由被引用表指向引用表。</text>
+<text x="10" y="514" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">总览省略人员、审计、自引用等连线；详细外键与可空性见分域图和附录。</text>
+</svg>

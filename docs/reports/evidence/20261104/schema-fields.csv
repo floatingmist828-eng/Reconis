@@ -1,0 +1,208 @@
+﻿"table","ordinal","column","sql_type","nullable","keys","default"
+"app_user","1","id","BIGINT","False","PK; IDENTITY",
+"app_user","2","username","NVARCHAR(64)","False","UNIQUE(username)",
+"app_user","3","password_hash","VARCHAR(100)","False","",
+"app_user","4","display_name","NVARCHAR(80)","False","",
+"app_user","5","platform_role","VARCHAR(24)","False","","('MEMBER')"
+"app_user","6","status","VARCHAR(16)","False","","('PENDING')"
+"app_user","7","reviewed_by","BIGINT","True","FK app_user.id",
+"app_user","8","reviewed_at","DATETIME2(3)","True","",
+"app_user","9","review_reason","NVARCHAR(500)","True","",
+"app_user","10","created_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"app_user","11","updated_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"app_user","12","version","ROWVERSION (BINARY(8))","False","",
+"audit_log","1","id","BIGINT","False","PK; IDENTITY",
+"audit_log","2","event_category","VARCHAR(24)","False","",
+"audit_log","3","actor_user_id","BIGINT","True","FK app_user.id",
+"audit_log","4","scope_merchant_id","BIGINT","True","FK merchant.id",
+"audit_log","5","object_type","VARCHAR(60)","True","",
+"audit_log","6","object_id","BIGINT","True","",
+"audit_log","7","action","NVARCHAR(100)","False","",
+"audit_log","8","result","VARCHAR(24)","False","",
+"audit_log","9","summary","NVARCHAR(1000)","True","",
+"audit_log","10","before_json","NVARCHAR(MAX)","True","",
+"audit_log","11","after_json","NVARCHAR(MAX)","True","",
+"audit_log","12","occurred_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"audit_log","13","request_id","VARCHAR(36)","True","",
+"business_order","1","id","BIGINT","False","PK; IDENTITY",
+"business_order","2","order_no","VARCHAR(60)","False","UNIQUE(order_no)",
+"business_order","3","store_id","BIGINT","False","FK store.id",
+"business_order","4","consumer_id","BIGINT","True","FK app_user.id",
+"business_order","5","created_by","BIGINT","False","FK app_user.id",
+"business_order","6","client_request_id","VARCHAR(36)","False","UNIQUE(client_request_id)",
+"business_order","7","subject","NVARCHAR(160)","False","",
+"business_order","8","remark","NVARCHAR(1000)","True","",
+"business_order","9","status","VARCHAR(24)","False","","('DRAFT')"
+"business_order","10","created_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"business_order","11","updated_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"business_order","12","version","ROWVERSION (BINARY(8))","False","",
+"exception_task","1","id","BIGINT","False","PK; IDENTITY",
+"exception_task","2","case_no","VARCHAR(64)","False","UNIQUE(case_no)",
+"exception_task","3","case_key","VARCHAR(240)","False","UNIQUE(case_key)",
+"exception_task","4","origin_result_id","BIGINT","False","UNIQUE(origin_result_id); FK reconciliation_result.id",
+"exception_task","5","latest_result_id","BIGINT","False","FK reconciliation_result.id",
+"exception_task","6","assignee_id","BIGINT","True","FK app_user.id",
+"exception_task","7","status","VARCHAR(24)","False","","('OPEN')"
+"exception_task","8","title","NVARCHAR(200)","False","",
+"exception_task","9","description","NVARCHAR(MAX)","False","",
+"exception_task","10","analysis_text","NVARCHAR(MAX)","True","",
+"exception_task","11","resolution_text","NVARCHAR(MAX)","True","",
+"exception_task","12","resolution_code","VARCHAR(40)","True","",
+"exception_task","13","evidence_file_uri","NVARCHAR(300)","True","",
+"exception_task","14","submitted_by","BIGINT","True","FK app_user.id",
+"exception_task","15","reviewed_by","BIGINT","True","FK app_user.id",
+"exception_task","16","due_at","DATETIME2(3)","True","",
+"exception_task","17","closed_at","DATETIME2(3)","True","",
+"exception_task","18","created_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"exception_task","19","updated_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"exception_task","20","version","ROWVERSION (BINARY(8))","False","",
+"merchant","1","id","BIGINT","False","PK; IDENTITY",
+"merchant","2","merchant_code","VARCHAR(32)","False","UNIQUE(merchant_code)",
+"merchant","3","name","NVARCHAR(100)","False","",
+"merchant","4","category_code","NVARCHAR(30)","False","",
+"merchant","5","contact","NVARCHAR(150)","True","",
+"merchant","6","status","VARCHAR(16)","False","","('PENDING')"
+"merchant","7","proposed_name","NVARCHAR(100)","True","",
+"merchant","8","proposed_category","NVARCHAR(30)","True","",
+"merchant","9","proposed_contact","NVARCHAR(150)","True","",
+"merchant","10","reviewed_by","BIGINT","True","FK app_user.id",
+"merchant","11","reviewed_at","DATETIME2(3)","True","",
+"merchant","12","review_reason","NVARCHAR(500)","True","",
+"merchant","13","created_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"merchant","14","updated_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"merchant","15","version","ROWVERSION (BINARY(8))","False","",
+"merchant_member","1","id","BIGINT","False","PK; IDENTITY",
+"merchant_member","2","merchant_id","BIGINT","False","UNIQUE(merchant_id,user_id); FK merchant.id",
+"merchant_member","3","user_id","BIGINT","False","UNIQUE(merchant_id,user_id); FK app_user.id",
+"merchant_member","4","role_code","VARCHAR(16)","False","",
+"merchant_member","5","status","VARCHAR(16)","False","","('ACTIVE')"
+"merchant_member","6","created_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"order_item","1","id","BIGINT","False","PK; IDENTITY",
+"order_item","2","order_id","BIGINT","False","UNIQUE(order_id,line_no); FK business_order.id",
+"order_item","3","line_no","INT","False","UNIQUE(order_id,line_no)",
+"order_item","4","item_name","NVARCHAR(120)","False","",
+"order_item","5","category_code","NVARCHAR(30)","False","","(N'其他')"
+"order_item","6","quantity","INT","False","",
+"order_item","7","unit_price_cent","BIGINT","False","",
+"payment_attempt","1","id","BIGINT","False","PK; IDENTITY",
+"payment_attempt","2","order_id","BIGINT","False","UNIQUE(order_id) WHERE ([is_primary]=(1)); FK business_order.id",
+"payment_attempt","3","client_request_id","VARCHAR(36)","False","UNIQUE(client_request_id)",
+"payment_attempt","4","out_trade_no","VARCHAR(64)","False","UNIQUE(out_trade_no)",
+"payment_attempt","5","channel_code","VARCHAR(16)","False","","('ALIPAY')"
+"payment_attempt","6","channel_env","VARCHAR(24)","False","UNIQUE(channel_env,app_id,channel_trade_no) WHERE ([channel_trade_no] IS NOT NULL)",
+"payment_attempt","7","app_id","VARCHAR(64)","False","UNIQUE(channel_env,app_id,channel_trade_no) WHERE ([channel_trade_no] IS NOT NULL)",
+"payment_attempt","8","seller_id","VARCHAR(64)","False","",
+"payment_attempt","9","channel_trade_no","VARCHAR(100)","True","UNIQUE(channel_env,app_id,channel_trade_no) WHERE ([channel_trade_no] IS NOT NULL)",
+"payment_attempt","10","status","VARCHAR(16)","False","","('CREATED')"
+"payment_attempt","11","is_primary","BIT","False","","((0))"
+"payment_attempt","12","next_query_at","DATETIME2(3)","True","",
+"payment_attempt","13","query_count","INT","False","","((0))"
+"payment_attempt","14","confirmed_at","DATETIME2(3)","True","",
+"payment_attempt","15","created_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"payment_attempt","16","updated_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"payment_attempt","17","qr_code","NVARCHAR(2048)","True","",
+"payment_attempt","18","last_result_code","VARCHAR(64)","True","",
+"payment_attempt","19","last_result_message","NVARCHAR(300)","True","",
+"payment_attempt","20","next_action","VARCHAR(32)","True","",
+"payment_attempt","21","precreate_count","INT","False","","((0))"
+"payment_attempt","22","dispatch_token","VARCHAR(36)","True","",
+"payment_attempt","23","dispatch_lease_until","DATETIME2(3)","True","",
+"payment_notification","1","id","BIGINT","False","PK; IDENTITY",
+"payment_notification","2","payment_id","BIGINT","True","FK payment_attempt.id",
+"payment_notification","3","notify_id","VARCHAR(100)","True","",
+"payment_notification","4","payload_file_uri","NVARCHAR(300)","True","",
+"payment_notification","5","payload_hash","CHAR(64)","False","",
+"payment_notification","6","signature_valid","BIT","False","",
+"payment_notification","7","handling_result","NVARCHAR(300)","False","",
+"payment_notification","8","received_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"payment_notification","9","request_id","VARCHAR(36)","False","",
+"reconciliation_batch","1","id","BIGINT","False","PK; IDENTITY",
+"reconciliation_batch","2","batch_no","VARCHAR(64)","False","UNIQUE(batch_no)",
+"reconciliation_batch","3","scope_type","VARCHAR(24)","False","UNIQUE(scope_type,merchant_id,file_sha256,ingest_options_sha256) WHERE ([file_sha256] IS NOT NULL AND [statement_source_batch_id] IS NULL)",
+"reconciliation_batch","4","merchant_id","BIGINT","True","UNIQUE(scope_type,merchant_id,file_sha256,ingest_options_sha256) WHERE ([file_sha256] IS NOT NULL AND [statement_source_batch_id] IS NULL); FK merchant.id",
+"reconciliation_batch","5","period_start","DATETIME2(3)","False","",
+"reconciliation_batch","6","period_end","DATETIME2(3)","False","",
+"reconciliation_batch","7","source_type","VARCHAR(24)","False","",
+"reconciliation_batch","8","statement_source_batch_id","BIGINT","True","FK reconciliation_batch.id",
+"reconciliation_batch","9","baseline_batch_id","BIGINT","True","FK reconciliation_batch.id",
+"reconciliation_batch","10","source_file_uri","NVARCHAR(300)","True","",
+"reconciliation_batch","11","file_sha256","CHAR(64)","True","UNIQUE(scope_type,merchant_id,file_sha256,ingest_options_sha256) WHERE ([file_sha256] IS NOT NULL AND [statement_source_batch_id] IS NULL)",
+"reconciliation_batch","12","ingest_options_sha256","CHAR(64)","True","UNIQUE(scope_type,merchant_id,file_sha256,ingest_options_sha256) WHERE ([file_sha256] IS NOT NULL AND [statement_source_batch_id] IS NULL)",
+"reconciliation_batch","13","completeness","VARCHAR(24)","False","","('UNKNOWN')"
+"reconciliation_batch","14","status","VARCHAR(16)","False","","('READY')"
+"reconciliation_batch","15","observed_at","DATETIME2(3)","True","",
+"reconciliation_batch","16","started_at","DATETIME2(3)","True","",
+"reconciliation_batch","17","finished_at","DATETIME2(3)","True","",
+"reconciliation_batch","18","created_by","BIGINT","True","FK app_user.id",
+"reconciliation_batch","19","created_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"reconciliation_batch","20","acquisition_key","CHAR(64)","True","UNIQUE(acquisition_key) WHERE ([acquisition_key] IS NOT NULL)",
+"reconciliation_batch","21","acquisition_state","VARCHAR(24)","True","",
+"reconciliation_batch","22","acquisition_env","VARCHAR(20)","True","",
+"reconciliation_batch","23","acquisition_app","VARCHAR(64)","True","",
+"reconciliation_batch","24","acquisition_attempts","INT","False","","((0))"
+"reconciliation_batch","25","acquisition_generation","INT","False","","((1))"
+"reconciliation_batch","26","acquisition_token","VARCHAR(36)","True","",
+"reconciliation_batch","27","acquisition_lease_until","DATETIME2(3)","True","",
+"reconciliation_batch","28","acquisition_next_at","DATETIME2(3)","True","",
+"reconciliation_batch","29","acquisition_message","NVARCHAR(500)","True","",
+"reconciliation_batch","30","acquisition_format","VARCHAR(8)","True","",
+"reconciliation_batch","31","acquisition_result","NVARCHAR(MAX)","True","",
+"reconciliation_batch","32","acquisition_daily","BIT","False","","((0))"
+"reconciliation_batch","33","acquisition_owner","BIGINT","True","FK app_user.id",
+"reconciliation_result","1","id","BIGINT","False","PK; IDENTITY",
+"reconciliation_result","2","batch_id","BIGINT","False","UNIQUE(batch_id,result_key); FK reconciliation_batch.id",
+"reconciliation_result","3","result_key","VARCHAR(180)","False","UNIQUE(batch_id,result_key)",
+"reconciliation_result","4","source_event_key","VARCHAR(150)","False","",
+"reconciliation_result","5","entry_id","BIGINT","True","FK transaction_entry.id",
+"reconciliation_result","6","statement_line_id","BIGINT","True","FK statement_line.id",
+"reconciliation_result","7","classification","VARCHAR(32)","False","",
+"reconciliation_result","8","reason_code","VARCHAR(60)","False","",
+"reconciliation_result","9","detected_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"refund_request","1","id","BIGINT","False","PK; IDENTITY",
+"refund_request","2","payment_id","BIGINT","False","FK payment_attempt.id",
+"refund_request","3","client_request_id","VARCHAR(36)","False","UNIQUE(client_request_id)",
+"refund_request","4","out_request_no","VARCHAR(64)","False","UNIQUE(out_request_no)",
+"refund_request","5","amount_cent","BIGINT","False","",
+"refund_request","6","reason","NVARCHAR(1000)","False","",
+"refund_request","7","status","VARCHAR(24)","False","","('PENDING_REVIEW')"
+"refund_request","8","applicant_id","BIGINT","False","FK app_user.id",
+"refund_request","9","reviewed_by","BIGINT","True","FK app_user.id",
+"refund_request","10","reviewed_at","DATETIME2(3)","True","",
+"refund_request","11","review_reason","NVARCHAR(1000)","True","",
+"refund_request","12","query_count","INT","False","","((0))"
+"refund_request","13","next_query_at","DATETIME2(3)","True","",
+"refund_request","14","succeeded_at","DATETIME2(3)","True","",
+"refund_request","15","dispatch_token","VARCHAR(36)","True","",
+"refund_request","16","dispatch_lease_until","DATETIME2(3)","True","",
+"refund_request","17","created_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"refund_request","18","updated_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"refund_request","19","version","ROWVERSION (BINARY(8))","False","",
+"statement_line","1","id","BIGINT","False","PK; IDENTITY",
+"statement_line","2","import_batch_id","BIGINT","False","UNIQUE(import_batch_id,line_no); FK reconciliation_batch.id",
+"statement_line","3","line_no","INT","False","UNIQUE(import_batch_id,line_no)",
+"statement_line","4","event_type","VARCHAR(12)","False","",
+"statement_line","5","out_trade_no","VARCHAR(64)","True","",
+"statement_line","6","channel_trade_no","VARCHAR(100)","True","",
+"statement_line","7","out_request_no","VARCHAR(64)","True","",
+"statement_line","8","amount_cent","BIGINT","False","",
+"statement_line","9","channel_occurred_at","DATETIME2(3)","False","",
+"statement_line","10","raw_line_file_uri","NVARCHAR(300)","True","",
+"store","1","id","BIGINT","False","PK; IDENTITY",
+"store","2","merchant_id","BIGINT","False","UNIQUE(merchant_id,store_code); FK merchant.id",
+"store","3","store_code","VARCHAR(32)","False","UNIQUE(merchant_id,store_code)",
+"store","4","name","NVARCHAR(100)","False","",
+"store","5","location_text","NVARCHAR(200)","True","",
+"store","6","status","VARCHAR(16)","False","","('ACTIVE')"
+"store","7","created_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"store","8","updated_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"store","9","version","ROWVERSION (BINARY(8))","False","",
+"transaction_entry","1","id","BIGINT","False","PK; IDENTITY",
+"transaction_entry","2","entry_no","VARCHAR(64)","False","UNIQUE(entry_no)",
+"transaction_entry","3","event_key","VARCHAR(150)","False","UNIQUE(event_key)",
+"transaction_entry","4","entry_type","VARCHAR(12)","False","",
+"transaction_entry","5","payment_id","BIGINT","True","UNIQUE(payment_id) WHERE ([payment_id] IS NOT NULL); FK payment_attempt.id",
+"transaction_entry","6","refund_id","BIGINT","True","UNIQUE(refund_id) WHERE ([refund_id] IS NOT NULL); FK refund_request.id",
+"transaction_entry","7","amount_cent","BIGINT","False","",
+"transaction_entry","8","channel_occurred_at","DATETIME2(3)","False","",
+"transaction_entry","9","recorded_at","DATETIME2(3)","False","","(sysutcdatetime())"
+"transaction_entry","10","evidence_file_uri","NVARCHAR(300)","True","",

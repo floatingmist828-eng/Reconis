@@ -1,0 +1,32 @@
+[
+  {
+    "database": "ReconisDemo",
+    "tables": 15,
+    "fields": 207,
+    "primary_keys": 15,
+    "unique_constraints": 19,
+    "foreign_keys": 32,
+    "check_constraints": 27,
+    "indexes": 53,
+    "explicit_indexes": 19,
+    "views": 12,
+    "procedures": 5,
+    "scalar_functions": 2,
+    "triggers": 9
+  },
+  {
+    "database": "ReconisSandbox",
+    "tables": 15,
+    "fields": 207,
+    "primary_keys": 15,
+    "unique_constraints": 19,
+    "foreign_keys": 32,
+    "check_constraints": 27,
+    "indexes": 53,
+    "explicit_indexes": 19,
+    "views": 12,
+    "procedures": 5,
+    "scalar_functions": 2,
+    "triggers": 9
+  }
+]

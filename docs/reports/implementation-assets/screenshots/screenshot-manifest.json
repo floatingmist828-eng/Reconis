@@ -1,0 +1,406 @@
+{
+  "source_origin": "http://localhost:8080",
+  "captured_date": "2026-11-04",
+  "environment": "DEMO",
+  "release_id": "homepage-redesign-20261104-r1",
+  "operation": "Pillow crop only; lossless, no resize or retouch",
+  "records": [
+    {
+      "output": "01-home-report.png",
+      "source": "01-home.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        0,
+        0,
+        1384,
+        905
+      ],
+      "output_size": [
+        1384,
+        905
+      ],
+      "route": "/welcome",
+      "note": "首屏品牌、标题、产品场景及底部功能示例声明；仅作产品介绍，不作真实经营金额证据。",
+      "source_sha256": "9accbcecb34d816a61e4b83cf43822d4d0181dd2e696b4e6a3385848a030222d",
+      "output_sha256": "974a098de817c80129c790628845cdd9962c99e8693b7220cbe7eae8e484d9b6"
+    },
+    {
+      "output": "02-login-report.png",
+      "source": "02-login.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        0,
+        0,
+        1399,
+        1290
+      ],
+      "output_size": [
+        1399,
+        1290
+      ],
+      "route": "/login",
+      "note": "完整登录页；输入框为空，无密码或密钥。",
+      "source_sha256": "7bf24c71d6115d47a429076535ba3738a5f717c9804e6436105ff2cfd04008db",
+      "output_sha256": "957bd2e3cfa0305c2b958505625780bf1dbd023bd1b477993cb66ed15d6a0dc5"
+    },
+    {
+      "output": "03-dashboard-report.png",
+      "source": "03-dashboard.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        244,
+        0,
+        1360,
+        468
+      ],
+      "output_size": [
+        1116,
+        468
+      ],
+      "route": "/",
+      "note": "教学环境与平台财务身份、商户和期间筛选、净收120/收款150/退款30及金额口径；仅保留金额摘要，不包含单日趋势图或待办。",
+      "source_sha256": "5f862678354f781bcfc92cda953585266dc63adeed6c5428957acd2ba82b7368",
+      "output_sha256": "f1f27924d863fe6fc27c2b692683714794b7814925fb557de636383bee735c67"
+    },
+    {
+      "output": "04-orders-report.png",
+      "source": "04-orders.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        250,
+        100,
+        1356,
+        785
+      ],
+      "output_size": [
+        1106,
+        685
+      ],
+      "route": "/orders",
+      "note": "查询条件、三行订单、100/50元已支付及1元已取消、分页与明细入口。",
+      "source_sha256": "527db97a9d2d893a427c4b1c418c9529985e091d4da30ddea2603415fe558e06",
+      "output_sha256": "6714b721903681f487c9d264aaf7bd1f27645969d0b81acafcde6c671071ece3"
+    },
+    {
+      "output": "05-order-detail-report.png",
+      "source": "05-order-detail.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        250,
+        103,
+        1356,
+        1037
+      ],
+      "output_size": [
+        1106,
+        934
+      ],
+      "route": "/orders/266",
+      "note": "订单100元、已支付/部分退款、订单行、收100退30时间线、主支付及可退70元；不截入不完整的下方退款表。",
+      "source_sha256": "8ffcc00b56f12dcfed77ddf82227c3db10d7988665e265a2c343a8240a0dc6c1",
+      "output_sha256": "11be1438ec756f32ca794a27c4602d364b577b75ebea349fe5f1778d06f64e08"
+    },
+    {
+      "output": "06-refunds-report.png",
+      "source": "06-refunds.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        250,
+        100,
+        1356,
+        924
+      ],
+      "output_size": [
+        1106,
+        824
+      ],
+      "route": "/refunds",
+      "note": "三条退款申请及分页：1元与70.01元已退回，30元已成功。",
+      "source_sha256": "9ac7c3abc50408dbf00b85a34adfa6770c5bde42941a69d2360bc973fd8372d5",
+      "output_sha256": "f933229e2bb827c03491bf7c4ed86c95d155cdbd7a42c6a30099fef03f32c334"
+    },
+    {
+      "output": "07-reconciliation-report.png",
+      "source": "07-reconciliation.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        299,
+        0,
+        1399,
+        670
+      ],
+      "output_size": [
+        1100,
+        670
+      ],
+      "route": "/reconciliation",
+      "note": "完整结果抽屉：批次127、金额不符2/账实相符1、两侧100对101/50对51/30对30、分类原因及三行分页。",
+      "source_sha256": "967efad7bda0cff6a620965082848ed5df6de3e7ae187317e7ba4de388e46397",
+      "output_sha256": "c96be13b6bbd77ba734c6fec84919cf3136696b0369d5d7615a6b315550c0448"
+    },
+    {
+      "output": "08-compare-report.png",
+      "source": "08-compare.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        299,
+        0,
+        1399,
+        655
+      ],
+      "output_size": [
+        1100,
+        655
+      ],
+      "route": "/reconciliation",
+      "note": "完整比较抽屉：当前批次130、基线127、3行事件，两个RESOLVED和一个UNCHANGED，基线与当前分类全部可见。",
+      "source_sha256": "61fccaaefb6fc55ba16175cac7ab3356248cf828404c298aaea6d682b0636a70",
+      "output_sha256": "54230712171fece71c71047519ca88831c5d109094829a95d31fb0f366f8a46e"
+    },
+    {
+      "output": "09-import-preview-report.png",
+      "source": "09-import-preview.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        260,
+        194,
+        1140,
+        1064
+      ],
+      "output_size": [
+        880,
+        870
+      ],
+      "route": "/reconciliation",
+      "note": "完整预览弹窗：文件transactions.xml、原始3/有效3/重复0/错误0、归属商户、两格式模板与操作；当前为未知/不完整，期间10月6日至11月4日，未再次导入。",
+      "source_sha256": "61ad3fec8117a6fa6183e8da6950b07a3a006f0098f2e7b1d50ca63552bc8ef3",
+      "output_sha256": "b1f37feb39b4cd2bc6212841cb03d8d59df408b7f0a403df9791211d6591156f"
+    },
+    {
+      "output": "10-case-closed-report.png",
+      "source": "10-case-closed.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        250,
+        103,
+        1356,
+        913
+      ],
+      "output_size": [
+        1106,
+        810
+      ],
+      "route": "/cases/115",
+      "note": "已关闭工单、当前处理人、两侧50元、原始金额不符标签、订单与批次关联、复核人/结案类型/时间及一条完整推荐。",
+      "source_sha256": "26ca004ef2a4420e6f58f0ebc11304f9ab7b7a2708e81f69251173b3b69d2c6f",
+      "output_sha256": "a2103b3682f45486ea2bb5cd77f0f4197c3c1c5565b7634bd516dd7643dec1fa"
+    },
+    {
+      "output": "10-case-analysis-report.png",
+      "source": "10-case-closed.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        260,
+        1047,
+        944,
+        1273
+      ],
+      "output_size": [
+        684,
+        226
+      ],
+      "route": "/cases/115",
+      "note": "同一截图左栏原因分析局部；只包含原因分析，处理结论仍在原屏幕下方，不冒称完整结论。",
+      "source_sha256": "26ca004ef2a4420e6f58f0ebc11304f9ab7b7a2708e81f69251173b3b69d2c6f",
+      "output_sha256": "902fe8bc001ce5c36689e7e3de825fbd64287a83d6ab4161c3379558c415bb76"
+    },
+    {
+      "output": "11-case-history-report.png",
+      "source": "11-case-history.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        260,
+        106,
+        944,
+        1068
+      ],
+      "output_size": [
+        684,
+        962
+      ],
+      "route": "/cases/115",
+      "note": "左栏完整四个节点：提交、退回处理、重新提交、复核关闭（画面倒序）；保留人员、时间、状态变化及请求编号。",
+      "source_sha256": "d72886363b7f34f423c00f3c6f119a095432593fe76460bb616e4c42d695d01d",
+      "output_sha256": "6fdca12e66dc7449f64dad8cfe5f999a742f1af49e040e20204492f077b2d295"
+    },
+    {
+      "output": "12-evidence-chain-report.png",
+      "source": "12-evidence-chain.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        260,
+        182,
+        944,
+        936
+      ],
+      "output_size": [
+        684,
+        754
+      ],
+      "route": "/cases/115",
+      "note": "差错诊断与证据档案：6个对账版本/1笔账本事实/4原始行/7证据文件；关联订单267、成功支付、无退款、50元收款事实及渠道时间。",
+      "source_sha256": "6cfb3fccd1ba971fa510f8448a2d418eb7c9d5129c73f349e290db967f1eb6ba",
+      "output_sha256": "f984dc7c5d43c2737690a603c15b143f9b97f67b0227ad2a07ec801da722a77b"
+    },
+    {
+      "output": "13-analytics-merchant-report.png",
+      "source": "13-analytics-merchant.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        250,
+        100,
+        1356,
+        1284
+      ],
+      "output_size": [
+        1106,
+        1184
+      ],
+      "route": "/analytics",
+      "note": "期间/商户/维度/截止时点、120/150/30与3个资金事件、收退款图与匹配分布、完整商户分组行。",
+      "source_sha256": "298c3b4c1649df6c3a4001388ee744e284dac5c4ad03abb28604554715ef5a08",
+      "output_sha256": "6ec0c2ee486052e3abcf87b97324df2324b0da6c45d375a99d86cf6d7d565eac"
+    },
+    {
+      "output": "14-analytics-store-report.png",
+      "source": "14-analytics-store.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        260,
+        470,
+        1348,
+        736
+      ],
+      "output_size": [
+        1088,
+        266
+      ],
+      "route": "/analytics",
+      "note": "组织层级面包屑、门店44分组、3事件及收150/退30/净120；筛选上文见13，当前截图不含顶部筛选。",
+      "source_sha256": "b9099328acdb875885398ed909d7f3998d759d4accf9c56c014693e659fbe3fa",
+      "output_sha256": "b0d964e53e1e5e33763e4c5b379087daddf0d9fe4e8475a72447f63788369c02"
+    },
+    {
+      "output": "15-analytics-detail-report.png",
+      "source": "15-analytics-detail.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        250,
+        193,
+        1356,
+        738
+      ],
+      "output_size": [
+        1106,
+        545
+      ],
+      "route": "/analytics",
+      "note": "全部范围→商户→门店面包屑，退款30/收款50/收款100三条明细、事件键、业务日、分页。",
+      "source_sha256": "561b52f932ebcdecbf5a7ef1f1491aae2f33c59d47a2c30d19ef8027fcb05ec6",
+      "output_sha256": "cd406f827a673933573c55befa77725d5e7e69781e37c814772814f8f079ccf9"
+    },
+    {
+      "output": "16-fulltext-report.png",
+      "source": "16-fulltext.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        250,
+        100,
+        1356,
+        1290
+      ],
+      "output_size": [
+        1106,
+        1190
+      ],
+      "route": "/search",
+      "note": "检索词“修订账单”、已解决案例选项、17条结果计数及前三个结果；第三条为本轮工单115，含结论与时间。",
+      "source_sha256": "7e918f20ffb249cea7078435acc8b124fbe9bc52bff44ef97bc3a887a7d95526",
+      "output_sha256": "fb07b4048aee8f5bd40102df1776a011040ad04bdc34ea69c199e3cf7103487c"
+    },
+    {
+      "output": "17-audit-report.png",
+      "source": "17-audit.png",
+      "source_size": [
+        1399,
+        1290
+      ],
+      "bounds": [
+        250,
+        100,
+        1356,
+        1055
+      ],
+      "output_size": [
+        1106,
+        955
+      ],
+      "route": "/audit",
+      "note": "事件分布、人员统计、商户54筛选、183条事件及前五条完整记录；没有可见requestId列。",
+      "source_sha256": "40801d663bcc838fd86e2bb614865f6a0f1297c96db3a8817de08b5b14711543",
+      "output_sha256": "fa86a81d29543fb5ee8e5ae84eab31fe877dafe63d89fa39aa7d4484ae795a8d"
+    }
+  ],
+  "pending_retake": []
+}

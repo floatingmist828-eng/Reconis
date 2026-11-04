@@ -160,9 +160,8 @@ async function importFile(preview: boolean) {
   <div>
     <div class="page-heading">
       <div>
-        <div class="eyebrow">MERCHANT DIRECTORY</div>
         <h1>商户与门店</h1>
-        <p>管理商户、门店和成员。</p>
+        <p>管理商户资料、门店和成员。</p>
       </div>
       <div class="heading-actions">
         <el-dropdown
@@ -216,8 +215,8 @@ async function importFile(preview: boolean) {
       <el-table :data="list.items"
         ><el-table-column label="商户" min-width="200"
           ><template #default="{ row }"
-            ><b>{{ row.name }}</b
-            ><span class="subline mono">{{ row.merchantCode }}</span></template
+            ><div class="merchant-identity"><span class="merchant-initial" aria-hidden="true">{{ row.name?.slice(0,1) }}</span><div><b>{{ row.name }}</b
+            ><span class="subline mono">{{ row.merchantCode }}</span></div></div></template
           ></el-table-column
         ><el-table-column
           label="经营类别"

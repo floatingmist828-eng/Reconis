@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6.3in" height="7.08333in" viewBox="0 0 453.6 510">
+<rect width="453.6" height="510" fill="white"/>
+<rect x="10" y="10" width="195" height="116" rx="3" fill="#ffffff" stroke="#1d4876" stroke-width="0.8"/>
+<rect x="10.5" y="10.5" width="194" height="38" rx="2" fill="#f2f5f8" stroke="#f2f5f8" stroke-width="0.8"/>
+<text x="19" y="22" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">用户</text>
+<text x="19" y="37" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.3" font-weight="700" fill="#202b38">app_user</text>
+<text x="19" y="58" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">PK  id</text>
+<text x="19" y="71" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    username</text>
+<text x="19" y="84" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    platform_role</text>
+<text x="19" y="97" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    status</text>
+<text x="19" y="110" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">FK  reviewed_by ?</text>
+<rect x="249" y="10" width="195" height="116" rx="3" fill="#ffffff" stroke="#1d4876" stroke-width="0.8"/>
+<rect x="249.5" y="10.5" width="194" height="38" rx="2" fill="#f2f5f8" stroke="#f2f5f8" stroke-width="0.8"/>
+<text x="258" y="22" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">商户</text>
+<text x="258" y="37" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.3" font-weight="700" fill="#202b38">merchant</text>
+<text x="258" y="58" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">PK  id</text>
+<text x="258" y="71" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    merchant_code</text>
+<text x="258" y="84" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    name</text>
+<text x="258" y="97" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    status</text>
+<text x="258" y="110" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">FK  reviewed_by ?</text>
+<rect x="10" y="191" width="195" height="129" rx="3" fill="#ffffff" stroke="#1d4876" stroke-width="0.8"/>
+<rect x="10.5" y="191.5" width="194" height="38" rx="2" fill="#f2f5f8" stroke="#f2f5f8" stroke-width="0.8"/>
+<text x="19" y="203" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">商户成员</text>
+<text x="19" y="218" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.3" font-weight="700" fill="#202b38">merchant_member</text>
+<text x="19" y="239" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">PK  id</text>
+<text x="19" y="252" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">FK  merchant_id</text>
+<text x="19" y="265" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">FK  user_id</text>
+<text x="19" y="278" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    role_code</text>
+<text x="19" y="291" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    status</text>
+<text x="19" y="304" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">UQ (merchant_id, user_id)</text>
+<rect x="249" y="191" width="195" height="116" rx="3" fill="#ffffff" stroke="#1d4876" stroke-width="0.8"/>
+<rect x="249.5" y="191.5" width="194" height="38" rx="2" fill="#f2f5f8" stroke="#f2f5f8" stroke-width="0.8"/>
+<text x="258" y="203" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">门店</text>
+<text x="258" y="218" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.3" font-weight="700" fill="#202b38">store</text>
+<text x="258" y="239" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">PK  id</text>
+<text x="258" y="252" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">FK  merchant_id</text>
+<text x="258" y="265" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    store_code</text>
+<text x="258" y="278" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    name</text>
+<text x="258" y="291" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">    status</text>
+<rect x="113" y="369" width="228" height="103" rx="3" fill="#ffffff" stroke="#1d4876" stroke-width="0.8"/>
+<rect x="113.5" y="369.5" width="227" height="38" rx="2" fill="#f2f5f8" stroke="#f2f5f8" stroke-width="0.8"/>
+<text x="122" y="381" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">审计日志</text>
+<text x="122" y="396" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.3" font-weight="700" fill="#202b38">audit_log</text>
+<text x="122" y="417" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">PK  id</text>
+<text x="122" y="430" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">FK  actor_user_id ?</text>
+<text x="122" y="443" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#202b38">FK  scope_merchant_id ?</text>
+<text x="122" y="456" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">操作前后快照 · 请求编号</text>
+<polyline points="107,126 107,191" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="107,191 104.7802594651724,186.5197375123724 109.2197405348276,186.5197375123724" fill="#1d4876"/>
+<rect x="117.68" y="151.6" width="20.64" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="128" y="158" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">1:N</text>
+<polyline points="346,126 346,191" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="346,191 343.7802594651724,186.5197375123724 348.2197405348276,186.5197375123724" fill="#1d4876"/>
+<rect x="359.68" y="151.6" width="20.64" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="370" y="158" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">1:N</text>
+<polyline points="249,83 227,83 227,222 205,222" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="205,222 209.4802624876276,219.7802594651724 209.4802624876276,224.2197405348276" fill="#1d4876"/>
+<rect x="216.68" y="150.6" width="20.64" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="227" y="157" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">1:N</text>
+<polyline points="205,41 249,41" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="249,41 244.5197375123724,43.2197405348276 244.5197375123724,38.7802594651724" fill="#1d4876"/>
+<rect x="211.88" y="21.6" width="30.24" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="227" y="28" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">0..1:N</text>
+<polyline points="10,75 3,75 3,403 113,403" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="113,403 108.51973751237237,405.2197405348276 108.51973751237237,400.7802594651724" fill="#1d4876"/>
+<polyline points="444,75 450,75 450,403 341,403" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="341,403 345.4802624876276,400.7802594651724 345.4802624876276,405.2197405348276" fill="#1d4876"/>
+<rect x="49.88" y="383.6" width="30.24" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="65" y="390" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">0..1:N</text>
+<rect x="378.88" y="383.6" width="30.24" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="394" y="390" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.8" font-weight="400" fill="#526174">0..1:N</text>
+<text x="10" y="489" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">PK 主键；FK 外键；? 可空。用户 reviewed_by 为自引用审核人。</text>
+</svg>

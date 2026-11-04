@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6.3in" height="6.08333in" viewBox="0 0 453.6 438">
+<rect width="453.6" height="438" fill="white"/>
+<rect x="25" y="10" width="290" height="54" rx="3" fill="#f2f5f8" stroke="#1d4876" stroke-width="0.8"/>
+<text x="35" y="26" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">OPEN · 待分派</text>
+<text x="35" y="45" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">差错结果建立或关联工单</text>
+<rect x="25" y="90" width="290" height="54" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="35" y="106" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">ASSIGNED · 已分派</text>
+<text x="35" y="125" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">有效处理人接收任务</text>
+<polyline points="170,64 170,90" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="170,90 167.7802594651724,85.51973751237237 172.2197405348276,85.51973751237237" fill="#1d4876"/>
+<rect x="25" y="170" width="290" height="54" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="35" y="186" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">PROCESSING · 处理中</text>
+<text x="35" y="205" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">分析、结论与证据留存</text>
+<polyline points="170,144 170,170" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="170,170 167.7802594651724,165.5197375123724 172.2197405348276,165.5197375123724" fill="#1d4876"/>
+<rect x="25" y="250" width="290" height="54" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="35" y="266" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">PENDING_REVIEW · 待复核</text>
+<text x="35" y="285" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">当前处理人提交完整结论</text>
+<polyline points="170,224 170,250" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="170,250 167.7802594651724,245.5197375123724 172.2197405348276,245.5197375123724" fill="#1d4876"/>
+<rect x="25" y="330" width="290" height="54" rx="3" fill="#f2f5f8" stroke="#1d4876" stroke-width="0.8"/>
+<text x="35" y="346" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">CLOSED · 已结案</text>
+<text x="35" y="365" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">独立复核通过且证据满足结案类型</text>
+<polyline points="170,304 170,330" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="170,330 167.7802594651724,325.5197375123724 172.2197405348276,325.5197375123724" fill="#1d4876"/>
+<polyline points="315,277 413,277 413,197 315,197" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="315,197 319.4802624876276,194.7802594651724 319.4802624876276,199.2197405348276" fill="#1d4876"/>
+<rect x="352.28" y="225.6" width="43.44" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="374" y="232" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.3" font-weight="400" fill="#526174">退回处理</text>
+<polyline points="315,197 355,197 355,117 315,117" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="315,117 319.4802624876276,114.7802594651724 319.4802624876276,119.2197405348276" fill="#1d4876"/>
+<rect x="354.28" y="150.6" width="43.44" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="376" y="157" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.3" font-weight="400" fill="#526174">重新分派</text>
+<text x="10" y="408" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">修改须匹配 ROWVERSION；复核人不得等于 submitted_by。</text>
+</svg>

@@ -31,16 +31,16 @@ async function load() {
 }
 onMounted(() => action(load));
 const chart = computed(() => ({
-  color: ["#729e80"],
+  color: ["#325ddb"],
   tooltip: { trigger: "axis" },
-  grid: { left: 85, right: 30, top: 12, bottom: 28 },
-  xAxis: { type: "value", splitLine: { lineStyle: { color: "#edf0e5" } } },
+  grid: { left: 10, right: 24, top: 12, bottom: 12, containLabel: true },
+  xAxis: { type: "value", splitLine: { lineStyle: { color: "#edf0f5", type: "dashed" } } },
   yAxis: {
     type: "category",
     data: stats.value.categories.map((r: Row) => r.eventCategory),
     axisTick: { show: false },
     axisLine: { show: false },
-    axisLabel: { fontSize: 10 },
+    axisLabel: { fontSize: 12 },
   },
   series: [
     {
@@ -56,9 +56,8 @@ const chart = computed(() => ({
   <div v-loading="busy">
     <div class="page-heading">
       <div>
-        <div class="eyebrow">AUDIT & TRACEABILITY</div>
         <h1>审计中心</h1>
-        <p>按人员、商户、时间与结果查询访问及操作，追溯关键业务变更。</p>
+        <p>查询操作记录与业务变更。</p>
       </div>
       <el-button @click="action(load)">刷新审计</el-button>
     </div>

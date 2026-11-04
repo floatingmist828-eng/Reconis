@@ -189,7 +189,7 @@ test('browser order creation, consumer payment and independent refund approval',
     await customer.page.getByPlaceholder('退款编号 / 申请原因').fill(run);
     await customer.page.getByRole('button',{name:'查询',exact:true}).click();
     await expect(customer.page.getByRole('button',{name:'批准',exact:true})).toHaveCount(0);
-    await expect(customer.page.getByText('等待他人审批')).toBeVisible();
+    await expect(customer.page.getByText('等待他人审批').filter({visible:true})).toBeVisible();
     await owner.page.goto('/refunds');
     await owner.page.getByPlaceholder('退款编号 / 申请原因').fill(run);
     await owner.page.getByRole('button',{name:'查询',exact:true}).click();
@@ -242,7 +242,7 @@ test('assignment, evidence, return, resubmission, independent review and dossier
     review = reviewer.page.getByRole('dialog');
     await review.getByLabel('复核意见与依据').fill('独立核查原始凭据与差额说明，按已说明例外结案');
     await review.getByRole('button',{name:'提交复核结论'}).click(); await expect(review).toBeHidden();
-    await expect(reviewer.page.locator('.heading-actions')).toContainText('已关闭');
+    await expect(reviewer.page.getByRole('region',{name:'工单摘要'}).getByText('已关闭',{exact:true})).toBeVisible();
     await reviewer.page.getByRole('button',{name:'查看档案',exact:true}).click();
     const downloadPromise = reviewer.page.waitForEvent('download');
     await reviewer.page.getByRole('button',{name:'下载 ZIP',exact:true}).click();
@@ -297,7 +297,7 @@ test('bill import and comparison, analytics drilldown, risk details, reports and
   const {page,context} = await login(browser,'owner');
   try {
     await page.goto('/reconciliation');
-    await page.getByRole('button',{name:'＋ 导入渠道账单',exact:true}).click();
+    await page.getByRole('button',{name:'导入渠道账单',exact:true}).click();
     const form = page.getByRole('dialog',{name:'导入渠道账单',exact:true});
     await form.locator('input[type=file]').setInputFiles({name:'browser-bill.xml',mimeType:'application/xml',buffer:Buffer.from(records.bill.replace('</statement>','<!--browser import--></statement>'))});
     await form.getByRole('button',{name:'预览与校验'}).click();

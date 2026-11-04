@@ -2,6 +2,7 @@
 import { ref, reactive, watch, onBeforeUnmount, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import { ArrowLeft, User, Timer, Flag } from "@element-plus/icons-vue";
 import {
   api,
   post,
@@ -192,17 +193,17 @@ async function finish() {
 }
 </script>
 <template>
-  <div v-loading="busy">
-    <div class="page-heading">
-      <div>
-        <el-button link @click="router.push('/cases')"
-          >← 返回差错工作台</el-button
+  <div v-loading="busy" class="case-detail-page">
+    <div class="page-heading detail-heading">
+      <div class="detail-title">
+        <el-button link :icon="ArrowLeft" @click="router.push('/cases')"
+          >返回差错工作台</el-button
         >
-        <h1 style="margin-top: 12px">{{ row?.title || "工单详情" }}</h1>
+        <h1>{{ row?.title || "工单详情" }}</h1>
         <p class="mono">{{ row?.caseNo }}</p>
       </div>
       <div v-if="row" class="heading-actions">
-        <StatusTag :value="row.status" /><el-button
+        <el-button
           v-if="
             session.can(row.merchantId, ['OWNER', 'FINANCE']) &&
             !['CLOSED', 'PENDING_REVIEW'].includes(row.status)
@@ -224,18 +225,25 @@ async function finish() {
         >
       </div>
     </div>
-    <div v-if="row" class="detail-grid">
+    <section v-if="row" class="case-summary" aria-label="工单摘要">
+      <div class="case-summary-status"><span><el-icon><Flag /></el-icon>处理状态</span><StatusTag :value="row.status" /></div>
+      <div><span><el-icon><User /></el-icon>当前处理人</span><b>{{ row.assigneeName || "尚未分派" }}</b></div>
+      <div><span><el-icon><Timer /></el-icon>处理期限</span><b>{{ time(row.dueAt) }}</b></div>
+      <div><span>已超期天数</span><b :class="{ 'overdue-value': Number(row.overdueDays) > 0 }">{{ row.overdueDays }}<small>天</small></b></div>
+    </section>
+    <div v-if="row" class="detail-grid case-detail-grid">
       <div class="detail-stack">
         <section class="panel">
           <div class="panel-heading">
-            <h2>问题定位与关联来源</h2>
+            <h2>差错与交易</h2>
             <StatusTag :value="row.classification" />
           </div>
-          <p style="font-size: 12px; color: #7c8d76">{{ row.description }}</p>
-          <div class="filter-breadcrumb">
-            差错 → 账单 / 流水 → 支付 / 退款 → 订单 → 门店 → 商户
+          <p class="case-description">{{ row.description }}</p>
+          <div class="case-amount-comparison">
+            <div><span>本地金额</span><strong>{{ row.source.localAmountCent ? "¥ " + money(row.source.localAmountCent) : "—" }}</strong></div>
+            <div><span>渠道金额</span><strong>{{ row.source.channelAmountCent ? "¥ " + money(row.source.channelAmountCent) : "—" }}</strong></div>
           </div>
-          <div class="description-grid" style="margin-top: 22px">
+          <div class="description-grid case-source-facts">
             <div>
               <label>商户 / 门店</label
               ><b
@@ -254,22 +262,6 @@ async function finish() {
               ><span v-else class="muted">等待渠道查询定位</span>
             </div>
             <div>
-              <label>本地金额 / 渠道金额</label
-              ><b
-                >{{
-                  row.source.localAmountCent
-                    ? "¥ " + money(row.source.localAmountCent)
-                    : "—"
-                }}
-                /
-                {{
-                  row.source.channelAmountCent
-                    ? "¥ " + money(row.source.channelAmountCent)
-                    : "—"
-                }}</b
-              >
-            </div>
-            <div>
               <label>支付 / 退款标识</label
               ><b class="mono">{{
                 row.source.outTradeNo ||
@@ -280,19 +272,13 @@ async function finish() {
             <div>
               <label>结果批次</label><b class="mono">{{ row.batchNo }}</b>
             </div>
-            <div>
-              <label>处理人与期限</label
-              ><b
-                >{{ row.assigneeName || "尚未分派" }} · {{ time(row.dueAt) }}</b
-              >
-            </div>
           </div>
           <div class="help-note">
             重新核对后，可选用新批次结果作为结案依据。
           </div>
         </section>
         <CaseDossier :case-id="String(route.params.id)" :version="String(row.version)" />
-        <section class="panel">
+        <section class="panel case-analysis">
           <div class="panel-heading">
             <h2>处理分析与证据</h2>
             <span class="muted">{{
@@ -323,7 +309,7 @@ async function finish() {
                   !['ASSIGNED', 'PROCESSING'].includes(row.status)
                 " /></el-form-item
             ><el-form-item label="证据附件"
-              ><a
+              ><span v-if="!row.evidenceFileUri" class="muted evidence-empty">尚未上传证据</span><a
                 v-if="row.evidenceFileUri"
                 :href="evidenceUrl(row.evidenceFileUri)"
                 ><el-button link type="primary">下载已保存证据 ↓</el-button></a
@@ -365,16 +351,16 @@ async function finish() {
             </div></el-form
           >
         </section>
-        <section class="panel">
-          <div class="panel-heading"><h2>协作与审核历史</h2></div>
+        <details class="panel case-history">
+          <summary>协作与审核历史<span>{{ row.history.length }} 条记录</span></summary>
           <el-timeline
             ><el-timeline-item
               v-for="h in row.history"
               :key="h.id"
               :timestamp="time(h.occurredAt)"
               placement="top"
-              color="#91ad83"
-              ><b>{{ h.actorName || "系统" }} · {{ h.action }}</b>
+              color="#325ddb"
+              ><b>{{ h.actorName || "系统" }} · {{ h.action === 'CASE_WORKFLOW' ? '工单状态更新' : codeName(h.action) }}</b>
               <p>{{ h.summary }}</p>
               <el-button
                 v-if="snapshot(h.afterJson).target_batch_id"
@@ -389,7 +375,7 @@ async function finish() {
               >
                 查看归属确认批次 #{{ snapshot(h.afterJson).target_batch_id }} ↗
               </el-button>
-              <details v-if="h.afterJson" style="margin: 10px 0">
+              <details v-if="h.afterJson" class="history-snapshot">
                 <summary>查看当时的处理记录</summary>
                 <div
                   v-for="[label, key] in [
@@ -416,14 +402,21 @@ async function finish() {
               ></el-timeline-item
             ></el-timeline
           >
-        </section>
+        </details>
       </div>
-      <aside class="detail-stack">
+      <aside class="detail-stack case-side">
+        <section class="panel case-progress">
+          <div class="panel-heading"><h2>复核与结案</h2></div>
+          <dl class="progress-list">
+            <div><dt>复核人</dt><dd>{{ row.reviewerName || "待复核" }}</dd></div>
+            <div><dt>结案类型</dt><dd>{{ codeName(row.resolutionCode) || "—" }}</dd></div>
+            <div><dt>结案时间</dt><dd>{{ time(row.closedAt) }}</dd></div>
+          </dl>
+        </section>
         <section class="panel">
           <div class="panel-heading">
             <div>
               <h2>相似解决案例</h2>
-              <p>与当前问题相关的已解决案例</p>
             </div>
           </div>
           <div class="compact-list">
@@ -452,25 +445,6 @@ async function finish() {
           <div v-if="recommendationError" class="help-note">
             案例推荐暂时不可用，可稍后重试。
             <el-button link type="primary" @click="loadRecommendations">重试</el-button>
-          </div>
-          <div class="help-note">查看相似问题的处理方法。</div>
-        </section>
-        <section class="panel">
-          <h2>处理进度</h2>
-          <div class="description-grid" style="margin-top: 22px">
-            <div>
-              <label>已超期天数</label><b>{{ row.overdueDays }}</b>
-            </div>
-            <div>
-              <label>复核人</label><b>{{ row.reviewerName || "待复核" }}</b>
-            </div>
-            <div>
-              <label>结案类型</label
-              ><b>{{ codeName(row.resolutionCode) || "—" }}</b>
-            </div>
-            <div>
-              <label>结案时间</label><b>{{ time(row.closedAt) }}</b>
-            </div>
           </div>
         </section>
       </aside>
@@ -516,7 +490,7 @@ async function finish() {
           label="同一事件的新匹配结果"
           ><el-select
             v-model="review.evidenceResultId"
-            placeholder="选择新批次 MATCHED 结果"
+            placeholder="选择新批次中已匹配的结果"
             ><el-option
               v-for="r in row?.matchedEvidence || []"
               :key="r.id"
@@ -562,3 +536,95 @@ async function finish() {
     >
   </div>
 </template>
+
+<style scoped>
+.detail-title { min-width: 0; }
+.detail-title h1 { margin-top: 16px; overflow-wrap: anywhere; line-height: 1.4; font-size: clamp(24px, 2.2vw, 32px); }
+.detail-title > p { overflow-wrap: anywhere; }
+.detail-heading { align-items: flex-start; }
+.detail-heading .heading-actions { padding-top: 34px; flex-wrap: wrap; justify-content: flex-end; flex-shrink: 0; }
+.case-summary { display: grid; grid-template-columns: 1fr 1fr 1.4fr .85fr; margin-bottom: 24px; border: 1px solid var(--line, #e5eaf2); border-radius: 12px; background: var(--surface, #fff); overflow: hidden; }
+.case-summary > div { padding: 23px 24px; min-width: 0; border-right: 1px solid var(--line, #e5eaf2); }
+.case-summary > div:last-child { border-right: 0; }
+.case-summary-status { background: #11243c; }
+.case-summary > div > span:first-child { display: flex; align-items: center; gap: 7px; color: var(--muted, #64748b); font-size: 12px; margin-bottom: 12px; }
+.case-summary-status > span:first-child { color: #b7c9e4 !important; }
+.case-summary > div > b { display: block; overflow-wrap: anywhere; font-size: 14px; font-weight: 600; line-height: 1.7; }
+.case-summary small { margin-left: 6px; color: var(--muted, #64748b); font-size: 12px; font-weight: 400; }
+.case-summary .overdue-value { color: #b16b14; }
+.case-detail-page .panel-heading h2 { display: flex; align-items: center; gap: 9px; }
+.case-detail-page .panel-heading h2 .el-icon { color: var(--brand, #325ddb); font-size: 19px; flex: none; }
+.case-description { margin: 0; color: var(--muted, #64748b); font-size: 13px; line-height: 1.9; overflow-wrap: anywhere; white-space: pre-wrap; }
+.case-amount-comparison { display: grid; grid-template-columns: 1fr 1fr; margin: 22px 0; border: 1px solid var(--line, #e5eaf2); border-radius: 9px; background: #f8faff; }
+.case-amount-comparison > div { min-width: 0; padding: 19px 21px; }
+.case-amount-comparison > div + div { border-left: 1px solid var(--line, #e5eaf2); background: #fcfbf8; border-radius: 0 8px 8px 0; }
+.case-amount-comparison span { display: block; color: var(--muted, #64748b); font-size: 12px; }
+.case-amount-comparison strong { display: block; margin-top: 9px; font-size: clamp(19px, 2vw, 27px); line-height: 1.4; font-variant-numeric: tabular-nums; font-weight: 600; overflow-wrap: anywhere; }
+.case-source-facts { margin-top: 22px; }
+.case-source-facts > div { min-width: 0; }
+.case-source-facts :deep(.el-button > span) { white-space: normal; overflow-wrap: anywhere; text-align: left; }
+.case-analysis :deep(.el-textarea__inner) { line-height: 1.8; resize: vertical; }
+.evidence-empty { display: block; width: 100%; margin-bottom: 10px; font-size: 13px; }
+.case-analysis input[type="file"] { display: block; width: 100%; max-width: 100%; padding: 12px; border: 1px dashed #bdcae0; border-radius: 8px; background: #f8faff; font-size: 12px; color: var(--muted, #64748b); }
+.case-analysis input[type="file"]::file-selector-button { padding: 7px 10px; margin-right: 10px; border: 1px solid #d5dfef; border-radius: 5px; background: white; color: var(--ink, #172b4d); cursor: pointer; }
+.case-analysis :deep(.el-form-item:last-of-type) { margin-bottom: 0; }
+.case-analysis .row-actions { border-top: 1px solid var(--line, #e5eaf2); margin-top: 22px; padding-top: 20px; }
+.case-history :deep(.el-timeline-item__content) { overflow-wrap: anywhere; }
+.case-history :deep(.el-timeline-item__content > p) { margin-top: 7px; color: var(--muted, #64748b); }
+.history-snapshot { margin: 12px 0; padding: 11px 13px; background: #f7f9fc; border: 1px solid var(--line, #e5eaf2); border-radius: 7px; font-size: 12px; }
+.history-snapshot summary { cursor: pointer; font-size: 13px; color: #4b6084; line-height: 1.7; }
+.history-snapshot summary:focus-visible { outline: 2px solid var(--brand, #325ddb); outline-offset: 3px; border-radius: 2px; }
+.history-snapshot a { color: var(--brand, #325ddb); }
+.progress-list { margin: 0; }
+.progress-list > div { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--line, #e5eaf2); font-size: 13px; line-height: 1.8; }
+.progress-list > div:first-child { padding-top: 0; }
+.progress-list > div:last-child { padding-bottom: 0; border-bottom: 0; }
+.progress-list dt { color: var(--muted, #64748b); }
+.progress-list dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.case-side .case-card { min-width: 0; }
+.case-side .case-card h3 { overflow-wrap: anywhere; }
+.case-side .card-caption { align-items: flex-start; line-height: 1.7; }
+.case-side .card-caption span:first-child { min-width: 0; }
+.case-detail-page :deep(.dossier .panel-heading) { flex-wrap: wrap; }
+.case-detail-grid > .detail-stack:first-child { gap: 0; align-self: start; background: var(--surface, #fff); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.case-detail-grid > .detail-stack:first-child > .panel { border: 0; border-radius: 0; border-bottom: 1px solid var(--line); box-shadow: none; padding: 30px; }
+.case-detail-grid > .detail-stack:first-child > .panel:last-child { border-bottom: 0; }
+.case-amount-comparison { background: transparent; border-radius: 0; border-width: 1px 0; margin: 25px 0; }
+.case-amount-comparison > div { padding: 23px 0; }
+.case-amount-comparison > div + div { background: none; border-radius: 0; padding-left: 26px; }
+.case-amount-comparison strong { font-size: clamp(24px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.5px; }
+.case-side > .panel { background: transparent; border-color: transparent; box-shadow: none; padding: 22px 10px; }
+.case-side .case-card { border-width: 0 0 1px; border-radius: 0; background: transparent; padding: 20px 0; }
+.case-side .case-card:first-child { padding-top: 0; }
+.case-side .case-card:hover { transform: none; background: transparent; box-shadow: none; }
+.case-side .case-card h3 { color: var(--ink); font-size: 14px; }
+.case-side .case-card:hover h3 { color: var(--brand); }
+.case-history summary { cursor: pointer; font-size: 16px; font-weight: 600; }
+.case-history summary span { margin-left: 12px; color: var(--muted); font-size: 12px; font-weight: 400; }
+.case-history[open] summary { margin-bottom: 28px; }
+.case-history summary:focus-visible { outline: 2px solid var(--brand); outline-offset: 6px; border-radius: 3px; }
+@media (max-width: 1200px) {
+  .detail-heading { flex-wrap: wrap; }
+  .detail-heading .heading-actions { padding-top: 0; }
+  .case-summary > div { padding: 20px; }
+}
+@media (max-width: 900px) {
+  .case-summary { grid-template-columns: 1fr 1fr; }
+  .case-summary > div:nth-child(2) { border-right: 0; }
+  .case-summary > div:nth-child(-n+2) { border-bottom: 1px solid var(--line, #e5eaf2); }
+}
+@media (max-width: 650px) {
+  .detail-heading .heading-actions { width: 100%; justify-content: flex-start; }
+  .detail-title h1 { font-size: 24px; }
+  .case-summary { margin-bottom: 18px; }
+  .case-summary > div { padding: 18px 16px; }
+  .case-summary > div > b { font-size: 13px; }
+  .case-amount-comparison > div { padding: 16px 13px; }
+  .case-amount-comparison strong { font-size: 21px; }
+  .case-detail-page .panel-heading { align-items: flex-start; flex-wrap: wrap; }
+  .case-analysis .panel-heading > .muted { font-size: 12px; }
+  .case-source-facts { grid-template-columns: 1fr; }
+  .case-detail-grid > .detail-stack:first-child > .panel { padding: 22px 18px; }
+  .case-side > .panel { padding: 18px; }
+}
+</style>

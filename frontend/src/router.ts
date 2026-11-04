@@ -5,6 +5,11 @@ export const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
   routes: [
     {
+      path: "/welcome",
+      component: () => import("./pages/Home.vue"),
+      meta: { title: "校园支付对账" },
+    },
+    {
       path: "/login",
       component: () => import("./pages/Login.vue"),
       meta: { title: "登录" },
@@ -84,9 +89,19 @@ export const router = createRouter({
   ],
 });
 router.beforeEach(async (to) => {
-  if (to.path === "/login") return true;
   const s = useSession();
-  if (!s.user && !(await s.load())) return "/login";
+  if (to.path === "/welcome") {
+    if (!s.user) await s.load();
+    return true;
+  }
+  if (to.path === "/login") {
+    if (to.query.expired === "1") return true;
+    if (s.user || await s.load()) return "/";
+    return true;
+  }
+  if (!s.user && !(await s.load())) {
+    return to.path === "/" ? "/welcome" : { path: "/login", query: { redirect: to.fullPath } };
+  }
   if (
     s.admin &&
     [

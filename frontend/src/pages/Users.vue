@@ -36,7 +36,6 @@ async function save() {
   <div>
     <div class="page-heading">
       <div>
-        <div class="eyebrow">IDENTITY ADMINISTRATION</div>
         <h1>账号审核与平台权限</h1>
         <p>审核账号，分配平台权限。</p>
       </div>

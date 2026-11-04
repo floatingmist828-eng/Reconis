@@ -54,6 +54,13 @@ function total() {
     return "—";
   }
 }
+function itemTotal(item: Row) {
+  try {
+    return money((BigInt(toCent(item.unitPriceYuan)) * BigInt(item.quantity || 0)).toString());
+  } catch {
+    return "—";
+  }
+}
 async function save() {
   const body = {
     ...form,
@@ -108,7 +115,7 @@ async function save() {
       /></el-form-item>
     </div>
     <div class="section-divider">收款明细 <span class="muted"></span></div>
-    <el-table :data="form.items"
+    <el-table :data="form.items" class="order-form-desktop-items"
       ><el-table-column label="项目名称" min-width="160"
         ><template #default="{ row }"
           ><el-input
@@ -139,7 +146,19 @@ async function save() {
         ></el-table-column
       ></el-table
     >
-    <div class="table-toolbar" style="margin-top: 15px">
+    <div class="order-form-mobile-items">
+      <article v-for="(item, index) in form.items" :key="index" class="order-form-item-card" role="group" :aria-label="`第 ${index + 1} 项收款明细`">
+        <header><strong>明细 {{ index + 1 }}</strong><el-button link type="danger" :disabled="form.items.length === 1" :aria-label="`删除第 ${index + 1} 项明细`" @click="form.items.splice(index, 1)">删除</el-button></header>
+        <label :for="`mobile-item-name-${index}`">项目名称</label>
+        <el-input :id="`mobile-item-name-${index}`" v-model="item.itemName" maxlength="120" placeholder="填写商品或服务名称" />
+        <div class="mobile-item-values">
+          <div><label :for="`mobile-item-quantity-${index}`">数量</label><el-input-number :id="`mobile-item-quantity-${index}`" v-model="item.quantity" :min="1" :max="10000" controls-position="right" /></div>
+          <div><label :for="`mobile-item-price-${index}`">单价（元）</label><el-input :id="`mobile-item-price-${index}`" v-model="item.unitPriceYuan" inputmode="decimal" /></div>
+        </div>
+        <footer><span>小计</span><strong>¥ {{ itemTotal(item) }}</strong></footer>
+      </article>
+    </div>
+    <div class="table-toolbar order-form-items-total" style="margin-top: 15px">
       <el-button
         @click="
           form.items.push({
@@ -164,3 +183,26 @@ async function save() {
     </div></el-form
   >
 </template>
+
+<style scoped>
+.order-form-mobile-items { display: none; }
+.order-form-item-card { padding: 16px; border: 1px solid var(--line, #e5eaf2); border-radius: 10px; background: #f8faff; }
+.order-form-item-card + .order-form-item-card { margin-top: 14px; }
+.order-form-item-card header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+.order-form-item-card header strong { font-size: 13px; font-weight: 600; }
+.order-form-item-card label { display: block; margin-bottom: 8px; font-size: 12px; line-height: 1.5; color: var(--muted, #66758c); }
+.mobile-item-values { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 17px; }
+.mobile-item-values > div { min-width: 0; }
+.mobile-item-values :deep(.el-input-number) { width: 100%; }
+.mobile-item-values :deep(.el-input__inner) { font-variant-numeric: tabular-nums; }
+.order-form-item-card footer { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line, #e5eaf2); }
+.order-form-item-card footer > span { font-size: 12px; color: var(--muted, #66758c); }
+.order-form-item-card footer strong { min-width: 0; overflow-wrap: anywhere; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) {
+  .order-form-desktop-items { display: none; }
+  .order-form-mobile-items { display: block; }
+  .order-form-items-total { align-items: center; gap: 12px; }
+  .order-form-items-total .grow { display: none; }
+  .order-form-items-total > b { margin-left: auto; font-variant-numeric: tabular-nums; }
+}
+</style>

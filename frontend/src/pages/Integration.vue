@@ -55,7 +55,6 @@ onUnmounted(() => { if (refreshTimer) clearInterval(refreshTimer); });
   <div v-loading="busy">
     <div class="page-heading">
       <div>
-        <div class="eyebrow">CHANNEL INTEGRATION</div>
         <h1>支付接入与自动获取</h1>
         <p>查看渠道连接和最近查询。</p>
       </div>
@@ -157,8 +156,7 @@ onUnmounted(() => { if (refreshTimer) clearInterval(refreshTimer); });
     <section class="panel">
       <div class="panel-heading">
         <div>
-          <h2>最近自动 / 手动渠道查询</h2>
-          <p>自动与手动查询记录</p>
+          <h2>最近渠道查询</h2>
         </div>
       </div>
       <el-table :data="data.recentQueries"

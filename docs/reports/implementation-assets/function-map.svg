@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6.3in" height="5.37500in" viewBox="0 0 453.6 387">
+<rect width="453.6" height="387" fill="white"/>
+<rect x="109" y="10" width="236" height="48" rx="3" fill="#f2f5f8" stroke="#1d4876" stroke-width="0.8"/>
+<text x="119" y="26" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">Reconis 校园支付对账</text>
+<text x="119" y="45" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">交易事实、逐笔核对与差错协作</text>
+<polyline points="226,58 226,359" fill="none" stroke="#aebbc9" stroke-width="0.9"/>
+<polyline points="226,125 221,125" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="221,125 225.4802624876276,122.7802594651724 225.4802624876276,127.2197405348276" fill="#1d4876"/>
+<rect x="10" y="88" width="211" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="104" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">身份与基础资料</text>
+<text x="20" y="123" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">注册与审核 · 登录与权限</text>
+<text x="20" y="137" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">商户 · 门店 · 成员管理</text>
+<polyline points="226,125 232,125" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="232,125 227.5197375123724,127.2197405348276 227.5197375123724,122.7802594651724" fill="#1d4876"/>
+<rect x="232" y="88" width="211" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="242" y="104" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">收款与退款</text>
+<text x="242" y="123" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">订单与明细 · 收款确认</text>
+<text x="242" y="137" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">独立退款审批 · 查询恢复</text>
+<polyline points="226,218 221,218" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="221,218 225.4802624876276,215.7802594651724 225.4802624876276,220.2197405348276" fill="#1d4876"/>
+<rect x="10" y="181" width="211" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="197" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">账单与对账</text>
+<text x="20" y="216" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">导入校验 · 自动账单任务</text>
+<text x="20" y="230" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">逐笔差异 · 重跑与历史比较</text>
+<polyline points="226,218 232,218" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="232,218 227.5197375123724,220.2197405348276 227.5197375123724,215.7802594651724" fill="#1d4876"/>
+<rect x="232" y="181" width="211" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="242" y="197" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">差错与证据</text>
+<text x="242" y="216" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">分派 · 处理 · 独立复核</text>
+<text x="242" y="230" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">原件校验 · 档案与留痕</text>
+<polyline points="226,311 221,311" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="221,311 225.4802624876276,308.7802594651724 225.4802624876276,313.2197405348276" fill="#1d4876"/>
+<rect x="10" y="274" width="211" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="290" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">经营分析</text>
+<text x="20" y="309" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">商户/门店 · 年/月/日钻取</text>
+<text x="20" y="323" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">关联明细 · 风险指标 · 导出</text>
+<polyline points="226,311 232,311" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="232,311 227.5197375123724,313.2197405348276 227.5197375123724,308.7802594651724" fill="#1d4876"/>
+<rect x="232" y="274" width="211" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="242" y="290" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">知识与审计</text>
+<text x="242" y="309" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">中文全文 · 相似案例</text>
+<text x="242" y="323" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.2" font-weight="400" fill="#526174">访问/操作日志 · 查询统计</text>
+<text x="10" y="370" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">功能按业务职责划分；各入口继续受角色与商户范围限制。</text>
+</svg>

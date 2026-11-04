@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { api, post, type Row } from "../api";
+import { api, signOut, type Row } from "../api";
 export const useSession = defineStore("session", () => {
   const user = ref<Row | null>(null);
   const integration = ref<Row>({ environment: "未连接", configured: false });
@@ -35,7 +35,7 @@ export const useSession = defineStore("session", () => {
     }
   }
   async function logout() {
-    await post("/auth/logout");
+    await signOut();
     user.value = null;
   }
   return {

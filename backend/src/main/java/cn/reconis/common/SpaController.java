@@ -8,6 +8,7 @@ public class SpaController {
   @GetMapping({
     "/",
     "/login",
+    "/welcome",
     "/merchants",
     "/orders",
     "/orders/{id}",

@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { ArrowLeft, Wallet, Shop } from "@element-plus/icons-vue";
 import QRCode from "qrcode";
 import { api, post, money, toCent, time, action, type Row } from "../api";
 import { useSession } from "../stores/session";
@@ -136,17 +137,17 @@ async function submitRefund() {
 }
 </script>
 <template>
-  <div v-loading="busy">
-    <div class="page-heading">
-      <div>
-        <el-button link @click="router.push('/orders')"
-          >← 返回订单列表</el-button
+  <div v-loading="busy" class="order-detail-page">
+    <div class="page-heading detail-heading">
+      <div class="detail-title">
+        <el-button link :icon="ArrowLeft" @click="router.push('/orders')"
+          >返回订单列表</el-button
         >
-        <h1 style="margin-top: 13px">{{ row?.subject || "订单详情" }}</h1>
+        <h1>{{ row?.subject || "订单详情" }}</h1>
         <p class="mono">{{ row?.orderNo }}</p>
       </div>
       <div v-if="row" class="heading-actions">
-        <StatusTag :value="row.status" /><el-tag v-if="refundSummary.label" type="info">{{ refundSummary.label }}</el-tag><template v-if="session.writable"
+        <template v-if="session.writable"
           ><el-button v-if="canEditOrder && row.status === 'DRAFT'" @click="edit = true"
             >编辑草稿</el-button
           ><el-button v-if="canEditOrder && row.status === 'DRAFT'" @click="action(remove)"
@@ -173,20 +174,25 @@ async function submitRefund() {
     <el-alert v-if="loadError" :title="loadError" type="error" :closable="false" style="margin-bottom: 18px">
       <el-button link @click="action(() => load())">重新加载订单</el-button>
     </el-alert>
-    <div v-if="row" class="detail-grid">
+    <section v-if="row" class="order-summary" aria-label="订单摘要">
+      <div class="order-total">
+        <span class="summary-label"><el-icon><Wallet /></el-icon>应收合计</span>
+        <strong><small>¥</small>{{ money(row.amountCent) }}</strong>
+      </div>
+      <div class="order-summary-facts">
+        <div><span class="summary-label">订单状态</span><div class="summary-tags"><StatusTag :value="row.status" /><el-tag v-if="refundSummary.label" type="info">{{ refundSummary.label }}</el-tag></div></div>
+        <div><span class="summary-label">所属商户</span><b>{{ row.merchantName }}</b></div>
+        <div><span class="summary-label">收款门店</span><b><el-icon><Shop /></el-icon>{{ row.storeName }}</b></div>
+      </div>
+    </section>
+    <div v-if="row" class="detail-grid order-detail-grid">
       <div class="detail-stack">
         <section class="panel">
           <div class="panel-heading">
             <h2>订单信息</h2>
-            <span class="muted">收款项目</span>
+            <span class="muted">{{ row.items.length }} 项收款明细</span>
           </div>
           <div class="description-grid">
-            <div>
-              <label>所属商户</label><b>{{ row.merchantName }}</b>
-            </div>
-            <div>
-              <label>收款门店</label><b>{{ row.storeName }}</b>
-            </div>
             <div>
               <label>创建时间</label><b>{{ time(row.createdAt) }}</b>
             </div>
@@ -198,12 +204,12 @@ async function submitRefund() {
                   : "柜台匿名订单"
               }}</b>
             </div>
-            <div>
+            <div class="detail-full">
               <label>备注</label><b>{{ row.remark || "—" }}</b>
             </div>
           </div>
           <div class="section-divider">收款明细</div>
-          <el-table :data="row.items"
+          <el-table :data="row.items" class="order-items-desktop"
             ><el-table-column
               label="项目"
               prop="itemName"
@@ -229,31 +235,32 @@ async function submitRefund() {
               ></el-table-column
             ></el-table
           >
-          <div class="balance-block">
-            <small>应收合计</small
-            ><strong>¥ {{ money(row.amountCent) }}</strong>
+          <div class="order-items-mobile">
+            <article v-for="(item, index) in row.items" :key="item.id || index" class="order-item-mobile">
+              <div><b>{{ item.itemName }}</b><span>数量 {{ item.quantity }}</span></div>
+              <footer><span>单价 ¥ {{ money(item.unitPriceCent) }}</span><strong>小计 ¥ {{ money((BigInt(item.quantity) * BigInt(item.unitPriceCent)).toString()) }}</strong></footer>
+            </article>
           </div>
         </section>
         <section class="panel">
           <div class="panel-heading">
             <h2>支付与退款</h2>
-            <span class="muted">支付记录</span>
+            <span class="muted">{{ row.payments.length }} 笔支付记录</span>
           </div>
           <div
             v-for="p in row.payments"
             :key="p.id"
-            class="case-card"
-            style="cursor: default; margin-bottom: 13px"
+            class="payment-record"
           >
             <div class="card-caption">
               <b class="mono">{{ p.outTradeNo }}</b
               ><StatusTag :value="p.status" />
             </div>
-            <p>
-              渠道交易：{{ p.channelTradeNo || "待确认" }} ·
-              {{ p.isPrimary ? "主支付" : "非主支付" }} · 可退 ¥
-              {{ money(p.refundableCent) }}
-            </p>
+            <div class="payment-facts">
+              <div class="payment-channel"><span>渠道交易</span><b class="mono">{{ p.channelTradeNo || "待确认" }}</b></div>
+              <div><span>支付类型</span><b>{{ p.isPrimary ? "主支付" : "非主支付" }}</b></div>
+              <div><span>可退金额</span><b class="amount">¥ {{ money(p.refundableCent) }}</b></div>
+            </div>
             <el-alert v-if="p.lastResultMessage && ['FAILED', 'UNKNOWN', 'CREATED'].includes(p.status)"
               :title="paymentMessage(p)" :type="p.status === 'FAILED' ? 'error' : 'warning'" :closable="false" />
             <div
@@ -280,7 +287,7 @@ async function submitRefund() {
             v-if="!row.payments.length"
             description="尚未发起支付"
             :image-size="60"
-          /><el-table v-if="row.refunds.length" :data="row.refunds"
+          /><div v-if="row.refunds.length" class="section-divider">退款记录</div><el-table v-if="row.refunds.length" :data="row.refunds"
             ><el-table-column
               label="退款请求"
               prop="outRequestNo"
@@ -295,9 +302,9 @@ async function submitRefund() {
         </section>
         <section class="panel">
           <div class="panel-heading">
-            <h2>对账追踪</h2>
+            <h2>对账记录</h2>
             <el-button link @click="router.push('/reconciliation')"
-              >进入对账 →</el-button
+              >进入对账</el-button
             >
           </div>
           <el-table :data="row.results"
@@ -311,16 +318,16 @@ async function submitRefund() {
           ></el-table>
         </section>
       </div>
-      <div class="detail-stack">
+      <aside class="detail-stack order-side">
         <section class="panel">
-          <div class="panel-heading"><h2>资金事实时间线</h2></div>
+          <div class="panel-heading"><h2>收退款时间线</h2></div>
           <el-timeline v-if="row.entries.length"
             ><el-timeline-item
               v-for="e in row.entries"
               :key="e.id"
               :timestamp="time(e.channelOccurredAt)"
               placement="top"
-              :color="e.entryType === 'RECEIPT' ? '#6e9d7d' : '#c4a36d'"
+              :color="e.entryType === 'RECEIPT' ? '#325ddb' : '#d89536'"
               ><b
                 >{{ e.entryType === "RECEIPT" ? "确认收款" : "确认退款" }} ¥
                 {{ money(e.amountCent) }}</b
@@ -333,14 +340,14 @@ async function submitRefund() {
                 }}
               </p>
               <small
-                >系统获知：{{ time(e.recordedAt) }}</small
+                >记录时间：{{ time(e.recordedAt) }}</small
               ></el-timeline-item
             ></el-timeline
           ><el-empty v-else description="暂无收退款记录" :image-size="60" />
           <div class="help-note">收退款按发生日期展示。</div>
         </section>
-        <section class="panel">
-          <div class="panel-heading"><h2>通知接收记录</h2></div>
+        <details class="panel order-notifications">
+          <summary>支付通知<span>{{ row.notifications.length }}</span></summary>
           <div v-for="n in row.notifications" :key="n.id" class="batch-mini">
             <div>
               <b>{{ n.handlingResult }}</b
@@ -357,8 +364,8 @@ async function submitRefund() {
             description="暂无通知"
             :image-size="60"
           />
-        </section>
-      </div>
+        </details>
+      </aside>
     </div>
     <el-dialog
       :model-value="!!pay"
@@ -439,3 +446,83 @@ async function submitRefund() {
     /></el-dialog>
   </div>
 </template>
+
+<style scoped>
+.detail-title { min-width: 0; }
+.detail-title h1 { margin-top: 16px; overflow-wrap: anywhere; line-height: 1.4; font-size: clamp(24px, 2.2vw, 32px); }
+.detail-title > p { overflow-wrap: anywhere; }
+.detail-heading { align-items: flex-start; }
+.detail-heading .heading-actions { padding-top: 34px; flex-wrap: wrap; justify-content: flex-end; flex-shrink: 0; }
+.order-summary { display: grid; grid-template-columns: minmax(210px, .8fr) minmax(0, 2fr); margin-bottom: 24px; background: var(--surface, #fff); border: 1px solid var(--line, #e5eaf2); border-radius: 12px; overflow: hidden; }
+.order-total { padding: 28px 30px; background: #11243c; border-right: 1px solid #11243c; min-width: 0; }
+.summary-label { display: flex; align-items: center; gap: 7px; color: var(--muted, #64748b); font-size: 12px; }
+.order-total .summary-label { color: #b7c9e4; }
+.order-total strong { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px; margin-top: 14px; color: #fff; font-size: clamp(30px, 2.7vw, 40px); font-weight: 600; letter-spacing: -.8px; line-height: 1.2; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.order-total strong small { font-size: 18px; font-weight: 500; }
+.order-summary-facts { display: grid; grid-template-columns: 1.1fr 1fr 1fr; align-items: center; gap: 22px; padding: 24px 28px; min-width: 0; }
+.order-summary-facts > div { min-width: 0; }
+.order-summary-facts b { display: flex; align-items: baseline; gap: 6px; margin-top: 10px; font-size: 14px; font-weight: 600; line-height: 1.6; overflow-wrap: anywhere; }
+.order-summary-facts b .el-icon { flex: none; color: #7a8aa3; }
+.summary-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.order-detail-page .panel-heading h2 { display: flex; align-items: center; gap: 9px; }
+.order-detail-page .panel-heading h2 .el-icon { color: var(--brand, #325ddb); font-size: 19px; }
+.detail-full { grid-column: 1/-1; }
+.order-items-mobile { display: none; }
+.payment-record { padding: 22px 0; border-bottom: 1px solid var(--line, #e5eaf2); }
+.payment-record:first-of-type { padding-top: 0; }
+.payment-record:last-of-type { padding-bottom: 0; border-bottom: 0; }
+.payment-record .card-caption { align-items: flex-start; }
+.payment-record .card-caption b { min-width: 0; overflow-wrap: anywhere; color: var(--ink, #172b4d); font-weight: 600; }
+.payment-record .card-caption :deep(.el-tag) { flex: none; }
+.payment-facts { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, .8fr) minmax(0, 1fr); gap: 14px; margin-top: 16px; }
+.payment-facts > div { min-width: 0; }
+.payment-facts span { display: block; color: var(--muted, #64748b); font-size: 12px; margin-bottom: 7px; }
+.payment-facts b { display: block; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; line-height: 1.6; }
+.payment-facts .amount { text-align: left; font-weight: 600; }
+.payment-record :deep(.el-alert) { margin-top: 14px; }
+.order-side :deep(.el-timeline-item__content) { overflow-wrap: anywhere; }
+.order-side :deep(.el-timeline-item__content > b) { color: var(--ink, #172b4d); font-size: 14px; }
+.order-side :deep(.el-timeline-item__content > p) { margin-top: 8px; font-size: 12px; line-height: 1.7; }
+.order-side :deep(.el-timeline-item__content > small) { display: block; margin-top: 7px; color: var(--muted, #64748b); }
+.order-side .batch-mini { cursor: default; }
+.order-side .batch-mini b { overflow-wrap: anywhere; }
+.order-detail-page :deep(.el-table .cell) { overflow-wrap: anywhere; }
+.order-detail-grid > .detail-stack:first-child { gap: 0; align-self: start; background: var(--surface, #fff); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.order-detail-grid > .detail-stack:first-child > .panel { border: 0; border-radius: 0; border-bottom: 1px solid var(--line); box-shadow: none; padding: 30px; }
+.order-detail-grid > .detail-stack:first-child > .panel:last-child { border-bottom: 0; }
+.order-side > .panel { background: transparent; border-color: transparent; box-shadow: none; padding: 22px 10px; }
+.order-side .help-note { padding: 0; border: 0; background: none; margin-top: 20px; }
+.order-notifications { border-top: 1px solid var(--line) !important; }
+.order-notifications summary { cursor: pointer; font-size: 15px; font-weight: 600; }
+.order-notifications summary span { margin-left: 10px; padding: 2px 7px; border-radius: 4px; color: var(--muted); background: #e9edf5; font-size: 12px; font-weight: 500; }
+.order-notifications[open] summary { margin-bottom: 20px; }
+.order-notifications summary:focus-visible { outline: 2px solid var(--brand); outline-offset: 6px; border-radius: 3px; }
+@media (max-width: 1200px) {
+  .order-summary-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px 22px; }
+  .order-summary-facts > div:first-child { grid-column: 1/-1; }
+  .detail-heading { flex-wrap: wrap; }
+  .detail-heading .heading-actions { padding-top: 0; }
+}
+@media (max-width: 650px) {
+  .order-items-desktop { display: none; }
+  .order-items-mobile { display: block; }
+  .order-item-mobile { padding: 16px 0; border-top: 1px solid var(--line, #e5eaf2); }
+  .order-item-mobile > div, .order-item-mobile footer { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+  .order-item-mobile b { min-width: 0; overflow-wrap: anywhere; font-size: 14px; font-weight: 600; }
+  .order-item-mobile > div > span { flex: none; color: var(--muted, #64748b); font-size: 12px; }
+  .order-item-mobile footer { margin-top: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted, #64748b); }
+  .order-item-mobile footer strong { color: var(--ink, #172b4d); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .order-summary { grid-template-columns: 1fr; margin-bottom: 18px; }
+  .order-total { padding: 21px; border-right: 0; border-bottom: 1px solid #dfe7f8; }
+  .order-total strong { font-size: 32px; }
+  .order-summary-facts { padding: 20px; }
+  .detail-heading .heading-actions { width: 100%; justify-content: flex-start; }
+  .detail-title h1 { font-size: 24px; }
+  .payment-record { padding: 20px 0; }
+  .payment-facts { grid-template-columns: 1fr 1fr; }
+  .payment-channel { grid-column: 1/-1; }
+  .order-detail-page .panel-heading { align-items: flex-start; flex-wrap: wrap; }
+  .order-detail-grid > .detail-stack:first-child > .panel { padding: 22px 18px; }
+  .order-side > .panel { padding: 18px; }
+}
+</style>

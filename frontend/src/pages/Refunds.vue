@@ -2,24 +2,46 @@
 import { reactive, ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
+import { Search, Refresh, RefreshLeft, InfoFilled } from "@element-plus/icons-vue";
 import { api, post, query, money, time, action, type Row } from "../api";
 import { useSession } from "../stores/session";
 import StatusTag from "../components/StatusTag.vue";
+import ListFeedback from "../components/ListFeedback.vue";
 const router = useRouter(),
   route = useRoute(),
   session = useSession(),
   list = ref<Row>({ items: [], total: 0 }),
   filters = reactive({ q: "", status: String(route.query.status || ""), page: 1 }),
-  busy = ref(false);
+  busy = ref(false), failed = ref(false);
 async function load() {
   busy.value = true;
+  failed.value = false;
   try {
     list.value = await api("/refunds?" + query(filters));
+  } catch (error) {
+    failed.value = true;
+    throw error;
   } finally {
     busy.value = false;
   }
 }
 onMounted(() => action(load));
+const statusOptions = [
+  { value: "", label: "全部退款" },
+  { value: "PENDING_REVIEW", label: "待审核" },
+  { value: "APPROVED", label: "已批准" },
+  { value: "PROCESSING", label: "处理中" },
+  { value: "UNKNOWN", label: "待确认" },
+  { value: "SUCCEEDED", label: "已成功" },
+  { value: "REJECTED", label: "已退回" },
+];
+function selectStatus(value: string) {
+  if (busy.value) return;
+  filters.status = value;
+  filters.page = 1;
+  action(load);
+}
+async function resetFilters() { filters.q = ''; filters.status = ''; filters.page = 1; await load(); }
 async function review(row: Row, approve: boolean) {
   const { value } = await ElMessageBox.prompt("填写审批意见", "退款审批", {
     inputValidator: (v) => !!v || "请填写意见",
@@ -34,50 +56,41 @@ async function sync(row: Row) {
 }
 </script>
 <template>
-  <div>
+  <div class="refund-workspace">
     <div class="page-heading">
       <div>
-        <div class="eyebrow">REFUND OPERATIONS</div>
-        <h1>退款工作台</h1>
-        <p>查看申请，审批退款，跟进处理结果。</p>
+        <h1>{{ session.consumer ? '我的退款' : '退款工作台' }}</h1>
+        <p>{{ session.consumer ? '查看退款申请与到账进度' : '审核申请，跟进退款结果' }}</p>
       </div>
-      <el-button @click="action(load)">刷新状态</el-button>
+      <el-button :icon="Refresh" @click="action(load)">刷新状态</el-button>
     </div>
-    <div class="help-note">待确认的退款可点击“查询恢复”更新进度。</div>
-    <section class="panel" v-loading="busy">
+      <div class="refund-status-nav" role="group" aria-label="退款状态筛选"><button v-for="option in statusOptions" :key="option.value" :class="{selected: filters.status === option.value}" :aria-pressed="filters.status === option.value" :aria-disabled="busy" @click="selectStatus(option.value)">{{option.label}}</button></div>
+    <section class="panel refund-list" v-loading="busy" :aria-busy="busy">
       <div class="table-toolbar">
         <el-input
           v-model="filters.q"
+          :prefix-icon="Search"
           placeholder="退款编号 / 申请原因"
           clearable
-          @keyup.enter="action(load)"
-        /><el-select v-model="filters.status" placeholder="全部状态" clearable
-          ><el-option
-            v-for="(label, value) in {
-              PENDING_REVIEW: '待审核',
-              APPROVED: '已批准',
-              PROCESSING: '处理中',
-              UNKNOWN: '待确认',
-              SUCCEEDED: '已成功',
-              REJECTED: '已退回',
-            }"
-            :key="value"
-            :label="label"
-            :value="value" /></el-select
-        ><el-button
+          aria-label="退款编号或申请原因"
+          @keyup.enter="filters.page = 1; action(load)"
+        /><el-button type="primary"
           @click="
             filters.page = 1;
             action(load);
           "
           >查询</el-button
         ><span class="grow"></span
-        ><span class="muted">{{ list.total }} 笔退款</span>
+        ><span class="muted">{{ list.total }} 笔</span>
+        <el-button v-if="filters.q || filters.status" link @click="action(resetFilters)">清除筛选</el-button>
       </div>
-      <el-table :data="list.items"
+      <div v-if="['UNKNOWN', 'PROCESSING'].includes(filters.status)" class="refund-hint"><el-icon><InfoFilled /></el-icon><span>渠道尚未确认退款结果，可通过“查询恢复”更新进度。</span></div>
+      <ListFeedback :failed="failed" :busy="busy" :has-previous="!!list.items.length" noun="退款记录" @retry="action(load)" />
+      <el-table :data="list.items" class="refund-desktop"
         ><el-table-column label="退款与订单" min-width="230"
           ><template #default="{ row }"
-            ><b class="mono">{{ row.outRequestNo }}</b
-            ><span class="subline"
+            ><span class="refund-reference"><el-icon><RefreshLeft /></el-icon><b class="mono">{{ row.outRequestNo }}</b></span>
+            <span class="subline"
               ><el-button link @click="router.push('/orders/' + row.orderId)"
                 >{{ row.orderNo }} ↗</el-button
               ></span
@@ -137,8 +150,27 @@ async function sync(row: Row) {
               >
             </div></template
           ></el-table-column
-        ></el-table
+        ><template #empty><el-empty :description="busy ? '正在加载退款' : failed ? '退款暂不可用' : '暂无符合条件的退款'" :image-size="68"><el-button v-if="!busy && !failed && (filters.q || filters.status)" @click="action(resetFilters)">清除筛选</el-button></el-empty></template></el-table
       >
+      <div class="refund-mobile">
+        <article v-for="row in list.items" :key="row.id" class="refund-mobile-row">
+          <header><span>{{ row.outRequestNo }}</span><StatusTag :value="row.status" /></header>
+          <div class="refund-mobile-amount"><strong>¥ {{ money(row.amountCent) }}</strong><time>{{ time(row.createdAt) }}</time></div>
+          <p class="refund-mobile-reason">{{ row.reason }}</p>
+          <p class="refund-mobile-source">{{ row.merchantName }} / {{ row.applicantName }}</p>
+          <footer>
+            <el-button link type="primary" @click="router.push('/orders/' + row.orderId)">查看订单</el-button>
+            <div v-if="session.writable" class="row-actions">
+              <template v-if="session.can(row.merchantId, ['OWNER', 'FINANCE']) && row.status === 'PENDING_REVIEW' && row.applicantId !== session.user?.id">
+                <el-button size="small" @click="action(() => review(row, false))">退回</el-button><el-button size="small" type="primary" @click="action(() => review(row, true))">批准</el-button>
+              </template>
+              <el-button v-if="session.can(row.merchantId, ['OWNER', 'FINANCE']) && ['UNKNOWN', 'PROCESSING'].includes(row.status)" size="small" @click="action(() => sync(row))">查询恢复</el-button>
+              <span v-if="row.status === 'PENDING_REVIEW' && row.applicantId === session.user?.id" class="muted">等待他人审批</span>
+            </div>
+          </footer>
+        </article>
+        <el-empty v-if="!list.items.length" :description="busy ? '正在加载退款' : failed ? '退款暂不可用' : '暂无符合条件的退款'" :image-size="68"><el-button v-if="!busy && !failed && (filters.q || filters.status)" @click="action(resetFilters)">清除筛选</el-button></el-empty>
+      </div>
       <div class="pagination">
         <el-pagination
           v-model:current-page="filters.page"
@@ -151,3 +183,38 @@ async function sync(row: Row) {
     </section>
   </div>
 </template>
+<style scoped>
+.refund-list { padding: 0; overflow: hidden; }
+.refund-list > .table-toolbar { padding: 24px 26px; margin: 0; }
+.refund-list > .pagination { padding: 20px 26px; margin: 0; border-top: 1px solid var(--line); }
+.refund-status-nav { display: flex; align-items: center; gap: 28px; border-bottom: 1px solid var(--line); margin: 0 0 20px; overflow-x: auto; scrollbar-width: thin; }
+.refund-status-nav button { position: relative; padding: 14px 0 17px; border: 0; background: transparent; font-size: 13px; color: var(--muted); white-space: nowrap; flex: none; transition: color .15s; }
+.refund-status-nav button::after { position: absolute; content: ''; bottom: 0; left: 0; right: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--brand); transform: scaleX(0); transition: transform .18s; }
+.refund-status-nav button.selected { color: var(--brand); font-weight: 600; }
+.refund-status-nav button.selected::after { transform: scaleX(1); }
+.refund-status-nav button:hover { color: var(--brand); }
+.refund-list > .table-toolbar .el-input { width: 320px; }
+.refund-hint { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #667c9e; background: #f5f8fd; padding: 11px 14px; margin-bottom: 20px; border-radius: 7px; }
+.refund-hint > .el-icon { color: #93acd7; flex: none; }
+.refund-reference { display: flex; align-items: center; gap: 9px; }
+.refund-reference > .el-icon { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 7px; background: #f1f5ff; color: #6c86b8; font-size: 14px; flex: none; }
+.refund-reference b { min-width: 0; overflow-wrap: anywhere; }
+.refund-mobile { display: none; }
+.refund-desktop :deep(.cell) { padding-inline: 22px; }
+.refund-desktop :deep(td.el-table__cell) { height: 80px; }
+.refund-desktop :deep(.el-table__header-wrapper) { border-radius: 0; }
+.refund-mobile-row { padding: 22px 20px; border-top: 1px solid var(--line); }
+.refund-mobile-row header { display: flex; align-items: center; gap: 12px; }
+.refund-mobile-row header > span:first-child { min-width: 0; flex: 1; overflow-wrap: anywhere; font-size: 11px; color: var(--muted); }
+.refund-mobile-row header :deep(.el-tag) { flex: none; }
+.refund-mobile-amount { display: flex; align-items: baseline; gap: 15px; margin: 18px 0 12px; }
+.refund-mobile-amount strong { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.refund-mobile-amount time { margin-left: auto; font-size: 11px; color: var(--muted); }
+.refund-mobile-reason { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
+.refund-mobile-source { margin: 8px 0 0; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.refund-mobile-row footer { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; align-items: center; }
+.refund-mobile-row footer .muted { font-size: 12px; }
+@media(max-width:650px) { .refund-status-nav { gap: 22px; } .refund-list > .table-toolbar .el-input { width: 100%; } .refund-hint { align-items: flex-start; line-height: 1.7; } .refund-hint > .el-icon { margin-top: 4px; } }
+@media(max-width:760px) { .refund-desktop { display: none; } .refund-mobile { display: block; } .refund-list > .table-toolbar { padding: 20px; } .refund-list > .pagination { padding: 20px 14px; } }
+@media(prefers-reduced-motion:reduce) { .refund-status-nav button, .refund-status-nav button::after { transition: none; } }
+</style>
