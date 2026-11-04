@@ -145,7 +145,7 @@ public class PaymentGateway {
           0,
           null,
           "DEMO_PRECREATE",
-          "明确标注的模拟渠道",
+          "本地支付渠道",
           "reconis-demo:" + p.get("outTradeNo"));
     }
     var configuration = configuration();
@@ -299,7 +299,7 @@ public class PaymentGateway {
   }
 
   public void simulate(String key, long amount, String mode) {
-    if (!environment.equals("DEMO")) throw Api.fail(403, "只允许演示环境模拟");
+    if (!environment.equals("DEMO")) throw Api.fail(403, "当前渠道不支持模拟支付");
     if (!key.matches("[A-Za-z0-9_-]{1,64}")) throw Api.fail(422, "交易标识不合法");
     Map<String, Object> b =
         new HashMap<>(

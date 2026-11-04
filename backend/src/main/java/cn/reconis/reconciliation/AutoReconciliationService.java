@@ -117,7 +117,7 @@ public class AutoReconciliationService {
     result.put("scheduleTime", "每日上海时间10:00后获取前日账单，停机后补建遗漏账期");
     result.put("maxAttempts", 4);
     result.put("capabilityMessage", gateway.environment.equals("DEMO")
-        ? "账单来自独立模拟渠道记录，明确标注DEMO，不作为真实支付宝数据。"
+        ? "账单由本地渠道按账期生成。"
         : "支付宝沙箱账单接口仅提供模板；成功下载会保留原件，但不据此判断漏单或生成差错。");
     return result;
   }

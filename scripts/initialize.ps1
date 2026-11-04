@@ -65,9 +65,10 @@ try{
 `$env:DATA_DIR='$($root.Replace("'","''"))\data\$runtimeDir'
 "@
  if($Environment -eq 'DEMO'){
+  $catalog=Get-Content -LiteralPath (Join-Path $root 'database\demo\campus_catalog.sql') -Raw -Encoding UTF8
   $seed=(Get-Content -LiteralPath (Join-Path $root 'database\seed_demo.sql') -Raw -Encoding UTF8).Replace('$(DemoPasswordHash)',$hash)
-  foreach($batch in [regex]::Split($seed,'(?im)^GO\s*$')){if($batch.Trim()){Invoke-Sql $batch}}
-  Set-Content -LiteralPath (Join-Path $private 'demo-accounts.txt') -Value "DEMO账号：admin(管理员), finance(平台财务), auditor(审计), owner(M001负责人), cashier(M001收银), reviewer(M001复核), customer(消费者), otherowner(M002/M003负责人)。`n统一初始密码：$password`n用户名使用英文；admin 的用户名是 admin。请勿提交此文件。" -Encoding UTF8
+  foreach($batch in [regex]::Split($catalog + "`n" + $seed,'(?im)^GO\s*$')){if($batch.Trim()){Invoke-Sql $batch}}
+  Set-Content -LiteralPath (Join-Path $private 'demo-accounts.txt') -Value "DEMO账号：admin(管理员), finance(平台财务), auditor(审计), owner(海棠咖啡店负责人), cashier(海棠咖啡店收银), reviewer(海棠咖啡店复核), customer(消费者), otherowner(其他门店负责人)。`n统一初始密码：$password`n用户名使用英文；admin 的用户名是 admin。请勿提交此文件。" -Encoding UTF8
  }else{
   $seed=(Get-Content -LiteralPath (Join-Path $root 'database\005_bootstrap_admin.sql') -Raw -Encoding UTF8).Replace('$(AdminPasswordHash)',$hash)
   foreach($batch in [regex]::Split($seed,'(?im)^GO\s*$')){if($batch.Trim()){Invoke-Sql $batch}}

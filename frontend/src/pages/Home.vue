@@ -75,7 +75,7 @@ onBeforeUnmount(() => observer?.disconnect());
         </router-link>
         <nav class="home-nav" aria-label="产品介绍">
           <a href="#campus-shops" @click="jump($event, 'campus-shops')">校园门店</a>
-          <a href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">对账演示</a>
+          <a href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">账单核对</a>
           <a href="#capabilities" @click="jump($event, 'capabilities')">功能介绍</a>
         </nav>
         <div class="header-actions">
@@ -93,7 +93,7 @@ onBeforeUnmount(() => observer?.disconnect());
           <p class="hero-description">图书馆旁的咖啡店、宿舍区的砂锅店，白天收款，打烊后要对账。Reconis 把订单、退款和渠道账单放在一起，差额可以交给财务复核。</p>
           <div class="hero-actions">
             <router-link class="home-button primary" :to="destination">{{ actionLabel }}<el-icon><ArrowRight /></el-icon></router-link>
-            <a class="home-text-link" href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">试用对账示例<el-icon><ArrowDown /></el-icon></a>
+            <a class="home-text-link" href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">查看账单样例<el-icon><ArrowDown /></el-icon></a>
           </div>
         </div>
         <figure class="hero-scene">
@@ -105,7 +105,7 @@ onBeforeUnmount(() => observer?.disconnect());
             </div>
           </div>
           <a class="hero-ledger-link" href="#reconciliation-demo-section" @click="jump($event, 'reconciliation-demo-section')">
-            <span><i />演示账单 · 4 笔交易</span>
+            <span><i />日账单 · 4 笔交易</span>
             <span class="hero-ledger-result">3 笔匹配 <i />1 笔差异</span>
             <el-icon><ArrowRight /></el-icon>
           </a>
@@ -127,7 +127,7 @@ onBeforeUnmount(() => observer?.disconnect());
 
       <section id="reconciliation-demo-section" class="home-container demo-section" tabindex="-1" aria-labelledby="demo-title">
         <div class="section-heading reveal-section">
-          <div><p class="public-kicker">对账演示</p><h2 id="demo-title">海棠咖啡店的日账单</h2></div>
+          <div><p class="public-kicker">账单核对</p><h2 id="demo-title">海棠咖啡店的日账单</h2></div>
           <p>导入四笔记录，看看 0.50 元差额如何进入复核。</p>
         </div>
         <div class="reveal-section"><ReconciliationDemo /></div>

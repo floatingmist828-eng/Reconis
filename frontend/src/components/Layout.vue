@@ -215,14 +215,7 @@ async function logout() {
           ><strong>{{ session.consumer && route.path === '/' ? '我的概览' : route.meta.title }}</strong>
         </div>
         <div class="topbar-right">
-          <span class="environment-badge">{{
-            session.integration.environment === "DEMO"
-              ? "教学演示"
-              : session.integration.environment === "ALIPAY_SANDBOX"
-                ? "支付宝沙箱"
-                : "后端连接中"
-          }}</span
-          >
+          <span v-if="session.integration.environment === 'ALIPAY_SANDBOX'" class="environment-badge">支付宝沙箱</span>
           <div class="avatar">{{ session.user?.displayName?.slice(-1) }}</div>
           <div class="user-caption">
             <b>{{ session.user?.displayName }}</b

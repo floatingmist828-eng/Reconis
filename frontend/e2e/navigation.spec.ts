@@ -12,7 +12,7 @@ test('public introduction, illustrative reconciliation and login entry', async (
   await page.goto('/');
   await expect(page).toHaveURL(/\/welcome$/);
   await expect(page.locator('h1')).toHaveText(/给校园小店的\s*收款对账台/);
-  await expect(page.getByText('演示账单 · 4 笔交易', {exact:true})).toBeVisible();
+  await expect(page.getByText('日账单 · 4 笔交易', {exact:true})).toBeVisible();
   const demo = page.getByTestId('reconciliation-demo');
   const scene = demo.getByTestId('demo-scene');
   const steps = ['01 导入账单', '02 核对记录', '03 发现差异', '04 分派与复核'];
@@ -107,7 +107,7 @@ test('mobile public pages support reduced motion and keyboard navigation', async
   await page.goto('/welcome');
   await expect(page.locator('h1')).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
-  await page.getByRole('link',{name:'试用对账示例',exact:true}).click();
+  await page.getByRole('link',{name:'查看账单样例',exact:true}).click();
   await expect(page.locator('#reconciliation-demo-section')).toBeFocused();
   const demo = page.getByTestId('reconciliation-demo');
   await demo.getByRole('button', {name:'03 发现差异', exact:true}).press('Enter');

@@ -385,9 +385,6 @@ async function submitRefund() {
           />
         </p>
       </div>
-      <div v-if="session.integration.environment === 'DEMO'" class="help-note">
-        DEMO 演示付款
-      </div>
       <div
         v-if="session.integration.environment === 'DEMO'"
         class="row-actions"

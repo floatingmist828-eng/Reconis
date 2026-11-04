@@ -40,7 +40,7 @@ export function codeName(value: unknown) {
     DECLARED_COMPLETE: "声明完整",
     PROVIDER_COMPLETE: "渠道确认完整",
     UNKNOWN: "未知",
-    DEMO_SEED: "教学基准账单",
+    DEMO_SEED: "渠道账单",
     TRADE_QUERY: "单笔渠道核查",
     ALIPAY_CSV: "支付宝 CSV",
     ALIPAY_ZIP: "支付宝账单压缩包",

@@ -108,10 +108,10 @@ onUnmounted(() => { if (refreshTimer) clearInterval(refreshTimer); });
     <div class="kpi-grid two">
       <section class="kpi-card">
         <span>当前环境</span
-        ><strong style="font-size: 24px">{{ data.environment || "—" }}</strong
+        ><strong style="font-size: 24px">{{ data.environment === "DEMO" ? "本地渠道" : data.environment === "ALIPAY_SANDBOX" ? "支付宝沙箱" : "—" }}</strong
         ><small>{{
           data.environment === "DEMO"
-            ? "教学模拟渠道"
+            ? "模拟支付"
             : "支付宝官方测试网关"
         }}</small>
       </section>
