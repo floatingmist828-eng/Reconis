@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6.3in" height="7.23611in" viewBox="0 0 453.6 521">
+<rect width="453.6" height="521" fill="white"/>
+<rect x="10" y="10" width="265" height="61" rx="3" fill="#f2f5f8" stroke="#1d4876" stroke-width="0.8"/>
+<text x="20" y="26" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">提交待付款订单</text>
+<text x="20" y="45" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">UUID 幂等 · 锁定订单 · 复用支付号</text>
+<rect x="10" y="101" width="265" height="61" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="117" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">领取派发租约，调用渠道</text>
+<text x="20" y="136" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">90 秒租约与令牌；网络在数据库事务外</text>
+<rect x="10" y="192" width="265" height="61" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="208" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">付款结果确认</text>
+<text x="20" y="227" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">用户主动查询 / 定时补查 / 合法通知触发</text>
+<rect x="10" y="283" width="265" height="61" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="299" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">核对金额与渠道交易身份</text>
+<text x="20" y="318" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">金额一致且成功 → 调用支付确认过程</text>
+<rect x="10" y="374" width="265" height="76" rx="3" fill="#f2f5f8" stroke="#1d4876" stroke-width="0.8"/>
+<text x="20" y="390" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">本地事务确认成功</text>
+<text x="20" y="409" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">更新支付与订单 · 写唯一收款事实</text>
+<text x="20" y="423" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">已确认结果重入不重复入账</text>
+<polyline points="142,71 142,101" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="142,101 139.7802594651724,96.51973751237237 144.2197405348276,96.51973751237237" fill="#1d4876"/>
+<polyline points="142,162 142,192" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="142,192 139.7802594651724,187.5197375123724 144.2197405348276,187.5197375123724" fill="#1d4876"/>
+<polyline points="142,253 142,283" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="142,283 139.7802594651724,278.5197375123724 144.2197405348276,278.5197375123724" fill="#1d4876"/>
+<polyline points="142,344 142,374" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="142,374 139.7802594651724,369.5197375123724 144.2197405348276,369.5197375123724" fill="#1d4876"/>
+<rect x="302" y="101" width="141" height="75" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="312" y="117" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">结果未知</text>
+<text x="312" y="136" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">保留原交易号</text>
+<text x="312" y="150" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">不认定失败</text>
+<text x="312" y="164" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">优先查原交易</text>
+<polyline points="275,130 302,130" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="302,130 297.5197375123724,132.2197405348276 297.5197375123724,127.7802594651724" fill="#1d4876"/>
+<rect x="277.36" y="109.6" width="23.279999999999998" height="12.8" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="0.8"/>
+<text x="289" y="116" dominant-baseline="central" text-anchor="middle" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="8.6" font-weight="400" fill="#526174">超时</text>
+<polyline points="373,176 373,218 275,218" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="275,218 279.4802624876276,215.7802594651724 279.4802624876276,220.2197405348276" fill="#1d4876"/>
+<rect x="302" y="283" width="141" height="75" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="312" y="299" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">金额 / 额外收款差异</text>
+<text x="312" y="318" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">金额不符：保存证据</text>
+<text x="312" y="332" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">额外成功：仍保留流水</text>
+<text x="312" y="346" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">两者进入差错处理</text>
+<polyline points="275,313 302,313" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="302,313 297.5197375123724,315.2197405348276 297.5197375123724,310.7802594651724" fill="#1d4876"/>
+<text x="10" y="474" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">未知结果 ≠ 明确失败；重试始终保留原支付身份。</text>
+<text x="10" y="488" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">回调必须验签、核对主体与金额；真实公网通知尚待联调。</text>
+</svg>

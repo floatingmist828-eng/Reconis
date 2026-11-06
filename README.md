@@ -39,4 +39,4 @@ SQL Server 管理 15 张关系表。退款额度和对账结果由数据库过�
 | `samples/` | 教学账单 |
 | `docs/` | [运行说明](docs/runbook.md)、[数据库设计](docs/design.md)、[课程功能对照](docs/requirements-matrix.md) |
 
-两份课程报告单独提交。
+[最终实践总结报告](docs/reports/README.md)包含 Word、PDF、正文源稿及配套图表。初期系统设计报告单独保存。

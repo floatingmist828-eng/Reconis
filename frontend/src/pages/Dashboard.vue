@@ -6,6 +6,7 @@ import { api, query, money, time, dateDays, action, type Row } from "../api";
 import { useSession } from "../stores/session";
 import Chart from "../components/Chart.vue";
 import StatusTag from "../components/StatusTag.vue";
+import CategoryArtwork from "../components/CategoryArtwork.vue";
 const router = useRouter(),
   session = useSession(),
   data = ref<Row>({
@@ -128,7 +129,7 @@ const option = computed(() => ({
       <section class="panel">
         <div class="panel-heading"><h2>最近订单</h2><el-button link @click="router.push('/orders')">全部订单<el-icon><ArrowRight /></el-icon></el-button></div>
         <el-table :data="data.recentOrders" class="clickable dashboard-desktop-table" @row-click="(r:Row)=>router.push('/orders/'+r.id)">
-          <el-table-column label="订单" prop="subject" min-width="190" show-overflow-tooltip />
+          <el-table-column label="订单" min-width="230"><template #default="{row}"><div class="dashboard-order-identity"><CategoryArtwork :subject="row.subject" :merchant-name="row.merchantName" size="sm" /><b>{{ row.subject }}</b></div></template></el-table-column>
           <el-table-column label="商户" prop="merchantName" min-width="130" show-overflow-tooltip />
           <el-table-column label="金额" align="right" width="125"><template #default="{row}">¥ {{money(row.amountCent)}}</template></el-table-column>
           <el-table-column label="状态" width="110"><template #default="{row}"><StatusTag :value="row.status"/></template></el-table-column>
@@ -136,8 +137,7 @@ const option = computed(() => ({
         </el-table>
         <div class="dashboard-mobile-list">
           <router-link v-for="order in data.recentOrders" :key="order.id" :to="'/orders/'+order.id" class="recent-order">
-            <div><b>{{order.subject}}</b><StatusTag :value="order.status"/></div>
-            <p>{{order.merchantName}}</p>
+            <div class="recent-order-heading"><CategoryArtwork :subject="order.subject" :merchant-name="order.merchantName" /><div class="recent-order-copy"><b>{{order.subject}}</b><p>{{order.merchantName}}</p></div><StatusTag :value="order.status"/></div>
             <footer><small>{{time(order.createdAt)}}</small><strong>¥ {{money(order.amountCent)}}</strong></footer>
           </router-link>
           <el-empty v-if="!data.recentOrders?.length" description="暂无订单" :image-size="70"/>
@@ -182,7 +182,7 @@ const option = computed(() => ({
       <section class="panel">
         <div class="panel-heading"><h2>最近对账批次</h2><el-button link @click="router.push('/reconciliation')">查看全部<el-icon><ArrowRight /></el-icon></el-button></div>
         <router-link v-for="b in data.recentBatches" :key="b.id" class="batch-mini" :to="'/reconciliation?batchId=' + b.id">
-          <span class="batch-icon"><el-icon><DocumentChecked /></el-icon></span><div><b>{{ b.merchantName }}</b><small>{{ time(b.createdAt) }}</small></div><StatusTag :value="b.status" />
+          <CategoryArtwork :merchant-name="b.merchantName" size="sm" /><div><b>{{ b.merchantName }}</b><small>{{ time(b.createdAt) }}</small></div><StatusTag :value="b.status" />
         </router-link>
         <el-empty v-if="!data.recentBatches?.length" description="尚无对账批次" :image-size="60" />
       </section>
@@ -289,6 +289,8 @@ const option = computed(() => ({
 .consumer-states strong { font-size: 25px; color: #172b4d; font-weight: 600; font-variant-numeric: tabular-nums; }
 .consumer-states > a > .el-icon { color: #8b9ab0; font-size: 12px; }
 .dashboard-mobile-list { display: none; }
+.dashboard-order-identity { display: flex; align-items: center; gap: 12px; padding-block: 3px; min-width: 0; }
+.dashboard-order-identity b { color: #263753; font-size: 14px; line-height: 1.6; font-weight: 500; overflow-wrap: anywhere; min-width: 0; }
 @media (max-width: 1200px) {
   .finance-workspace { grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); gap: 18px; }
   .financial-overview { padding: 22px; }
@@ -337,7 +339,9 @@ const option = computed(() => ({
   .recent-order:last-child { padding-bottom: 0; }
   .recent-order > div, .recent-order footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
   .recent-order b { color: #263753; font-size: 14px; font-weight: 500; line-height: 1.6; min-width: 0; flex: 1; overflow-wrap: anywhere; }
-  .recent-order p { color: #64748b; font-size: 12px; margin: 6px 0 12px; overflow-wrap: anywhere; }
+  .recent-order .recent-order-copy { min-width: 0; flex: 1; }
+  .recent-order p { color: #64748b; font-size: 12px; margin: 4px 0 0; overflow-wrap: anywhere; }
+  .recent-order footer { margin-top: 16px; }
   .recent-order small { color: #64748b; font-size: 12px; min-width: 0; overflow-wrap: anywhere; }
   .recent-order strong { color: #172b4d; font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 0; max-width: 55%; overflow-wrap: anywhere; text-align: right; }
   .recent-order :deep(.el-tag) { flex: none; }

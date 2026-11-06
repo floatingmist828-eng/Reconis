@@ -1,0 +1,17 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "BD63829156F3DFD241D32B4A1D9F57512BFBAD8D70BB773B9CC64D9A6367F107",
+    "Path": "docs/reports/system-design.md"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "89CBDF08790D85D192062316C22952E50124DD437E0E6EA35C0D561D67F39715",
+    "Path": "docs/reports/final/Reconis-系统设计报告.docx"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "E41CF46203B6189BB22EACF0D0DE55888E149000B9AF6D56F10D835FBDDF3933",
+    "Path": "docs/reports/final/Reconis-系统设计报告.pdf"
+  }
+]

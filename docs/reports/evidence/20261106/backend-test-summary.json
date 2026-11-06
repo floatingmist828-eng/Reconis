@@ -1,0 +1,272 @@
+{
+  "totals": {
+    "tests": 190,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 72,
+    "executed": 118,
+    "passed": 118
+  },
+  "suites": [
+    {
+      "name": "cn.reconis.analytics.AnalyticsDatabaseTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 12,
+      "seconds": 0.028,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.analytics.AnalyticsDatabaseTest.xml",
+      "sourceSha256": "E864060B61AC574BD8BA23BB819519032ED9D5EBEC2F61FE27C5BAD70936ABCD"
+    },
+    {
+      "name": "cn.reconis.analytics.AnalyticsServiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.954,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.analytics.AnalyticsServiceTest.xml",
+      "sourceSha256": "1B008551A8986DF214013B70095C7719F293BA313E4B65EA8222AE4EACA03BF4"
+    },
+    {
+      "name": "cn.reconis.analytics.ReportServiceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.651,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.analytics.ReportServiceTest.xml",
+      "sourceSha256": "A67F928F98967382DF19F92B63CB19D1359661DBD87B1834CD7610C409D5F5F9"
+    },
+    {
+      "name": "cn.reconis.analytics.RiskAnalyticsServiceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.002,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.analytics.RiskAnalyticsServiceTest.xml",
+      "sourceSha256": "05398ACEC3B843893903FF6B6BADFA1618A8F2EDA4379237088B687A7D83EE87"
+    },
+    {
+      "name": "cn.reconis.casework.CaseControllerTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.113,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.casework.CaseControllerTest.xml",
+      "sourceSha256": "4FAF1DEA6A76D503F2023BC328DF68980C4966BB1DA27939A8D462E4EDC9237C"
+    },
+    {
+      "name": "cn.reconis.casework.CaseEvidenceDatabaseTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4,
+      "seconds": 0.0,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.casework.CaseEvidenceDatabaseTest.xml",
+      "sourceSha256": "72026F5DD826E601F421E39CBA9EC361EA01D11A89261E307FD5759C224C1B90"
+    },
+    {
+      "name": "cn.reconis.casework.CaseEvidenceServiceTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.437,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.casework.CaseEvidenceServiceTest.xml",
+      "sourceSha256": "FB4CCBC6B6E344A116C5F95A7367F1B5AD9A9D07D5C1EAF07E74F74F93075909"
+    },
+    {
+      "name": "cn.reconis.casework.CaseWorkflowDatabaseTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 10,
+      "seconds": 0.0,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.casework.CaseWorkflowDatabaseTest.xml",
+      "sourceSha256": "D3CA017DF74D97100CABBF855803BEDFCC37BFC178B49969CDE79F36CA792875"
+    },
+    {
+      "name": "cn.reconis.casework.FullTextReadinessTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.264,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.casework.FullTextReadinessTest.xml",
+      "sourceSha256": "4116BB54A2AE3E299FC5810A673A1DBBC66CBB82F8D6268537CAC499AFDBECBF"
+    },
+    {
+      "name": "cn.reconis.common.ApiErrorsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.668,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.common.ApiErrorsTest.xml",
+      "sourceSha256": "769624ECD521CCD8DB3E081007DE6D804C394C564E81AE5C61313FEA5F625F15"
+    },
+    {
+      "name": "cn.reconis.common.DbDatabaseTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4,
+      "seconds": 0.001,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.common.DbDatabaseTest.xml",
+      "sourceSha256": "A4144F37FEA043D8C2F3E85F9B7F6A26C426E411346C07438CE38FC254772651"
+    },
+    {
+      "name": "cn.reconis.common.HealthControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.016,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.common.HealthControllerTest.xml",
+      "sourceSha256": "67EAAC8D9E1F126EEF03BBBAA625551FA338A38C0B392428582F58CF47D90DBD"
+    },
+    {
+      "name": "cn.reconis.identity.IdentityAuditTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.04,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.identity.IdentityAuditTest.xml",
+      "sourceSha256": "F2C46F50C7EC12446D461640A5D8F15D63739573F19F077C2646DEE13489A7D7"
+    },
+    {
+      "name": "cn.reconis.payment.CallbackEndpointTest",
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.072,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.payment.CallbackEndpointTest.xml",
+      "sourceSha256": "40AE3D35E41D76D712DC30AFCBD91817B5F84897371286933055229BEB4F4ABA"
+    },
+    {
+      "name": "cn.reconis.payment.FinancialConcurrencyDatabaseTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 5,
+      "seconds": 0.0,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.payment.FinancialConcurrencyDatabaseTest.xml",
+      "sourceSha256": "EBD1563183D819EED0D67BD88E2872FEA76A0A965B977BA5E44BCF46354B5222"
+    },
+    {
+      "name": "cn.reconis.payment.PaymentCallbackDatabaseTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 10,
+      "seconds": 0.0,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.payment.PaymentCallbackDatabaseTest.xml",
+      "sourceSha256": "72F46A0A5F11CBA28DD2ED18E4C86751D93872E07A0B91CA69A379B19D9E9E92"
+    },
+    {
+      "name": "cn.reconis.payment.PaymentConfigurationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.411,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.payment.PaymentConfigurationTest.xml",
+      "sourceSha256": "7DF00D18CB0ECF27E329BBB8723BC6FFA450AEA8A156B1738589B1A31D30829D"
+    },
+    {
+      "name": "cn.reconis.payment.PaymentCreationDatabaseTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 10,
+      "seconds": 0.0,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.payment.PaymentCreationDatabaseTest.xml",
+      "sourceSha256": "642FB6D4675474D0F700625279EC1B1F4B5E08EF799D3DB6971E9628BF2C36A2"
+    },
+    {
+      "name": "cn.reconis.payment.PaymentGatewayTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.199,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.payment.PaymentGatewayTest.xml",
+      "sourceSha256": "10050A7F19E25D29C2B766B73197DDFA5CAA4F1BA4E3D6EE8754C634E7799FE6"
+    },
+    {
+      "name": "cn.reconis.payment.PaymentIntegrationDatabaseTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 7,
+      "seconds": 0.0,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.payment.PaymentIntegrationDatabaseTest.xml",
+      "sourceSha256": "F33C819D4E0E66FFAFEF9031BC237C84341E3568C47E7EF9DB0E0F19B3C07F2C"
+    },
+    {
+      "name": "cn.reconis.payment.PaymentRecoveryTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.094,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.payment.PaymentRecoveryTest.xml",
+      "sourceSha256": "509D315A15D8AB49736730D8EA0C1B6BE4ADED2184F4CB72A02ACCF1F80B176E"
+    },
+    {
+      "name": "cn.reconis.reconciliation.AlipayBillParserTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.141,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.reconciliation.AlipayBillParserTest.xml",
+      "sourceSha256": "2FE6250485CD5CB27D5674295C414FB120B6D355B0AE3D33E23CB83DADFAFE5A"
+    },
+    {
+      "name": "cn.reconis.reconciliation.AutoReconciliationDatabaseTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 10,
+      "seconds": 0.0,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.reconciliation.AutoReconciliationDatabaseTest.xml",
+      "sourceSha256": "4D107F57033D82436CD2A4B943047443D1CA2B2E34360C12E817A9B78060845D"
+    },
+    {
+      "name": "cn.reconis.reconciliation.AutoReconciliationTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.186,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.reconciliation.AutoReconciliationTest.xml",
+      "sourceSha256": "959B8D42DAE3C1EB4C08BBC9600E247ACA9D020F4D67F43627980B23A07681B5"
+    },
+    {
+      "name": "cn.reconis.reconciliation.ImportServiceTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.213,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.reconciliation.ImportServiceTest.xml",
+      "sourceSha256": "95AEA830D27448BD7870643CD61D00BDCEB6DF12F4F2B732EF0E64F8FFE2CFBD"
+    },
+    {
+      "name": "cn.reconis.reconciliation.ReconciliationControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.005,
+      "sourceXml": "D:\\数据库\\Reconis\\artifacts\\build\\category-artwork-20261106-r2\\backend\\target\\surefire-reports\\TEST-cn.reconis.reconciliation.ReconciliationControllerTest.xml",
+      "sourceSha256": "6D0417CAC24D16E1D61120861527290702FAF0945F47E887B479BABCE283C071"
+    }
+  ]
+}

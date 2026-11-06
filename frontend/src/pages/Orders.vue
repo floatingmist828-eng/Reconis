@@ -7,6 +7,7 @@ import { useSession } from "../stores/session";
 import StatusTag from "../components/StatusTag.vue";
 import OrderForm from "../components/OrderForm.vue";
 import ListFeedback from "../components/ListFeedback.vue";
+import CategoryArtwork from "../components/CategoryArtwork.vue";
 const route = useRoute(), router = useRouter(), session = useSession(),
   list = ref<Row>({ items: [], total: 0 }), merchants = ref<Row[]>([]), stores = ref<Row[]>([]),
   busy = ref(false), failed = ref(false), dialog = ref(false), advanced = ref(Boolean(route.query.storeId)), minAmount = ref(""), maxAmount = ref("");
@@ -68,7 +69,7 @@ onMounted(() => action(async () => {
       <ListFeedback :failed="failed" :busy="busy" :has-previous="!!list.items.length" noun="订单" @retry="action(load)" />
       <div class="orders-results" v-loading="busy" :aria-busy="busy">
         <el-table :data="list.items" class="clickable desktop-order-table" @row-click="(r: Row) => router.push('/orders/' + r.id)">
-          <el-table-column label="订单" min-width="250"><template #default="{ row }"><div class="order-identity"><div><b>{{ row.subject }}</b><span class="subline mono">{{ row.orderNo }}</span></div></div></template></el-table-column>
+          <el-table-column label="订单" min-width="280"><template #default="{ row }"><div class="order-identity"><CategoryArtwork :subject="row.subject" :merchant-name="row.merchantName" /><div><b>{{ row.subject }}</b><span class="subline mono">{{ row.orderNo }}</span></div></div></template></el-table-column>
           <el-table-column label="商户 / 门店" min-width="170"><template #default="{ row }">{{ row.merchantName }}<span class="subline">{{ row.storeName }}</span></template></el-table-column>
           <el-table-column label="订单金额" align="right" width="130"><template #default="{ row }"><span class="amount">¥ {{ money(row.amountCent) }}</span></template></el-table-column>
           <el-table-column label="状态" width="115"><template #default="{ row }"><StatusTag :value="row.status" /></template></el-table-column>
@@ -78,8 +79,9 @@ onMounted(() => action(async () => {
         </el-table>
         <div class="mobile-order-list orders-mobile">
           <router-link v-for="row in list.items" :key="row.id" :to="'/orders/'+row.id" class="order-mobile-card">
-            <div class="mobile-record-top"><span class="mobile-record-no">{{ row.orderNo }}</span><StatusTag :value="row.status" /></div><h3>{{ row.subject }}</h3>
-            <p><el-icon><Shop /></el-icon><span>{{ row.storeName || row.merchantName }}</span></p>
+            <div class="mobile-record-top"><span class="mobile-record-no">{{ row.orderNo }}</span><StatusTag :value="row.status" /></div>
+            <div class="mobile-order-identity"><CategoryArtwork :subject="row.subject" :merchant-name="row.merchantName" /><div><h3>{{ row.subject }}</h3>
+            <p><el-icon><Shop /></el-icon><span>{{ row.storeName || row.merchantName }}</span></p></div></div>
             <footer><time>{{ time(row.createdAt) }}</time><strong>¥ {{ money(row.amountCent) }}</strong><el-icon><ArrowRight /></el-icon></footer>
           </router-link>
           <el-empty v-if="!list.items.length" :description="busy ? '正在加载订单' : failed ? '订单暂不可用' : '暂无符合条件的订单'" :image-size="76"><el-button v-if="!busy && !failed && (filters.q || filters.status || advancedCount)" @click="action(resetFilters)">清除筛选</el-button></el-empty>
@@ -133,10 +135,9 @@ onMounted(() => action(async () => {
 .orders-results :deep(.el-table td.el-table__cell) { height: 76px; }
 .orders-results :deep(.el-table .el-button .el-icon) { margin-left: 3px; }
 .order-identity { display: flex; align-items: center; gap: 13px; }
-.order-record-icon { display: grid; place-items: center; width: 35px; height: 39px; flex: none; background: #f1f5fd; color: #6d87b5; border: 1px solid #e6edf9; border-radius: 8px; font-size: 18px; }
 .order-identity > div { min-width: 0; }
-.order-identity b { color: #253956; font-size: 14px; font-weight: 600; }
-.order-identity .subline { font-size: 11px; color: #66758c; }
+.order-identity b { color: #253956; font-size: 14px; font-weight: 600; line-height: 1.6; overflow-wrap: anywhere; }
+.order-identity .subline { font-size: 11px; color: #66758c; overflow-wrap: anywhere; }
 .order-time { font-size: 12px; color: #65758b; font-variant-numeric: tabular-nums; }
 .orders-pagination { margin: 0; padding: 21px 26px; border-top: 1px solid var(--line); }
 .empty-guidance { color: var(--muted); font-size: 12px; }
@@ -145,7 +146,9 @@ onMounted(() => action(async () => {
 .mobile-record-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .mobile-record-top :deep(.el-tag) { flex: none; }
 .mobile-record-no { min-width: 0; overflow-wrap: anywhere; color: #76849b; font-size: 11px; }
-.order-mobile-card h3 { margin-top: 12px; font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
+.mobile-order-identity { display: flex; align-items: center; gap: 13px; margin-top: 16px; }
+.mobile-order-identity > div { min-width: 0; }
+.order-mobile-card h3 { margin: 0; font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
 .order-mobile-card p { display: flex; align-items: center; gap: 6px; margin-top: 6px; color: var(--muted); font-size: 12px; }
 .order-mobile-card p .el-icon { flex: none; }
 .order-mobile-card p > span { min-width: 0; overflow-wrap: anywhere; }

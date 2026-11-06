@@ -1,0 +1,12 @@
+{
+  "school": "",
+  "college": "",
+  "class_name": "",
+  "teacher": "",
+  "members": [
+    {"name": "王梓豪", "student_id": "24373342"},
+    {"name": "吕世英", "student_id": "24373352"},
+    {"name": "朱晓天", "student_id": "24373340"}
+  ],
+  "date": "2026-11-06"
+}

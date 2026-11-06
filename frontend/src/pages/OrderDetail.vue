@@ -8,6 +8,7 @@ import { api, post, money, toCent, time, action, type Row } from "../api";
 import { useSession } from "../stores/session";
 import StatusTag from "../components/StatusTag.vue";
 import OrderForm from "../components/OrderForm.vue";
+import CategoryArtwork from "../components/CategoryArtwork.vue";
 const route = useRoute(),
   router = useRouter(),
   session = useSession(),
@@ -143,8 +144,8 @@ async function submitRefund() {
         <el-button link :icon="ArrowLeft" @click="router.push('/orders')"
           >返回订单列表</el-button
         >
-        <h1>{{ row?.subject || "订单详情" }}</h1>
-        <p class="mono">{{ row?.orderNo }}</p>
+        <div class="detail-order-identity"><CategoryArtwork v-if="row" :subject="row.subject" :merchant-name="row.merchantName" size="lg" /><div><h1>{{ row?.subject || "订单详情" }}</h1>
+        <p class="mono">{{ row?.orderNo }}</p></div></div>
       </div>
       <div v-if="row" class="heading-actions">
         <template v-if="session.writable"
@@ -212,9 +213,8 @@ async function submitRefund() {
           <el-table :data="row.items" class="order-items-desktop"
             ><el-table-column
               label="项目"
-              prop="itemName"
-              min-width="120"
-            /><el-table-column
+              min-width="190"
+            ><template #default="{ row: item }"><div class="item-identity"><CategoryArtwork :subject="item.itemName" :category="item.categoryCode" :merchant-name="row.merchantName" size="sm" /><b>{{ item.itemName }}</b></div></template></el-table-column><el-table-column
               label="数量"
               prop="quantity"
               width="80"
@@ -237,7 +237,7 @@ async function submitRefund() {
           >
           <div class="order-items-mobile">
             <article v-for="(item, index) in row.items" :key="item.id || index" class="order-item-mobile">
-              <div><b>{{ item.itemName }}</b><span>数量 {{ item.quantity }}</span></div>
+              <div class="item-mobile-identity"><CategoryArtwork :subject="item.itemName" :category="item.categoryCode" :merchant-name="row.merchantName" size="sm" /><div><b>{{ item.itemName }}</b><span>数量 {{ item.quantity }}</span></div></div>
               <footer><span>单价 ¥ {{ money(item.unitPriceCent) }}</span><strong>小计 ¥ {{ money((BigInt(item.quantity) * BigInt(item.unitPriceCent)).toString()) }}</strong></footer>
             </article>
           </div>
@@ -446,8 +446,14 @@ async function submitRefund() {
 
 <style scoped>
 .detail-title { min-width: 0; }
-.detail-title h1 { margin-top: 16px; overflow-wrap: anywhere; line-height: 1.4; font-size: clamp(24px, 2.2vw, 32px); }
-.detail-title > p { overflow-wrap: anywhere; }
+.detail-order-identity { display: flex; align-items: center; gap: 17px; margin-top: 19px; }
+.detail-order-identity > div { min-width: 0; }
+.detail-title h1 { margin: 0; overflow-wrap: anywhere; line-height: 1.4; font-size: clamp(24px, 2.2vw, 32px); }
+.detail-order-identity p { margin: 7px 0 0; overflow-wrap: anywhere; }
+.item-identity { display: flex; align-items: center; gap: 11px; }
+.item-identity b { font-weight: 500; overflow-wrap: anywhere; line-height: 1.6; }
+.item-mobile-identity { display: flex; align-items: center; gap: 11px; }
+.item-mobile-identity > div { display: grid; gap: 3px; min-width: 0; flex: 1; }
 .detail-heading { align-items: flex-start; }
 .detail-heading .heading-actions { padding-top: 34px; flex-wrap: wrap; justify-content: flex-end; flex-shrink: 0; }
 .order-summary { display: grid; grid-template-columns: minmax(210px, .8fr) minmax(0, 2fr); margin-bottom: 24px; background: var(--surface, #fff); border: 1px solid var(--line, #e5eaf2); border-radius: 12px; overflow: hidden; }
@@ -505,6 +511,8 @@ async function submitRefund() {
   .order-items-mobile { display: block; }
   .order-item-mobile { padding: 16px 0; border-top: 1px solid var(--line, #e5eaf2); }
   .order-item-mobile > div, .order-item-mobile footer { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+  .order-item-mobile > .item-mobile-identity { align-items: center; justify-content: flex-start; gap: 11px; }
+  .item-mobile-identity > div > span { color: var(--muted, #64748b); font-size: 12px; }
   .order-item-mobile b { min-width: 0; overflow-wrap: anywhere; font-size: 14px; font-weight: 600; }
   .order-item-mobile > div > span { flex: none; color: var(--muted, #64748b); font-size: 12px; }
   .order-item-mobile footer { margin-top: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted, #64748b); }
@@ -515,6 +523,8 @@ async function submitRefund() {
   .order-summary-facts { padding: 20px; }
   .detail-heading .heading-actions { width: 100%; justify-content: flex-start; }
   .detail-title h1 { font-size: 24px; }
+  .detail-order-identity { gap: 13px; }
+  .detail-order-identity :deep(.category-artwork) { width: 56px; height: 56px; }
   .payment-record { padding: 20px 0; }
   .payment-facts { grid-template-columns: 1fr 1fr; }
   .payment-channel { grid-column: 1/-1; }

@@ -1,0 +1,64 @@
+{
+  "releaseId": "category-artwork-20261106-r2",
+  "buildCreatedUtc": "2026-11-06T12:24:29.4782816Z",
+  "frontend": {
+    "tests": 9,
+    "pass": 9,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "backend": {
+    "tests": 190,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 72,
+    "executed": 118,
+    "passed": 118
+  },
+  "databaseTestsEnabled": false,
+  "browser": {
+    "startTime": "2026-11-06T12:25:06.302Z",
+    "duration": 144608.438,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "limitations": [
+    "72 database integration tests were not enabled for this build and are excluded from passed tests.",
+    "No new performance benchmark or Alipay sandbox test was performed by this UI regression."
+  ],
+  "evidence": [
+    {
+      "file": "release-manifest.json",
+      "sourcePath": "D:\\数据库\\Reconis\\artifacts\\releases\\category-artwork-20261106-r2\\manifest.json",
+      "sha256": "ED6E92FB9C2D4682580D2212FFE9F07C847E8F1057DBE2DFAD7C4E74A8E6DF9E",
+      "sourceSha256": "ED6E92FB9C2D4682580D2212FFE9F07C847E8F1057DBE2DFAD7C4E74A8E6DF9E"
+    },
+    {
+      "file": "build-r2.log",
+      "sourcePath": "D:\\数据库\\Reconis\\artifacts\\category-artwork-build-r2.log",
+      "sha256": "D53806751E73D172AE0E2C66DDECCE29C81BE1ECE574D28AEA21DECAA2BA1B88",
+      "sourceSha256": "D53806751E73D172AE0E2C66DDECCE29C81BE1ECE574D28AEA21DECAA2BA1B88"
+    },
+    {
+      "file": "browser-r2.log",
+      "sourcePath": "D:\\数据库\\Reconis\\artifacts\\category-artwork-browser-r2.log",
+      "sha256": "4F581597102BD3ABCF936BF6DB6CB5E1DA6550BAB44072A64146096269A4FCD1",
+      "sourceSha256": "4F581597102BD3ABCF936BF6DB6CB5E1DA6550BAB44072A64146096269A4FCD1"
+    },
+    {
+      "file": "browser-results.json",
+      "sourcePath": "D:\\数据库\\Reconis\\artifacts\\validation\\browser-results.json",
+      "sha256": "1F545D9DDB1893F67F5F08A7B7C882380BA6330990F5E194D98B3BB8DA3571DA",
+      "sourceSha256": "1F545D9DDB1893F67F5F08A7B7C882380BA6330990F5E194D98B3BB8DA3571DA"
+    },
+    {
+      "file": "visual-check.json",
+      "sourcePath": "D:\\数据库\\Reconis\\artifacts\\category-artwork-20261106\\visual-check.json",
+      "sha256": "F42A1940E07DF4F064B49626686578CC0A421E323A7C6F92298AF87011070106",
+      "sourceSha256": "F42A1940E07DF4F064B49626686578CC0A421E323A7C6F92298AF87011070106"
+    }
+  ]
+}

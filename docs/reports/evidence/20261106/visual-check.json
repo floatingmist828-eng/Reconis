@@ -1,0 +1,35 @@
+{
+  "release": "category-artwork-20261106-r2",
+  "checkedAt": "2026-11-06T12:26:53.686Z",
+  "viewports": [
+    1440,
+    1280,
+    390
+  ],
+  "pages": [
+    "orders",
+    "order-detail",
+    "merchants",
+    "refunds",
+    "dashboard"
+  ],
+  "checks": {
+    "search": true,
+    "minimumAmountFilter": true,
+    "orderDetail": true,
+    "refundDialogOpenAndClose": true,
+    "merchantDrawerOpenTabsCloseReopen": true,
+    "noHorizontalPageOverflow": true,
+    "reducedMotion": true
+  },
+  "consoleErrorsAfterFix": [],
+  "screenshots": [
+    "orders-desktop.png",
+    "orders-mobile.png",
+    "orders-laptop.png",
+    "order-detail-mobile.png",
+    "order-detail-laptop.png",
+    "merchants-mobile.png",
+    "refunds-desktop.png"
+  ]
+}

@@ -1,0 +1,18 @@
+
+Running 11 tests using 1 worker
+
+(node:3884) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 e2e\navigation.spec.ts:5:1 › public introduction, illustrative reconciliation and login entry (2.4s)
+  ok  2 e2e\navigation.spec.ts:49:1 › authenticated entry preserves protected destination and skips repeated login (4.8s)
+  ok  3 e2e\navigation.spec.ts:104:1 › mobile public pages support reduced motion and keyboard navigation (618ms)
+  ok  4 e2e\navigation.spec.ts:125:3 › public product scenes remain readable without motion at 1440px (975ms)
+  ok  5 e2e\navigation.spec.ts:125:3 › public product scenes remain readable without motion at 1280px (901ms)
+  ok  6 e2e\navigation.spec.ts:125:3 › public product scenes remain readable without motion at 390px (888ms)
+  ok  7 e2e\roles.spec.ts:134:1 › eight roles: page access, permitted actions and empty states (1.2m)
+  ok  8 e2e\roles.spec.ts:160:1 › browser order creation, consumer payment and independent refund approval (10.6s)
+  ok  9 e2e\roles.spec.ts:212:1 › assignment, evidence, return, resubmission, independent review and dossier download (15.2s)
+  ok 10 e2e\roles.spec.ts:257:1 › registration, administrator review, mobile layout and payment error presentation (14.8s)
+  ok 11 e2e\roles.spec.ts:296:1 › bill import and comparison, analytics drilldown, risk details, reports and search (16.6s)
+
+  11 passed (2.4m)

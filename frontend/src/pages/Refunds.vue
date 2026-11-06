@@ -2,11 +2,12 @@
 import { reactive, ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { Search, Refresh, RefreshLeft, InfoFilled } from "@element-plus/icons-vue";
+import { Search, Refresh, InfoFilled } from "@element-plus/icons-vue";
 import { api, post, query, money, time, action, type Row } from "../api";
 import { useSession } from "../stores/session";
 import StatusTag from "../components/StatusTag.vue";
 import ListFeedback from "../components/ListFeedback.vue";
+import CategoryArtwork from "../components/CategoryArtwork.vue";
 const router = useRouter(),
   route = useRoute(),
   session = useSession(),
@@ -87,14 +88,14 @@ async function sync(row: Row) {
       <div v-if="['UNKNOWN', 'PROCESSING'].includes(filters.status)" class="refund-hint"><el-icon><InfoFilled /></el-icon><span>渠道尚未确认退款结果，可通过“查询恢复”更新进度。</span></div>
       <ListFeedback :failed="failed" :busy="busy" :has-previous="!!list.items.length" noun="退款记录" @retry="action(load)" />
       <el-table :data="list.items" class="refund-desktop"
-        ><el-table-column label="退款与订单" min-width="230"
+        ><el-table-column label="退款与订单" min-width="270"
           ><template #default="{ row }"
-            ><span class="refund-reference"><el-icon><RefreshLeft /></el-icon><b class="mono">{{ row.outRequestNo }}</b></span>
+            ><div class="refund-identity"><CategoryArtwork :merchant-name="row.merchantName" size="sm" /><div><span class="refund-reference"><b class="mono">{{ row.outRequestNo }}</b></span>
             <span class="subline"
               ><el-button link @click="router.push('/orders/' + row.orderId)"
                 >{{ row.orderNo }} ↗</el-button
               ></span
-            ></template
+            ></div></div></template
           ></el-table-column
         ><el-table-column label="商户 / 申请人" min-width="130"
           ><template #default="{ row }"
@@ -157,7 +158,7 @@ async function sync(row: Row) {
           <header><span>{{ row.outRequestNo }}</span><StatusTag :value="row.status" /></header>
           <div class="refund-mobile-amount"><strong>¥ {{ money(row.amountCent) }}</strong><time>{{ time(row.createdAt) }}</time></div>
           <p class="refund-mobile-reason">{{ row.reason }}</p>
-          <p class="refund-mobile-source">{{ row.merchantName }} / {{ row.applicantName }}</p>
+          <div class="refund-mobile-source"><CategoryArtwork :merchant-name="row.merchantName" size="sm" /><div><b>{{ row.merchantName }}</b><span>申请人：{{ row.applicantName }}</span></div></div>
           <footer>
             <el-button link type="primary" @click="router.push('/orders/' + row.orderId)">查看订单</el-button>
             <div v-if="session.writable" class="row-actions">
@@ -197,7 +198,10 @@ async function sync(row: Row) {
 .refund-hint { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #667c9e; background: #f5f8fd; padding: 11px 14px; margin-bottom: 20px; border-radius: 7px; }
 .refund-hint > .el-icon { color: #93acd7; flex: none; }
 .refund-reference { display: flex; align-items: center; gap: 9px; }
-.refund-reference > .el-icon { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 7px; background: #f1f5ff; color: #6c86b8; font-size: 14px; flex: none; }
+.refund-identity { display: flex; align-items: center; gap: 12px; padding-block: 3px; }
+.refund-identity > div { min-width: 0; }
+.refund-identity .subline :deep(.el-button) { max-width: 100%; height: auto; min-height: 24px; white-space: normal; text-align: left; }
+.refund-identity .subline :deep(.el-button > span) { overflow-wrap: anywhere; }
 .refund-reference b { min-width: 0; overflow-wrap: anywhere; }
 .refund-mobile { display: none; }
 .refund-desktop :deep(.cell) { padding-inline: 22px; }
@@ -211,7 +215,10 @@ async function sync(row: Row) {
 .refund-mobile-amount strong { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .refund-mobile-amount time { margin-left: auto; font-size: 11px; color: var(--muted); }
 .refund-mobile-reason { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
-.refund-mobile-source { margin: 8px 0 0; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.refund-mobile-source { display: flex; align-items: center; gap: 11px; margin: 16px 0 0; font-size: 12px; }
+.refund-mobile-source > div { min-width: 0; }
+.refund-mobile-source b { display: block; color: #425575; font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
+.refund-mobile-source > div > span { display: block; margin-top: 3px; color: var(--muted); overflow-wrap: anywhere; }
 .refund-mobile-row footer { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; align-items: center; }
 .refund-mobile-row footer .muted { font-size: 12px; }
 @media(max-width:650px) { .refund-status-nav { gap: 22px; } .refund-list > .table-toolbar .el-input { width: 100%; } .refund-hint { align-items: flex-start; line-height: 1.7; } .refund-hint > .el-icon { margin-top: 4px; } }

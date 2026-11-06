@@ -14,6 +14,7 @@ import {
 } from "../api";
 import { useSession } from "../stores/session";
 import StatusTag from "../components/StatusTag.vue";
+import CategoryArtwork from "../components/CategoryArtwork.vue";
 const session = useSession(),
   list = ref<Row>({ items: [], total: 0 }),
   busy = ref(false),
@@ -84,20 +85,45 @@ async function review(row: Row, approve: boolean) {
   });
   await load();
 }
+let resourceVersion = 0;
 async function open(row: Row) {
   selected.value = row;
+  stores.value = [];
+  members.value = [];
+  resource.value = "stores";
+  storeDialog.value = false;
+  memberDialog.value = false;
   await resources();
 }
+function closeResources() {
+  ++resourceVersion;
+  selected.value = null;
+  stores.value = [];
+  members.value = [];
+  storeDialog.value = false;
+  memberDialog.value = false;
+  storeEdit.value = null;
+}
 async function resources() {
-  if (!selected.value) return;
-  stores.value = await api(`/merchants/${selected.value.id}/stores`);
-  if (
-    !session.admin &&
-    session.can(selected.value!.id, ["OWNER", "FINANCE", "REVIEWER"])
-  )
-    members.value = await api(`/merchants/${selected.value.id}/members`);
+  const merchant = selected.value;
+  if (!merchant) return;
+  const version = ++resourceVersion;
+  const canReadMembers = !session.admin && session.can(merchant.id, ["OWNER", "FINANCE", "REVIEWER"]);
+  try {
+    const [nextStores, nextMembers] = await Promise.all([
+      api(`/merchants/${merchant.id}/stores`),
+      canReadMembers ? api(`/merchants/${merchant.id}/members`) : Promise.resolve([]),
+    ]);
+    if (version !== resourceVersion || selected.value !== merchant) return;
+    stores.value = nextStores;
+    members.value = nextMembers;
+  } catch (error) {
+    if (version !== resourceVersion || selected.value !== merchant) return;
+    throw error;
+  }
 }
 function editStore(row?: Row) {
+  if (!selected.value) return;
   storeEdit.value = row || null;
   Object.assign(storeForm, {
     storeCode: row?.storeCode || "",
@@ -109,33 +135,45 @@ function editStore(row?: Row) {
   storeDialog.value = true;
 }
 async function saveStore() {
+  const merchant = selected.value;
+  if (!merchant) return;
   if (storeEdit.value)
     await patch(
-      `/merchants/${selected.value!.id}/stores/${storeEdit.value.id}`,
+      `/merchants/${merchant.id}/stores/${storeEdit.value.id}`,
       storeForm,
     );
-  else await post(`/merchants/${selected.value!.id}/stores`, storeForm);
+  else await post(`/merchants/${merchant.id}/stores`, storeForm);
+  if (selected.value !== merchant) return;
   storeDialog.value = false;
   await resources();
 }
 async function removeStore(row: Row) {
+  const merchant = selected.value;
+  if (!merchant) return;
   await ElMessageBox.confirm(
     "仅未被订单引用的门店可删除，是否继续？",
     "删除门店",
     { type: "warning" },
   );
-  await api(`/merchants/${selected.value!.id}/stores/${row.id}`, {
+  if (selected.value !== merchant) return;
+  await api(`/merchants/${merchant.id}/stores/${row.id}`, {
     method: "DELETE",
   });
-  await resources();
+  if (selected.value === merchant) await resources();
 }
 async function addMember() {
-  await post(`/merchants/${selected.value!.id}/members`, memberForm);
+  const merchant = selected.value;
+  if (!merchant) return;
+  await post(`/merchants/${merchant.id}/members`, memberForm);
+  if (selected.value !== merchant) return;
   memberDialog.value = false;
   await resources();
 }
 async function saveMember(row: Row) {
-  await patch(`/merchants/${selected.value!.id}/members/${row.id}`, row);
+  const merchant = selected.value;
+  if (!merchant) return;
+  await patch(`/merchants/${merchant.id}/members/${row.id}`, row);
+  if (selected.value !== merchant) return;
   ElMessage.success("成员权限已更新");
   await resources();
 }
@@ -212,10 +250,10 @@ async function importFile(preview: boolean) {
         ><span class="grow"></span
         ><span class="muted">共 {{ list.total }} 家商户</span>
       </div>
-      <el-table :data="list.items"
-        ><el-table-column label="商户" min-width="200"
+      <el-table :data="list.items" class="merchant-desktop"
+        ><el-table-column label="商户" min-width="240"
           ><template #default="{ row }"
-            ><div class="merchant-identity"><span class="merchant-initial" aria-hidden="true">{{ row.name?.slice(0,1) }}</span><div><b>{{ row.name }}</b
+            ><div class="merchant-identity"><CategoryArtwork :merchant-name="row.name" :category="row.categoryCode" /><div><b>{{ row.name }}</b
             ><span class="subline mono">{{ row.merchantCode }}</span></div></div></template
           ></el-table-column
         ><el-table-column
@@ -257,6 +295,28 @@ async function importFile(preview: boolean) {
           ></el-table-column
         ></el-table
       >
+      <div class="merchant-mobile">
+        <article v-for="row in list.items" :key="row.id" class="merchant-card">
+          <div class="merchant-card-heading">
+            <CategoryArtwork :merchant-name="row.name" :category="row.categoryCode" />
+            <div class="merchant-card-name"><h2>{{ row.name }}</h2><span>{{ row.merchantCode }}</span></div>
+            <StatusTag :value="row.status" />
+          </div>
+          <dl class="merchant-card-details">
+            <div><dt>经营类别</dt><dd>{{ codeName(row.categoryCode) }}</dd></div>
+            <div><dt>联系信息</dt><dd>{{ row.contact || '未填写' }}</dd></div>
+          </dl>
+          <footer>
+            <span v-if="row.proposedName" class="merchant-pending">有变更待审</span>
+            <div class="row-actions">
+              <el-button link type="primary" @click="action(() => open(row))">门店与成员</el-button>
+              <el-button v-if="session.admin && (row.status === 'PENDING' || row.proposedName)" link type="primary" @click="edit(row)">审核资料</el-button>
+              <el-button v-else-if="!session.admin && session.can(row.id, ['OWNER'])" link @click="edit(row)">变更资料</el-button>
+            </div>
+          </footer>
+        </article>
+        <el-empty v-if="!list.items.length" :description="busy ? '正在加载商户' : '暂无符合条件的商户'" :image-size="68" />
+      </div>
       <div class="pagination">
         <el-pagination
           v-model:current-page="filters.page"
@@ -329,9 +389,9 @@ async function importFile(preview: boolean) {
     >
     <el-drawer
       :model-value="!!selected"
-      :title="selected?.name + ' · 门店与成员'"
+      :title="selected ? selected.name + ' · 门店与成员' : '门店与成员'"
       size="720px"
-      @close="selected = null"
+      @close="closeResources"
       ><el-tabs v-model="resource"
         ><el-tab-pane label="门店管理" name="stores"
           ><div class="table-toolbar">
@@ -373,8 +433,8 @@ async function importFile(preview: boolean) {
           ></el-tab-pane
         ><el-tab-pane
           v-if="
-            !session.admin &&
-            session.can(selected!.id, ['OWNER', 'FINANCE', 'REVIEWER'])
+            selected && !session.admin &&
+            session.can(selected.id, ['OWNER', 'FINANCE', 'REVIEWER'])
           "
           label="成员权限"
           name="members"
@@ -522,3 +582,24 @@ async function importFile(preview: boolean) {
     >
   </div>
 </template>
+<style scoped>
+.merchant-identity { gap: 14px; padding-block: 4px; }
+.merchant-identity b { display: block; line-height: 1.6; overflow-wrap: anywhere; }
+.merchant-identity .subline { overflow-wrap: anywhere; }
+.merchant-mobile { display: none; }
+.merchant-card { padding: 22px 0; border-top: 1px solid var(--line); }
+.merchant-card-heading { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.merchant-card-name { flex: 1; min-width: 0; }
+.merchant-card-name h2 { margin: 0; color: var(--ink); font-size: 15px; line-height: 1.6; font-weight: 600; overflow-wrap: anywhere; }
+.merchant-card-name > span { display: block; margin-top: 4px; font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
+.merchant-card-heading :deep(.el-tag) { flex: none; }
+.merchant-card-details { display: grid; gap: 9px; margin: 18px 0 0; font-size: 12px; line-height: 1.7; }
+.merchant-card-details > div { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 12px; }
+.merchant-card-details dt { color: var(--muted); }
+.merchant-card-details dd { margin: 0; color: #425575; overflow-wrap: anywhere; }
+.merchant-card footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+.merchant-pending { margin-right: auto; color: #7d6b4f; font-size: 12px; }
+.merchant-card footer .el-button { min-height: 32px; }
+@media (max-width: 760px) { .merchant-desktop { display: none; } .merchant-mobile { display: block; } }
+@media (max-width: 360px) { .merchant-card-heading { flex-wrap: wrap; } .merchant-card-heading :deep(.el-tag) { margin-left: 64px; } }
+</style>

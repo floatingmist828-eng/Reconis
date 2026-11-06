@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6.3in" height="8.02778in" viewBox="0 0 453.6 578">
+<rect width="453.6" height="578" fill="white"/>
+<rect x="10" y="10" width="265" height="74" rx="3" fill="#f2f5f8" stroke="#1d4876" stroke-width="0.8"/>
+<text x="20" y="26" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">上传或自动获取账单</text>
+<text x="20" y="45" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">XLSX / XML / 渠道 CSV / ZIP</text>
+<text x="20" y="59" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">保留原件 · SHA256 · 期间与完整性</text>
+<rect x="10" y="116" width="265" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="132" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">预览与校验</text>
+<text x="20" y="151" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">字段 / 金额 / 环境 / 时间 / 商户</text>
+<text x="20" y="165" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">保留重复行；未知归属交平台识别</text>
+<rect x="10" y="222" width="265" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="238" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">导入输入集</text>
+<text x="20" y="257" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">文件 + 解释参数幂等 · 事务锁</text>
+<text x="20" y="271" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">原始账单行不可变；重复上传复用</text>
+<rect x="10" y="328" width="265" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="20" y="344" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">一致时点逐笔核对</text>
+<text x="20" y="363" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">缺键 / 重复先分类，再 FULL OUTER JOIN</text>
+<text x="20" y="377" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">完整账期才能判定 LOCAL_ONLY</text>
+<rect x="10" y="434" width="265" height="74" rx="3" fill="#f2f5f8" stroke="#1d4876" stroke-width="0.8"/>
+<text x="20" y="450" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#1d4876">保存结果与差错关联</text>
+<text x="20" y="469" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">8 类核对结果；差错进入工单队列</text>
+<text x="20" y="483" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.4" font-weight="400" fill="#526174">重跑生成新批次，保留基线和历史</text>
+<polyline points="142,84 142,116" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="142,116 139.7802594651724,111.51973751237237 144.2197405348276,111.51973751237237" fill="#1d4876"/>
+<polyline points="142,190 142,222" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="142,222 139.7802594651724,217.5197375123724 144.2197405348276,217.5197375123724" fill="#1d4876"/>
+<polyline points="142,296 142,328" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="142,328 139.7802594651724,323.5197375123724 144.2197405348276,323.5197375123724" fill="#1d4876"/>
+<polyline points="142,402 142,434" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="142,434 139.7802594651724,429.5197375123724 144.2197405348276,429.5197375123724" fill="#1d4876"/>
+<rect x="302" y="10" width="141" height="89" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="312" y="26" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">沙箱模板边界</text>
+<text x="312" y="45" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">保存并校验原件</text>
+<text x="312" y="59" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">TEMPLATE_ONLY</text>
+<text x="312" y="73" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">不导入业务账单</text>
+<text x="312" y="87" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">不生成差错</text>
+<polyline points="275,47 302,47" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="302,47 297.5197375123724,49.2197405348276 297.5197375123724,44.7802594651724" fill="#1d4876"/>
+<rect x="302" y="116" width="141" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="312" y="132" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">校验未通过</text>
+<text x="312" y="151" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">返回具体错误行</text>
+<text x="312" y="165" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">不伪造完整输入</text>
+<text x="312" y="179" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">自动任务停止导入</text>
+<polyline points="275,151 302,151" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="302,151 297.5197375123724,153.2197405348276 297.5197375123724,148.7802594651724" fill="#1d4876"/>
+<rect x="302" y="434" width="141" height="74" rx="3" fill="#ffffff" stroke="#aebbc9" stroke-width="0.8"/>
+<text x="312" y="450" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="10" font-weight="700" fill="#202b38">历史比较</text>
+<text x="312" y="469" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">NEW / RESOLVED</text>
+<text x="312" y="483" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">CHANGED</text>
+<text x="312" y="497" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9.1" font-weight="400" fill="#526174">UNCHANGED</text>
+<polyline points="275,471 302,471" fill="none" stroke="#1d4876" stroke-width="0.9"/>
+<polygon points="302,471 297.5197375123724,473.2197405348276 297.5197375123724,468.7802594651724" fill="#1d4876"/>
+<text x="10" y="540" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">完整性 UNKNOWN 且本地有、渠道缺行：PENDING_CONFIRMATION。</text>
+<text x="10" y="554" dominant-baseline="central" text-anchor="start" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="9" font-weight="400" fill="#526174">人工结案与客观核对结果分别保存，不能用结案掩盖历史差异。</text>
+</svg>
