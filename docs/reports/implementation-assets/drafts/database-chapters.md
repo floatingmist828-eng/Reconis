@@ -2,7 +2,7 @@
 
 ## 4.1 数据组织原则与总体结构
 
-校园支付对账涉及订单、支付渠道、账单和人员处理四类信息。它们描述同一笔业务的不同阶段，但不能相互替代：订单说明应收什么，支付结果说明渠道确认了什么，资金流水记录已经发生的收付，渠道账单则提供另一侧核对依据。差错工单保存的是对这些证据的处理过程。我们将这些对象分别建模，使支付状态变化、重新导入和复核结案不会覆盖原始资金事实。
+校园支付对账涉及订单、支付渠道、账单和人员处理四类信息。订单说明应收内容，支付结果说明渠道确认结果，资金流水记录已经发生的收付，渠道账单提供另一侧核对依据。差错工单保存的是对这些证据的处理过程。我们将这些对象分别建模，使支付状态变化、重新导入和复核结案不会覆盖原始资金事实。
 
 最终数据库运行于 SQL Server 2022 Developer Edition，版本为 16.0.4305.5，兼容级别为 160，排序规则为 Chinese_PRC_CI_AS。教学模拟与支付宝沙箱分别使用 ReconisDemo、ReconisSandbox，避免两种环境的资金记录混入同一核对范围。两库采用相同结构，每库包含 15 张业务表、207 个字段、32 个外键和 27 个 CHECK 约束。图4-1展示最终实体关系的总体划分。
 
@@ -32,7 +32,7 @@
 
 ## 4.2 主要关系模式与实体联系
 
-以下列出各关系的主要业务属性。所有关系均以 id 为 BIGINT IDENTITY 主键，完整的 207 个字段、类型、空值性、默认值与约束见附录字段字典；此处着重说明实体之间的联系。
+以下列出各关系的主要业务属性及实体之间的联系。所有关系均以 id 为 BIGINT IDENTITY 主键，完整的207个字段、类型、空值性及键约束见附录A，默认表达式见数据库元数据附件。
 
 1. 用户 app_user（id，username，password_hash，display_name，platform_role，status，reviewed_by，version）。username 唯一；reviewed_by 自引用审核账号。平台角色与账号状态分别保存，待审核账号不会因为已选择身份而直接取得操作资格。
 2. 商户 merchant（id，merchant_code，name，category_code，contact，status，proposed_name，proposed_category，proposed_contact，reviewed_by，version）。merchant_code 唯一；正式资料与待审修订值分开，审核前仍可识别原有业务归属。
@@ -45,7 +45,7 @@
 9. 退款 refund_request（id，payment_id，client_request_id，out_request_no，amount_cent，reason，status，applicant_id，reviewed_by，dispatch_token，dispatch_lease_until，version）。每笔退款关联一笔原支付，请求号唯一；多次部分退款分别记录金额和状态。
 10. 资金事实 transaction_entry（id，entry_no，event_key，entry_type，payment_id，refund_id，amount_cent，channel_occurred_at，recorded_at，evidence_file_uri）。entry_no、event_key 各自唯一，payment_id 与 refund_id 按流水类型互斥使用。
 11. 批次 reconciliation_batch（id，batch_no，scope_type，merchant_id，period_start，period_end，source_type，statement_source_batch_id，baseline_batch_id，file_sha256，ingest_options_sha256，completeness，status，observed_at，acquisition_key，acquisition_state）。该关系还保存任务租约、重试与获取结果等属性，字段全集见附录。
-12. 账单行 statement_line（id，import_batch_id，line_no，event_type，out_trade_no，channel_trade_no，out_request_no，amount_cent，channel_occurred_at，raw_line_file_uri）。原始批次与行号组合唯一，交易标识允许缺失，以便记录原件问题而非悄悄丢弃该行。
+12. 账单行 statement_line（id，import_batch_id，line_no，event_type，out_trade_no，channel_trade_no，out_request_no，amount_cent，channel_occurred_at，raw_line_file_uri）。原始批次与行号组合唯一，交易标识允许缺失，使有问题的原始行也能完整保留。
 13. 对账结果 reconciliation_result（id，batch_id，result_key，source_event_key，entry_id，statement_line_id，classification，reason_code，detected_at）。batch_id 与 result_key 组合唯一；本地流水和渠道行均为可空引用，以表示仅存在一侧的情况。
 14. 差错工单 exception_task（id，case_no，case_key，origin_result_id，latest_result_id，assignee_id，status，analysis_text，resolution_text，resolution_code，evidence_file_uri，submitted_by，reviewed_by，version）。case_no、case_key、origin_result_id 分别唯一；最新证据引用不设全局唯一。
 15. 审计 audit_log（id，event_category，actor_user_id，scope_merchant_id，object_type，object_id，action，result，summary，before_json，after_json，occurred_at，request_id）。操作人和商户具有外键，object_type 与 object_id 表示多态业务对象，没有跨所有业务表的统一外键。
@@ -66,9 +66,9 @@
 
 金额采用 BIGINT 分值存储。订单单价、退款金额、资金事实金额和账单金额都使用同一单位，比较时不依赖浮点舍入。数量为 INT，SQL 汇总先将数量转换为 BIGINT；应用创建明细时使用精确乘加，并限制订单合计大于零且不超过100万元。数据库允许明细单价为零，但要求退款、资金事实和账单金额为正；这些行内约束与应用层总额范围校验分别承担不同层次的合法性检查。
 
-订单总金额没有重复存入 business_order，而由 v_order 汇总明细得到。草稿编辑因此只维护一份明细事实。发起支付后，数据库触发器冻结订单明细，避免支付请求与后台价格修改产生金额不一致。收款和退款流水的 amount_cent 均为正值，由 entry_type 指明方向；净收款计算时再将退款作负向合计。
+订单总金额由 v_order 汇总明细得到，business_order 不另存总额。草稿编辑因此只维护一份明细事实。发起支付后，数据库触发器冻结订单明细，避免支付请求与后台价格修改产生金额不一致。收款和退款流水的 amount_cent 均为正值，由 entry_type 指明方向；净收款计算时再将退款作负向合计。
 
-数据库共有15个主键、19个唯一约束。业务编号便于跨系统追踪，技术主键用于关联，两者并存。client_request_id 进一步标识同一次客户端操作，使网络重试能够返回原业务记录，而不是依靠新生成的自增键判断重复。支付环境、应用和非空渠道交易号组成筛选唯一索引，区分不同渠道环境中的同名交易编号。
+数据库共有15个主键、19个唯一约束。业务编号便于跨系统追踪，技术主键用于关联，两者并存。client_request_id 标识同一次客户端操作，网络重试据此返回原业务记录。支付环境、应用和非空渠道交易号组成筛选唯一索引，区分不同渠道环境中的同名交易编号。
 
 32个外键均采用 NO_ACTION，不进行级联删除。删除上层对象时，存在资金或证据引用会阻止直接删除，避免商户、订单与历史流水同时消失。27个 CHECK 约束覆盖状态枚举、正金额、正数量、账期先后和范围归属等规则。批次要求结束时间大于开始时间；MERCHANT 范围必须指定商户，PLATFORM_UNASSIGNED 范围必须不指定商户。
 
@@ -82,11 +82,11 @@ CHECK (
 );
 ```
 
-这保证一行不会同时声称是收款和退款。配合两个非空来源字段的筛选唯一索引，同一支付或退款不能重复形成资金事实。空值行不参与对应筛选索引，因此不会错误地限制其他类型的流水数量。
+该约束使每行资金事实只具有一种收付来源。配合两个非空来源字段的筛选唯一索引，同一支付或退款不能重复形成资金事实。空值行不参与对应筛选索引，因此不会错误地限制其他类型的流水数量。
 
 业务时间和操作时间采用 DATETIME2(3)，统一约定保存 UTC，缺省值为 SYSUTCDATETIME()。channel_occurred_at 表示渠道实际发生时间，recorded_at 表示系统入账时间，两者分离使晚到通知仍能归入正确业务日期。v_transaction_fact 将发生时间转换为中国标准时间的业务日期，供日、月、年统计使用。
 
-用户、商户、门店、订单、退款和工单采用 ROWVERSION。该字段是数据库自动维护的8字节版本标记，并非业务发生时刻。工单复核使用请求携带的预期版本与当前版本比较，防止两名操作人员从旧页面提交相互覆盖的决定。
+用户、商户、门店、订单、退款和工单采用 ROWVERSION。该字段是数据库自动维护的8字节版本标记[3]。工单复核使用请求携带的预期版本与当前版本比较，防止两名操作人员从旧页面提交相互覆盖的决定。
 
 ## 4.4 函数依赖与规范化分析
 
@@ -108,17 +108,17 @@ CHECK (
 
 例如，若在订单中同时保存 store_id、merchant_id 和 merchant_name，则 store_id 决定 merchant_id，merchant_id 又决定 merchant_name，会引入非键属性之间的传递依赖。最终订单只引用 store，商户信息通过视图连接，避免商户改名时逐单更新。同样，明细表没有重复保存消费者、创建人等订单级属性，不会因一笔订单包含多行而产生多份相同资料。
 
-支付与退款单独建表解决一对多事实的重复组问题。若把第二次支付或第二次退款继续放入订单的“支付号2”“退款金额2”等列，既限制次数，又使空值和状态组合迅速增多。独立关系允许任意合法次数的请求，同时分别建立唯一标识和关联约束。order_item 的项目名称表示当时的成交内容，并不存在项目名称必然决定单价或类别的业务假设，因此不把这一未经定义的依赖作为继续分表的理由。
+支付与退款单独建表解决一对多事实的重复组问题。若把第二次支付或第二次退款继续放入订单的“支付号2”“退款金额2”等列，既限制次数，又使空值和状态组合迅速增多。独立关系允许任意合法次数的请求，同时分别建立唯一标识和关联约束。order_item 的项目名称表示当时的成交内容。系统未定义“项目名称决定单价或类别”的函数依赖，这些属性按成交明细保存。
 
-在这些已识别的函数依赖下，核心实体表的非键属性依赖于候选键，复合键关系不存在已定义的部分依赖，实体之间的属性通过外键连接，能够按关系说明第三范式设计。不过，历史与工作流部分保留了受控冗余，不能把所有半结构化字段和快照都概括为严格的第三范式关系。
+在这些已识别的函数依赖下，核心实体表的非键属性依赖于候选键，复合键关系不存在已定义的部分依赖，实体之间的属性通过外键连接，能够按关系说明第三范式设计。历史与工作流中的半结构化字段和快照保留了受控冗余，其用途和维护约束如下。
 
-transaction_entry 保存确认时的金额和来源，是已发生事实的独立记录；exception_task 保存 case_key、最初结果、最新结果和处理状态，便于差错去重与历史追溯；audit_log 的 before_json、after_json 保存当时内容，不能简单替换为当前表的外键查询。上述数据由事务、唯一索引和触发器共同维护，而不是任意复制主数据。
+transaction_entry 保存确认时的金额和来源，是已发生事实的独立记录；exception_task 保存 case_key、最初结果、最新结果和处理状态，便于差错去重与历史追溯；audit_log 的 before_json、after_json 保存变更时的内容，当前表的外键查询则返回现时数据。上述数据由事务、唯一索引和触发器共同维护。
 
 自动获取任务目前复用 reconciliation_batch，增加14个 acquisition_* 字段，普通导入批次的大部分任务字段为空。该取舍减少了批次与任务间的协调代码，但使一张表承担输入来源与获取任务两种职责。系统通过 CK_batch_acquisition 区分合法组合，后续仍可拆分任务实体，改善职责划分和稀疏字段问题。
 
 ## 4.5 索引与查询组织
 
-实际数据库共有53个B树索引，其中34个由主键和唯一约束产生，另外19个为显式业务索引。索引设计分别服务于唯一性、工作队列、统计取数和证据追溯，不能只用索引数量评价查询效果。
+实际数据库共有53个B树索引，其中34个由主键和唯一约束产生，另外19个为显式业务索引。索引设计分别服务于唯一性、工作队列、统计取数和证据追溯。
 
 **表4-3 代表性业务索引及使用目的**
 
@@ -134,15 +134,15 @@ transaction_entry 保存确认时的金额和来源，是已发生事实的独�
 | IX_audit_case_snapshot | object_id, occurred_at DESC, id DESC；工单变更 | 重建截止时间的工单状态 |
 | IX_payment_order | order_id，包含状态与主支付标记 | 检查订单是否存在任意支付尝试 |
 
-IX_payment_order 体现了索引条件与业务条件必须一致。明细冻结要求检查所有支付尝试，不能只依靠筛选了 is_primary=1 的唯一索引，否则未成为主支付的记录不能得到同样的查找支持。导入唯一性也不只依赖文件摘要；同一原件在不同账期、归属或解析选项下可以构成不同导入，故需要同时保存 ingest_options_sha256。
+明细冻结要求检查所有支付尝试，IX_payment_order 为这些记录提供按订单查找的索引；UX_payment_primary 只覆盖 is_primary=1 的主支付。导入唯一性也不只依赖文件摘要；同一原件在不同账期、归属或解析选项下可以构成不同导入，故需要同时保存 ingest_options_sha256。
 
-在当前数据库的估计执行计划中，按订单查支付使用 IX_payment_order 的 Index Seek，按退款状态与下次查询时间筛选使用 IX_refund_pending 的 Index Seek。这说明相应谓词具有可用索引路径，但估计计划不代表实际耗时，也不能替代大规模并发负载测试。新增索引会增加写入维护和存储成本，后续扩展应继续结合实际查询频率、执行计划与数据规模调整。
+在当前数据库的估计执行计划中，按订单查支付使用 IX_payment_order 的 Index Seek，按退款状态与下次查询时间筛选使用 IX_refund_pending 的 Index Seek。这两项估计计划反映了相应谓词的索引选择；实测耗时和实验条件见第9.3节。新增索引会增加写入维护和存储成本，后续扩展应继续结合实际查询频率、执行计划与数据规模调整。
 
 # 5 数据库程序与一致性控制
 
 ## 5.1 视图形成统一查询口径
 
-系统部署12个视图。实际业务的主要查询由 v_order、v_transaction_fact、v_case 及两个结案证据视图承担，v_statement_normalized 被对账存储过程使用，其余视图提供已部署的受限查询或摘要入口。表5-1区分这些对象的实际作用，避免把存在于数据库中的对象与当前接口正在调用的对象混为一谈。
+系统部署12个视图。实际业务的主要查询由 v_order、v_transaction_fact、v_case 及两个结案证据视图承担，v_statement_normalized 被对账存储过程使用，其余视图提供已部署的受限查询或摘要入口。表5-1列出各视图的职责及实际调用情况。
 
 **表5-1 最终视图及调用情况**
 
@@ -165,7 +165,7 @@ v_transaction_fact 通过退款找到原支付，再连接订单、门店和商�
 
 ## 5.2 存储过程划定业务原子操作
 
-五个存储过程分别承担支付确认、退款审核、退款确认、执行对账和工单复核。我们把必须同时成功或失败的数据库变化放在同一事务内，使用 SET XACT_ABORT ON，并在 TRY/CATCH 中提交或回滚。外部支付请求不被当成数据库本地事务的一部分，其超时与结果未知通过状态恢复处理。
+五个存储过程分别承担支付确认、退款审核、退款确认、执行对账和工单复核。我们把必须同时成功或失败的数据库变化放在同一事务内，使用 SET XACT_ABORT ON，并在 TRY/CATCH 中提交或回滚。外部支付请求在数据库事务之外执行，超时与结果未知通过状态恢复处理。
 
 usp_confirm_payment 接收支付ID、渠道交易号、金额、发生时间与证据。过程锁定订单，重新汇总明细校验金额，再同时更新支付状态、插入收款事实和更新订单。已经成功且渠道号相同的重复确认返回 ALREADY_CONFIRMED；相同支付记录出现冲突渠道号则报错。若订单已存在主支付而另一尝试确实成功，过程保留额外资金事实，并标记 PAYMENT_EXCEPTION，避免把异常收款误当无效请求丢弃。
 
@@ -182,17 +182,17 @@ IF @approve=1 AND @amount>dbo.fn_refundable_amount(@payment)
   THROW 51012,N'可退额度不足，已有成功或预留退款',1;
 ```
 
-同一支付上的两个审批事务争用同一行锁，后获得锁的事务重新看到扣除前一申请预留后的余额。这样，两个分别看似不超过收款额的退款申请不会同时突破总额度。此处采用的是针对同一支付的锁定，不是把全部业务都提升为全局串行执行。
+同一支付上的两个审批事务争用同一行锁，后获得锁的事务重新看到扣除前一申请预留后的余额。两个申请即使各自未超过收款额，其合计也受到同一支付可退额度的限制。
 
 usp_confirm_refund 只接受 APPROVED、PROCESSING、UNKNOWN 等可确认状态，并核对金额和发生时间。退款终态与退款流水在一个事务中写入；已成功退款按相同金额再次确认，不再插入新流水。UNKNOWN 不能简单判为失败，否则原退款可能已经在渠道成功，又被错误释放额度。
 
 usp_run_reconciliation 在 SNAPSHOT 事务中读取本地事实与渠道记录，保存分类结果并生成或更新工单。已有历史结果的批次不可覆盖，重新核对另建观察批次。两库已开启 SNAPSHOT 支持，但默认 READ_COMMITTED_SNAPSHOT 未开启；对账过程显式切换隔离级别，正常或异常结束后恢复 READ COMMITTED。
 
-usp_review_exception 接收复核决定、结案类型、意见、预期版本及可选的新证据。过程要求工单处于 PENDING_REVIEW，复核人与 submitted_by 不同，复核人当前账号有效且仍有相应商户或平台复核权限。这里的独立性针对提交分析的人员判断，并不只依赖页面是否隐藏按钮。版本不符、权限变化或证据不满足条件时均不执行结案。
+usp_review_exception 接收复核决定、结案类型、意见、预期版本及可选的新证据。过程要求工单处于 PENDING_REVIEW，复核人与 submitted_by 不同，复核人当前账号有效且仍有相应商户或平台复核权限。版本不符、权限变化或证据不满足条件时均不执行结案。
 
 ## 5.3 标量函数与幂等控制
 
-fn_refundable_amount 返回已确认收款减去 APPROVED、PROCESSING、UNKNOWN、SUCCEEDED 退款之和。待审核申请不提前占用额度，真正的额度竞争在审批事务中解决；未知结果继续占用额度，直到查明成功或失败。该函数同时供详情展示与审批决策使用，避免界面显示口径和数据库审批口径各算一套。
+fn_refundable_amount 返回已确认收款减去 APPROVED、PROCESSING、UNKNOWN、SUCCEEDED 退款之和。待审核申请不提前占用额度，额度竞争在审批事务中解决；未知结果继续占用额度，直到查明成功或失败。该函数同时供详情展示与审批决策使用，统一两处的额度计算口径。
 
 函数的核心计算如下。两处 COALESCE 将无收款或无退款记录的空聚合结果转为零；成功退款仍保留在扣减集合中，因此状态从预留转为成功不会重新释放额度。
 
@@ -206,23 +206,23 @@ RETURN (
 );
 ```
 
-fn_case_overdue_days 以 due_at 与 closed_at 或给定 as_of 计算超期天数，负值截为零。其实现使用 DATEDIFF(DAY)，表示跨日边界的天数差，并非精确满24小时的持续时长。历史风险分析传入指定截止时点，避免把当前日期直接代入过去的状态。
+fn_case_overdue_days 以 due_at 与 closed_at 或给定 as_of 计算超期天数，负值截为零。其实现使用 DATEDIFF(DAY)，按跨日边界计数，不按满24小时折算。历史风险分析传入指定截止时点，避免把当前日期直接代入过去的状态。
 
-幂等在不同层次使用不同标识。订单、支付、退款以 client_request_id 识别同一次操作；资金流水以 event_key 和非空来源唯一索引防止重复记账；导入以文件摘要、解析选项摘要和业务范围识别同一输入；自动任务以 acquisition_key 复用任务。它们解决的重复来源不同，不能由一个通用“重复提交”按钮状态替代。
+幂等在不同层次使用不同标识。订单、支付、退款以 client_request_id 识别同一次操作；资金流水以 event_key 和非空来源唯一索引防止重复记账；导入以文件摘要、解析选项摘要和业务范围识别同一输入；自动任务以 acquisition_key 复用任务。
 
-导入还使用事务级 sp_getapplock，对文件与选项组合加互斥锁，使两个并发导入不会同时完成查重后各自插入。唯一索引保留为最后一道约束。原件相同但账期、范围或完整性声明不同的输入不会被无条件吞掉，而会按新的导入含义处理。
+导入还使用事务级 sp_getapplock，对文件与选项组合加互斥锁，使两个并发导入不会同时完成查重后各自插入。唯一索引保留为最后一道约束。原件相同但账期、范围或完整性声明不同的输入，按新的导入含义处理。
 
 ## 5.4 对账分类与可追溯结案
 
 对账先把收款键规范化为 P:加商户交易号，把退款键规范化为 R:加退款请求号。缺少事件键或同键重复的渠道行先形成 KEY_UNRESOLVED 或 BILL_DUPLICATE，剩余唯一有效键再与本地事实进行 FULL OUTER JOIN，使本地单边和渠道单边记录都被保留。
 
-最终分类共8种：MATCHED、CHANNEL_ONLY、LOCAL_ONLY、AMOUNT_MISMATCH、BILL_DUPLICATE、KEY_UNRESOLVED、PENDING_CONFIRMATION、EXTRA_SUCCESS。分类同时考察是否存在两侧记录、金额、退款关联、渠道交易号和支付是否为额外成功，不是仅按金额相等判断匹配。若账单完整性为 UNKNOWN，本地存在而渠道缺失只能判为 PENDING_CONFIRMATION；已确认完整性后，才可判为 LOCAL_ONLY。这样可避免把部分账单直接解释为渠道漏记。
+最终分类共8种：MATCHED、CHANNEL_ONLY、LOCAL_ONLY、AMOUNT_MISMATCH、BILL_DUPLICATE、KEY_UNRESOLVED、PENDING_CONFIRMATION、EXTRA_SUCCESS。分类同时考察是否存在两侧记录、金额、退款关联、渠道交易号和支付是否为额外成功。若账单完整性为 UNKNOWN，本地存在而渠道缺失只能判为 PENDING_CONFIRMATION；已确认完整性后，才可判为 LOCAL_ONLY。
 
 差错工单的 case_key 结合归属、事件键和分类生成，相同范围内同类异常的后续观察复用工单。原始异常保存在 origin_result_id，最新证据保存在 latest_result_id。后续又出现异常时，已结案工单可以重新打开，待复核工单回到处理中，防止人员继续批准已经过时的分析。
 
 结案支持 RECONCILED、INVALID_INPUT、FALSE_POSITIVE、KNOWN_EXCEPTION、OWNERSHIP_CONFIRMED。RECONCILED 必须引用同范围同事件的新匹配结果，并且没有更新异常推翻该证据；OWNERSHIP_CONFIRMED 需要相同原件、相同行号及一致的业务内容，并通过原支付关联证明新的商户归属。其他结案类型用于记录无效输入、误报或已知异常，均不直接修改原资金流水。
 
-本轮流程中的工单115在结案后，origin_result_id仍指向金额差异结果371，latest_result_id则指向匹配结果381。工单状态为 CLOSED，结案类型为 RECONCILED，经办提交人与复核人分别为286、287。该结果说明结案是新增判断和证据，不是将最初异常改写为从未发生。
+2026年11月4日的流程验证中，工单115结案后，origin_result_id仍指向金额差异结果371，latest_result_id则指向匹配结果381。工单状态为 CLOSED，结案类型为 RECONCILED，经办提交人与复核人分别为286、287。原始差异与结案依据同时保留。
 
 ## 5.5 触发器维护历史边界
 
@@ -255,14 +255,14 @@ BEGIN
 END;
 ```
 
-这些限制作用于正常数据库写操作，并不等同于对拥有数据库管理权限者的绝对防篡改。管理员仍可能停用触发器或改变数据库结构，因此运行账号权限、备份和操作管理仍是数据保护的一部分。
+这些触发器约束正常数据库写操作。管理员仍可能停用触发器或改变数据库结构，因此运行账号权限、备份和操作管理仍是数据保护的一部分。
 
 ## 5.6 全文查询、权限范围与结果边界
 
-全文目录 ReconisCases 对工单的 title、description、analysis_text、resolution_text 四列建立中文全文索引，语言编号为2052，使用自动变更跟踪。知识检索通过 FREETEXTTABLE 返回匹配键和相关性排名，再连接 v_case 加入可见范围条件。搜索结果既能定位历史处理文本，也能回到具体工单和证据链，不以普通 LIKE 查询代替全文检索。
+全文目录 ReconisCases 对工单的 title、description、analysis_text、resolution_text 四列建立中文全文索引，语言编号为2052，使用自动变更跟踪。知识检索通过 FREETEXTTABLE 返回匹配键和相关性排名，再连接 v_case 加入可见范围条件。搜索结果既能定位历史处理文本，也能回到具体工单和证据链。
 
-数据库定义了 reconis_runtime 和 reconis_auditor 两个角色，但业务中的消费者、收银、经办和复核人员并不是各自独立的 SQL 登录。实际应用权限由认证结果、Access 的动作检查及查询范围谓词落实。SessionContextPlugin 在SQL调用前设置 user_id、role、merchant_id、request_id，并在 finally 中清空，供会话限定视图和审计触发器使用，防止连接池复用时残留上一请求上下文。当前未建立 SQL Server 原生行级安全策略，数据库角色也不能替代每个接口的权限校验。
+数据库定义了 reconis_runtime 和 reconis_auditor 两个角色。消费者、收银、经办和复核属于应用层身份，没有分别建立 SQL 登录。实际应用权限由认证结果、Access 的动作检查及查询范围谓词落实。SessionContextPlugin 在SQL调用前设置 user_id、role、merchant_id、request_id，并在 finally 中清空，供会话限定视图和审计触发器使用，防止连接池复用时残留上一请求上下文。外模式与行范围的实现见第8.2节。
 
-2026年11月4日对两库进行的只读一致性查询中，成功支付缺流水、成功退款缺流水、退款事实金额冲突、收款与订单金额冲突、可退额度为负、工单证据范围冲突六类记录数均为零；外键、CHECK和触发器均有效。该结果与约束、事务及集成测试共同构成验证依据，但仅表示检查时未发现这些违例，不扩展解释为所有未来输入都已证明正确。
+2026年11月4日对两库进行的只读一致性查询中，成功支付缺流水、成功退款缺流水、退款事实金额冲突、收款与订单金额冲突、可退额度为负、工单证据范围冲突六类记录数均为零；外键、CHECK和触发器均有效。
 
-文件本体与关系数据分属文件系统和 SQL Server，本地事务不能天然保证跨介质原子性。后续仍需完善孤立文件清理、附件与数据库一致备份及恢复演练。审计JSON快照和自动任务复用批次表也有演进成本，进一步优化应保留现有证据链语义，而不是通过删改历史记录简化状态。
+文件本体与关系数据分属文件系统和 SQL Server，本地事务不能天然保证跨介质原子性。后续仍需完善孤立文件清理、附件与数据库一致备份及恢复演练。审计JSON快照和自动任务复用批次表也有演进成本，进一步优化需保留现有证据链语义和历史记录。

@@ -1,0 +1,4028 @@
+{
+  "scope": "Native Word text and rendered PDF text; figures and screenshots are inspected visually.",
+  "headingScalePoints": {
+    "Heading 1": 16,
+    "Heading 2": 13,
+    "Heading 3": 11.5,
+    "Heading 4": 11
+  },
+  "reports": [
+    {
+      "report": "系统设计报告",
+      "docxSha256": "F5584F39BCBCFE4E83E79601A9FD93F26AA95FCCE099A1FFE08A6A6D64F5659C",
+      "pdfSha256": "CFA1EE53DC385D080D9DD588734236491B00643FC196028C4151AECA779FBDBB",
+      "pdfPages": 21,
+      "docDefaults": {
+        "rFonts.ascii": "Times New Roman",
+        "rFonts.eastAsia": "宋体",
+        "rFonts.hAnsi": "Times New Roman",
+        "rFonts.cs": "Times New Roman",
+        "sz": "22",
+        "szCs": "22",
+        "lang.val": "en-US",
+        "lang.eastAsia": "zh-CN",
+        "lang.bidi": "ar-SA"
+      },
+      "themeEastAsianLanguage": "zh-CN",
+      "usedStyleChecks": [
+        {
+          "id": "1",
+          "name": "heading 1",
+          "effectiveProperties": {
+            "rFonts.ascii": "Arial",
+            "rFonts.eastAsia": "黑体",
+            "rFonts.hAnsi": "Arial",
+            "rFonts.cs": "Arial",
+            "sz": "32",
+            "szCs": "32",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA",
+            "b": "1",
+            "bCs": "1"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "21",
+          "name": "heading 2",
+          "effectiveProperties": {
+            "rFonts.ascii": "Arial",
+            "rFonts.eastAsia": "黑体",
+            "rFonts.hAnsi": "Arial",
+            "rFonts.cs": "Arial",
+            "sz": "26",
+            "szCs": "26",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA",
+            "b": "1",
+            "bCs": "1"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "TOC1",
+          "name": "toc 1",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a1",
+          "name": "Normal",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a2",
+          "name": "Default Paragraph Font",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a3",
+          "name": "Normal Table",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a4",
+          "name": "No List",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a5",
+          "name": "header",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "18",
+            "szCs": "18",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a7",
+          "name": "footer",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "18",
+            "szCs": "18",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "aa",
+          "name": "Title",
+          "effectiveProperties": {
+            "rFonts.ascii": "Arial",
+            "rFonts.eastAsia": "黑体",
+            "rFonts.hAnsi": "Arial",
+            "rFonts.cs": "Arial",
+            "sz": "50",
+            "szCs": "50",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA",
+            "b": "1",
+            "bCs": "1"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "ac",
+          "name": "Subtitle",
+          "effectiveProperties": {
+            "rFonts.ascii": "Arial",
+            "rFonts.eastAsia": "黑体",
+            "rFonts.hAnsi": "Arial",
+            "rFonts.cs": "Arial",
+            "sz": "32",
+            "szCs": "32",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA",
+            "b": "1",
+            "bCs": "1",
+            "iCs": "1"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "af7",
+          "name": "caption",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "19",
+            "szCs": "19",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "aff1",
+          "name": "Table Grid",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "19",
+            "szCs": "19",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "aff9",
+          "name": "Hyperlink",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        }
+      ],
+      "runOverrideIssues": [],
+      "headings": [
+        {
+          "text": "1 需求分析",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 2,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "1.1 角色与使用范围",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 2,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "1.2 核心业务规则",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 3,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "2 数据流与功能结构",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 3,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "2.1 数据流说明",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 4,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "3 数据元素",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 4,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "4 概念模式",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 5,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "5 逻辑模式与3NF",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 7,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "5.1 规范化分析示例",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 8,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": [],
+          "characters": [
+            {
+              "char": "5",
+              "unicode": "U+0035",
+              "font": "Arial-BoldMT",
+              "points": 12.96
+            },
+            {
+              "char": ".",
+              "unicode": "U+002E",
+              "font": "Arial-BoldMT",
+              "points": 12.96
+            },
+            {
+              "char": "1",
+              "unicode": "U+0031",
+              "font": "Arial-BoldMT",
+              "points": 12.96
+            },
+            {
+              "char": "规",
+              "unicode": "U+89C4",
+              "font": "SimHei",
+              "points": 12.96
+            },
+            {
+              "char": "范",
+              "unicode": "U+8303",
+              "font": "SimHei",
+              "points": 12.96
+            },
+            {
+              "char": "化",
+              "unicode": "U+5316",
+              "font": "SimHei",
+              "points": 12.96
+            },
+            {
+              "char": "分",
+              "unicode": "U+5206",
+              "font": "SimHei",
+              "points": 12.96
+            },
+            {
+              "char": "析",
+              "unicode": "U+6790",
+              "font": "SimHei",
+              "points": 12.96
+            },
+            {
+              "char": "示",
+              "unicode": "U+793A",
+              "font": "SimHei",
+              "points": 12.96
+            },
+            {
+              "char": "例",
+              "unicode": "U+4F8B",
+              "font": "SimHei",
+              "points": 12.96
+            }
+          ]
+        },
+        {
+          "text": "6 完整性与事务设计",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 8,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "6.1 状态与恢复",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 9,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "6.2 时间与统计口径",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 9,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "7 外模式与权限设计",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 9,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "8 物理实现与设计验证",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 10,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "9 资料依据",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 10,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "附录 A　基础表字段字典",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 11,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "app_user",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 11,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "merchant",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 12,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "merchant_member",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 12,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "store",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 13,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "business_order",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 13,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "order_item",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 14,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "payment_attempt",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 14,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "payment_notification",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 15,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "refund_request",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 16,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "transaction_entry",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 17,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "reconciliation_batch",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 17,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "statement_line",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 18,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "reconciliation_result",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 19,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "exception_task",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 19,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "audit_log",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 20,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "自动账单扩展（迁移 007）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 21,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        }
+      ],
+      "captions": [
+        {
+          "text": "表 1.1　角色与使用范围",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 2,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 1.2　核心业务规则",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 3,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图 2.1　主要数据流",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 3,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 2.1　数据流说明",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 4,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 3.1　数据元素",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 4,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图 4.1　关系图（分域展示；PK 主键，UK 唯一键，箭头指向子记录）",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 5,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图 4.2　关系图（分域展示；PK 主键，UK 唯一键，箭头指向子记录）",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 6,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图 4.3　关系图（分域展示；PK 主键，UK 唯一键，箭头指向子记录）",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 6,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 5.1　逻辑模式与3NF",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 7,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 6.1　状态与恢复",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 9,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 6.2　时间与统计口径",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 9,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.1　app_user",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 11,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.2　merchant",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 11,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.3　merchant_member",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 12,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.4　store",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 13,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.5　business_order",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 13,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.6　order_item",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 14,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.7　payment_attempt",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 14,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.8　payment_notification",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 15,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.9　refund_request",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 16,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.10　transaction_entry",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 17,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.11　reconciliation_batch",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 17,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.12　statement_line",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 18,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.13　reconciliation_result",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 19,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.14　exception_task",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 19,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表 A.15　audit_log",
+          "style": "Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 20,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        }
+      ],
+      "frontMatter": [
+        {
+          "text": "Reconis 系统设计报告",
+          "style": "Title",
+          "expectedPoints": 25.0,
+          "located": true,
+          "page": 1,
+          "fontSizes": [
+            24.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ]
+        },
+        {
+          "text": "目　录",
+          "style": "Subtitle",
+          "expectedPoints": 16.0,
+          "located": true,
+          "page": 1,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "SimHei"
+          ]
+        }
+      ],
+      "pdfTextFontDistribution": [
+        {
+          "font": "Arial-BoldMT",
+          "points": 12.96,
+          "characters": 225
+        },
+        {
+          "font": "Arial-BoldMT",
+          "points": 15.96,
+          "characters": 13
+        },
+        {
+          "font": "Arial-BoldMT",
+          "points": 24.96,
+          "characters": 7
+        },
+        {
+          "font": "SimHei",
+          "points": 12.96,
+          "characters": 47
+        },
+        {
+          "font": "SimHei",
+          "points": 15.96,
+          "characters": 65
+        },
+        {
+          "font": "SimHei",
+          "points": 24.96,
+          "characters": 6
+        },
+        {
+          "font": "SimSun",
+          "points": 9.0,
+          "characters": 168
+        },
+        {
+          "font": "SimSun",
+          "points": 9.48,
+          "characters": 2830
+        },
+        {
+          "font": "SimSun",
+          "points": 11.04,
+          "characters": 2243
+        },
+        {
+          "font": "SimSun",
+          "points": 12.0,
+          "characters": 18
+        },
+        {
+          "font": "TimesNewRomanPS-BoldMT",
+          "points": 9.48,
+          "characters": 76
+        },
+        {
+          "font": "TimesNewRomanPSMT",
+          "points": 9.0,
+          "characters": 201
+        },
+        {
+          "font": "TimesNewRomanPSMT",
+          "points": 9.48,
+          "characters": 5944
+        },
+        {
+          "font": "TimesNewRomanPSMT",
+          "points": 11.04,
+          "characters": 2315
+        }
+      ],
+      "issues": []
+    },
+    {
+      "report": "系统实现总结报告",
+      "docxSha256": "DDB59B5D08C098FC1ABA838DF8DA65C402061274EEE9AF34CDE25902F751A3EE",
+      "pdfSha256": "FE9BE5DC73A37F2D8EC4714DCF2C2C4C630395D470C44465F059A3EBC744FB0A",
+      "pdfPages": 73,
+      "docDefaults": {
+        "rFonts.ascii": "Times New Roman",
+        "rFonts.eastAsia": "宋体",
+        "rFonts.hAnsi": "Times New Roman",
+        "rFonts.cs": "Times New Roman",
+        "sz": "22",
+        "szCs": "22",
+        "lang.val": "en-US",
+        "lang.eastAsia": "zh-CN",
+        "lang.bidi": "ar-SA"
+      },
+      "themeEastAsianLanguage": "zh-CN",
+      "usedStyleChecks": [
+        {
+          "id": "1",
+          "name": "heading 1",
+          "effectiveProperties": {
+            "rFonts.ascii": "Arial",
+            "rFonts.eastAsia": "黑体",
+            "rFonts.hAnsi": "Arial",
+            "rFonts.cs": "Arial",
+            "sz": "32",
+            "szCs": "32",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA",
+            "b": "1",
+            "bCs": "1"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "21",
+          "name": "heading 2",
+          "effectiveProperties": {
+            "rFonts.ascii": "Arial",
+            "rFonts.eastAsia": "黑体",
+            "rFonts.hAnsi": "Arial",
+            "rFonts.cs": "Arial",
+            "sz": "26",
+            "szCs": "26",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA",
+            "b": "1",
+            "bCs": "1"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "ReportCaption",
+          "name": "Report Caption",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "19",
+            "szCs": "19",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "ReportCode",
+          "name": "Report Code",
+          "effectiveProperties": {
+            "rFonts.ascii": "Consolas",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Consolas",
+            "rFonts.cs": "Consolas",
+            "sz": "17",
+            "szCs": "17",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "ReportCoverDetail",
+          "name": "Report Cover Detail",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "24",
+            "szCs": "24",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "ReportFigure",
+          "name": "Report Figure",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "19",
+            "szCs": "19",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "ReportFrontHeading",
+          "name": "Report Front Heading",
+          "effectiveProperties": {
+            "rFonts.ascii": "Arial",
+            "rFonts.eastAsia": "黑体",
+            "rFonts.hAnsi": "Arial",
+            "rFonts.cs": "Arial",
+            "sz": "32",
+            "szCs": "32",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "ReportList",
+          "name": "Report List",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "ReportTable",
+          "name": "Report Table",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "19",
+            "szCs": "19",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "TOC1",
+          "name": "toc 1",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "TOC2",
+          "name": "toc 2",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a1",
+          "name": "Normal",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a2",
+          "name": "Default Paragraph Font",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a3",
+          "name": "Normal Table",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a4",
+          "name": "No List",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a5",
+          "name": "header",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "18",
+            "szCs": "18",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "a7",
+          "name": "footer",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "18",
+            "szCs": "18",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "aa",
+          "name": "Title",
+          "effectiveProperties": {
+            "rFonts.ascii": "Arial",
+            "rFonts.eastAsia": "黑体",
+            "rFonts.hAnsi": "Arial",
+            "rFonts.cs": "Arial",
+            "sz": "50",
+            "szCs": "50",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA",
+            "b": "1",
+            "bCs": "1"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "ac",
+          "name": "Subtitle",
+          "effectiveProperties": {
+            "rFonts.ascii": "Arial",
+            "rFonts.eastAsia": "黑体",
+            "rFonts.hAnsi": "Arial",
+            "rFonts.cs": "Arial",
+            "sz": "34",
+            "szCs": "34",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA",
+            "iCs": "1"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        },
+        {
+          "id": "aff9",
+          "name": "Hyperlink",
+          "effectiveProperties": {
+            "rFonts.ascii": "Times New Roman",
+            "rFonts.eastAsia": "宋体",
+            "rFonts.hAnsi": "Times New Roman",
+            "rFonts.cs": "Times New Roman",
+            "sz": "22",
+            "szCs": "22",
+            "lang.val": "en-US",
+            "lang.eastAsia": "zh-CN",
+            "lang.bidi": "ar-SA"
+          },
+          "themeFontReferences": [],
+          "sizeAndComplexSizeMatch": true
+        }
+      ],
+      "runOverrideIssues": [],
+      "headings": [
+        {
+          "text": "1 项目背景与最终范围",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 6,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "1.1 业务问题与建设目标",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 6,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "1.2 参与主体与业务边界",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 6,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "1.3 成果及验证范围",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 6,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "2 需求落实与功能结构",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 7,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "2.1 功能组织",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 7,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "2.2 基本功能与操作结果",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 8,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "2.3 高级能力的落点",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 10,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "3 实现环境与系统架构",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 11,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "3.1 实际环境",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 11,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "3.2 模块化单体与数据流",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 12,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "3.3 本地部署与环境隔离",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 12,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "3.4 源程序组织与运行版本",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 13,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "4 最终数据库设计",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 13,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "4.1 数据组织原则与总体结构",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 13,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "4.2 主要关系模式与实体联系",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 15,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "4.3 数据类型与完整性约束",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 20,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "4.4 函数依赖与规范化分析",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 21,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "4.5 索引与查询组织",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 23,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "5 数据库程序与一致性控制",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 23,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "5.1 视图形成统一查询口径",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 23,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "5.2 存储过程划定业务原子操作",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 24,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "5.3 标量函数与幂等控制",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 25,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "5.4 对账分类与可追溯结案",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 26,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "5.5 触发器维护历史边界",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 26,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "5.6 全文查询、权限范围与结果边界",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 27,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "6 核心业务流程与运行实例",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 28,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "6.1 实例范围与订单建立",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 28,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "6.2 收款确认与异常恢复",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 29,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "6.3 部分退款、独立审批与额度",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 31,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "6.4 账单导入与逐笔核对",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 33,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "6.5 修订账单、工单处理与独立复核",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 37,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "6.6 证据链与档案",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 39,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "7 高级查询、统计分析与数据交换",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 41,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "7.1 中文全文检索与相似案例",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 41,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "7.2 多粒度统计与逐级钻取",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 42,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "7.3 发生时间、获知时间与历史截面",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 45,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "7.4 差错关联统计与运营风险",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 46,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "7.5 自动获取与可靠任务",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 46,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "7.6 Excel、XML 与分析报告",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 46,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "8 安全设计、外模式与审计",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 47,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "8.1 身份认证与职责划分",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 47,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "8.2 外模式与行范围",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 48,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "8.3 数据库权限与不可变事实",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 48,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "8.4 访问日志、业务审计与文件安全",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 49,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "9 测试与结果分析",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 50,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "9.1 测试环境与方法",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 50,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "9.2 测试统计与代表性用例",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 50,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "9.3 规模实验与查询结果分析",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 52,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "9.4 支付渠道证据与验证边界",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 53,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "9.5 最终界面版本回归",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 54,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "10 设计调整与实践总结",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 54,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "10.1 从初期方案到最终实现",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 54,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "10.2 问题定位、处理与效果",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 55,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "10.3 数据库与工程实践收获",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 55,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "11 小组分工与系统局限",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 56,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "11.1 小组职责与协作",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 56,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "11.2 现有限制",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 56,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "11.3 后续改进方向",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 57,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "参考文献",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 57,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "附录A 完整字段字典",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 57,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.1 用户账号（app_user）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 58,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.2 商户（merchant）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 58,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.3 商户成员（merchant_member）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 59,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.4 门店（store）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 59,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.5 业务订单（business_order）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 60,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.6 订单明细（order_item）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 61,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.7 支付尝试（payment_attempt）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 61,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.8 支付通知（payment_notification）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 62,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.9 退款申请（refund_request）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 63,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.10 资金事实（transaction_entry）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 63,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.11 对账批次与获取任务（reconciliation_batch）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 64,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.12 原始账单行（statement_line）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 66,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.13 对账结果（reconciliation_result）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 66,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.14 差错工单（exception_task）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 67,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "A.15 审计日志（audit_log）",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 68,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "附录B 显式索引与CHECK约束",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 68,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "B.1 显式业务索引",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 68,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "B.2 状态与类型CHECK约束",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 70,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "B.3 数量、金额与时间CHECK约束",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 71,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "B.4 跨字段CHECK约束",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 71,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "附录C 运行、复现与证据索引",
+          "style": "Heading 1",
+          "expectedPoints": 16,
+          "located": true,
+          "page": 72,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "C.1 启动与验证入口",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 72,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "C.2 本次运行版本标识",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 72,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        },
+        {
+          "text": "C.3 证据文件与报告源文件",
+          "style": "Heading 2",
+          "expectedPoints": 13,
+          "located": true,
+          "page": 72,
+          "fontSizes": [
+            12.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ],
+          "fontMismatches": []
+        }
+      ],
+      "captions": [
+        {
+          "text": "图1-1 当前公开首页的产品入口与示意场景",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 7,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图2-1 Reconis 最终功能结构",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 8,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表2-1 基本功能及完成结果",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 8,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图2-2 平台财务工作台与限定商户摘要",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 9,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图2-3 校园演示订单的分类插画与列表层次",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 10,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表2-2 高级能力与验证方式",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 10,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表3-1 实现与验证环境",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 11,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图3-1 系统架构及数据流",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 12,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表3-2 主要源程序与职责",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 13,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表4-1 最终数据库关系及职责",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 14,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图4-1 最终实体关系总览",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 15,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图4-2 用户、商户、成员与门店关系",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 18,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图4-3 订单、支付、通知与资金关系",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 19,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图4-4 账单、核对结果与工单关系",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 20,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表4-2 主要函数依赖及结构依据",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 21,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表4-3 代表性业务索引及使用目的",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 23,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表5-1 最终视图及调用情况",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 24,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表5-2 触发器及一致性职责",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 26,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-1 验证订单列表及状态",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 28,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-2 订单266的资金状态与时间线",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 29,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-3 收款确认与结果恢复流程",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 30,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-4 退款审批、执行与未知结果恢复",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 32,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-5 部分退款成功与异常申请记录",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 33,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-6 账单校验、核对与历史比较",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 34,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表6-1 对账分类与判断边界",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 35,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-7 教学账单导入预览与校验",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 36,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-8 原批次127的两项金额差异",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 37,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-9 修订批次130与基线127的逐项比较",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 37,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-10 差错处理与独立复核状态",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 38,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-11 工单115的结案状态、最新核对与独立复核",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 39,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-12 退回、重提与结案的审核历史",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 40,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图6-13 工单关联的订单、支付和资金事实",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 41,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图7-1 中文全文检索及工单结案记录",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 42,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图7-2 统计钻取与关联明细路径",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 43,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图7-3 商户范围的交易统计",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 44,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图7-4 门店层的同口径汇总",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 44,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图7-5 最细粒度的三笔资金事件",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 45,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图7-6 发生时间与系统获知时间",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 45,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表8-1 角色授权与操作限制",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 47,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图8-1 登录与账号申请入口",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 48,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "图8-2 访问与操作审计查询",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 49,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表9-1 测试环境",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 50,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表9-2 2026年11月4日集中测试结果",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 50,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表9-3 代表性用例、预期与实际结果",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 51,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表9-4 规模实验耗时（毫秒）",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 53,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表9-5 2026年11月6日最终界面版本回归结果",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 54,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表10-1 主要设计细化及原因",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 54,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表11-1 成员职责与成果责任份额",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 56,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-1 用户账号字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 58,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-2 商户字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 58,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-3 商户成员字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 59,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-4 门店字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 59,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-5 业务订单字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 60,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-6 订单明细字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 61,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-7 支付尝试字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 61,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-8 支付通知字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 62,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-9 退款申请字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 63,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-10 资金事实字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 63,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-11 对账批次与获取任务字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 64,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-12 原始账单行字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 66,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-13 对账结果字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 66,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-14 差错工单字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 67,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表A-15 审计日志字段字典",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 68,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表B-1 六个筛选唯一索引",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 68,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表B-2 十三个非唯一业务索引",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 69,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表B-3 状态与类型约束（18项）",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 70,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表B-4 数值及账期约束（6项）",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 71,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        },
+        {
+          "text": "表C-1 证据索引",
+          "style": "Report Caption",
+          "expectedPoints": 9.5,
+          "located": true,
+          "page": 73,
+          "fontSizes": [
+            9.48
+          ],
+          "fonts": [
+            "SimSun",
+            "TimesNewRomanPSMT"
+          ]
+        }
+      ],
+      "frontMatter": [
+        {
+          "text": "Reconis 校园支付对账系统",
+          "style": "Title",
+          "expectedPoints": 25.0,
+          "located": true,
+          "page": 1,
+          "fontSizes": [
+            24.96
+          ],
+          "fonts": [
+            "Arial-BoldMT",
+            "SimHei"
+          ]
+        },
+        {
+          "text": "系统实践总结报告",
+          "style": "Subtitle",
+          "expectedPoints": 17.0,
+          "located": true,
+          "page": 1,
+          "fontSizes": [
+            17.04
+          ],
+          "fonts": [
+            "SimHei"
+          ]
+        },
+        {
+          "text": "摘要",
+          "style": "Report Front Heading",
+          "expectedPoints": 16.0,
+          "located": true,
+          "page": 2,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "SimHei"
+          ]
+        },
+        {
+          "text": "目录",
+          "style": "Report Front Heading",
+          "expectedPoints": 16.0,
+          "located": true,
+          "page": 3,
+          "fontSizes": [
+            15.96
+          ],
+          "fonts": [
+            "SimHei"
+          ]
+        }
+      ],
+      "pdfTextFontDistribution": [
+        {
+          "font": "Arial-BoldMT",
+          "points": 12.96,
+          "characters": 449
+        },
+        {
+          "font": "Arial-BoldMT",
+          "points": 15.96,
+          "characters": 21
+        },
+        {
+          "font": "Arial-BoldMT",
+          "points": 24.96,
+          "characters": 7
+        },
+        {
+          "font": "Consolas",
+          "points": 8.52,
+          "characters": 1576
+        },
+        {
+          "font": "Consolas",
+          "points": 9.48,
+          "characters": 450
+        },
+        {
+          "font": "SimHei",
+          "points": 12.96,
+          "characters": 590
+        },
+        {
+          "font": "SimHei",
+          "points": 15.96,
+          "characters": 143
+        },
+        {
+          "font": "SimHei",
+          "points": 17.04,
+          "characters": 8
+        },
+        {
+          "font": "SimHei",
+          "points": 24.96,
+          "characters": 8
+        },
+        {
+          "font": "SimSun",
+          "points": 8.52,
+          "characters": 39
+        },
+        {
+          "font": "SimSun",
+          "points": 9.0,
+          "characters": 432
+        },
+        {
+          "font": "SimSun",
+          "points": 9.48,
+          "characters": 8014
+        },
+        {
+          "font": "SimSun",
+          "points": 11.04,
+          "characters": 20867
+        },
+        {
+          "font": "SimSun",
+          "points": 12.0,
+          "characters": 12
+        },
+        {
+          "font": "TimesNewRomanPS-BoldMT",
+          "points": 9.48,
+          "characters": 43
+        },
+        {
+          "font": "TimesNewRomanPSMT",
+          "points": 9.0,
+          "characters": 711
+        },
+        {
+          "font": "TimesNewRomanPSMT",
+          "points": 9.48,
+          "characters": 11687
+        },
+        {
+          "font": "TimesNewRomanPSMT",
+          "points": 11.04,
+          "characters": 19178
+        },
+        {
+          "font": "TimesNewRomanPSMT",
+          "points": 12.0,
+          "characters": 31
+        }
+      ],
+      "issues": []
+    }
+  ],
+  "passed": true
+}

@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import math
 import re
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -29,6 +30,8 @@ from PIL import Image
 
 
 BASE = Path(__file__).resolve().parent
+sys.path.insert(0, str(BASE.parent / 'typography'))
+from report_typography import set_fonts, normalize_template
 DEFAULT_INPUT = BASE.parent / "implementation-report.md"
 DEFAULT_OUTPUT = BASE.parent / "final" / "Reconis-系统实现总结报告.docx"
 AUTHORS = "王梓豪、吕世英、朱晓天"
@@ -56,27 +59,6 @@ def xml(parent, tag, **attributes):
         element.set(qn(key.replace("__", ":")), str(value))
     parent.append(element)
     return element
-
-
-def set_fonts(font_owner, latin="Times New Roman", east_asia="宋体", size=11, bold=None):
-    font_owner.font.name = latin
-    font_owner.font.size = Pt(size)
-    font_owner.font.color.rgb = BLACK
-    if bold is not None:
-        font_owner.font.bold = bold
-    rpr = font_owner._element.get_or_add_rPr()
-    fonts = rpr.find(qn("w:rFonts"))
-    if fonts is None:
-        fonts = xml(rpr, "w:rFonts")
-    for theme in ("asciiTheme", "hAnsiTheme", "eastAsiaTheme", "cstheme"):
-        fonts.attrib.pop(qn("w:" + theme), None)
-    for key, value in (("ascii", latin), ("hAnsi", latin), ("eastAsia", east_asia), ("cs", latin)):
-        fonts.set(qn("w:" + key), value)
-    language = rpr.find(qn("w:lang"))
-    if language is None:
-        language = xml(rpr, "w:lang")
-    language.set(qn("w:val"), "en-US")
-    language.set(qn("w:eastAsia"), "zh-CN")
 
 
 def plain(text):
@@ -347,17 +329,7 @@ def setup_styles(document):
     if update is None:
         update = xml(document.settings.element, "w:updateFields")
     update.set(qn("w:val"), "true")
-    # Explicit Chinese line-break and script defaults avoid locale/theme drift.
-    defaults = document.styles.element.find(qn("w:docDefaults"))
-    if defaults is not None:
-        rdefaults = defaults.find(qn("w:rPrDefault"))
-        if rdefaults is not None:
-            rpr = rdefaults.find(qn("w:rPr"))
-            if rpr is not None:
-                lang = rpr.find(qn("w:lang"))
-                if lang is None:
-                    lang = xml(rpr, "w:lang")
-                lang.set(qn("w:eastAsia"), "zh-CN")
+    normalize_template(document)
 
 
 def configure_section(section, number_format=None):
@@ -587,6 +559,10 @@ def build(input_path, output_path):
             # with a figure reference is explanatory prose, not a caption.
             caption = plain(text).startswith("表") and len(plain(text)) < 65 and bool(CAPTION_RE.match(plain(text)))
             paragraph = document.add_paragraph(style="Report Caption" if caption else "Normal")
+            if not caption and re.search(r'[A-Za-z][A-Za-z0-9_./:\-]{11,}|\b[A-Z][A-Z_]{2,}(?: [A-Z_]{2,})+\b', text):
+                # Long identifiers cannot stretch like Chinese text. Keep their
+                # prose left-aligned instead of expanding nearby Chinese glyphs.
+                paragraph.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
             if caption:
                 paragraph.paragraph_format.keep_with_next = plain(text).startswith("表")
             if block.kind == "quote":
@@ -635,6 +611,7 @@ def build(input_path, output_path):
     if not main_started:
         raise ValueError("The source needs a chapter heading after the abstract/TOC")
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    normalize_template(document)
     document.save(output_path)
     print(f"Created: {output_path}")
     print(f"Paragraphs={paragraphs}; tables={tables}; images={images}; sections={len(document.sections)}; TOC={toc_added}")

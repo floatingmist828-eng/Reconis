@@ -1,5 +1,6 @@
 """Check the submitted artifacts; visual page review remains a separate step."""
 from pathlib import Path
+import argparse
 import hashlib
 import json
 import re
@@ -19,7 +20,10 @@ BACKUP = PROJECT_ROOT.parent / 'Reconis-更新前备份-20261105-173f1dd.zip'
 SOURCE = B.parent / 'implementation-report.md'
 DOCX = B.parent / 'final/Reconis-系统实现总结报告.docx'
 PDF = DOCX.with_suffix('.pdf')
-EVIDENCE = REPORT_ROOT / 'evidence/20261106'
+EVIDENCE = REPORT_ROOT / 'evidence/20261106-language-edit'
+parser = argparse.ArgumentParser()
+parser.add_argument('--evidence-dir', type=Path, default=EVIDENCE)
+EVIDENCE = parser.parse_args().evidence_dir
 EVIDENCE.mkdir(parents=True, exist_ok=True)
 
 def sha(path):
@@ -95,7 +99,7 @@ if not BACKUP.is_file():
     protected['status'] = 'ARCHIVE_UNAVAILABLE'
     protected['note'] = ('Local backup is not distributed with the repository. '
                          'This checkout cannot repeat the archived initial-design check; '
-                         'the dated result remains in initial-design-preservation.json.')
+                         'the dated result remains in evidence/20261106/initial-design-preservation.json.')
 else:
     protected['archiveSha256'] = sha(BACKUP)
     with zipfile.ZipFile(BACKUP) as archive:
@@ -114,9 +118,11 @@ else:
             protected['entries'].append(item)
             if not item['archiveMatchesHistoricalHash']:
                 issues.append('Archived initial-design hash mismatch: ' + name)
-            if item['standaloneRestoredCopyPresent']:
-                issues.append('Initial design unexpectedly restored into final-report directory: ' + name)
-    protected['status'] = 'ARCHIVED_CONTENT_VERIFIED_NOT_RESTORED'
+    protected['status'] = 'ARCHIVED_BASELINE_VERIFIED'
+    protected['currentDesignScope'] = ('The initial design report was restored for language editing '
+                                        'after the user expanded the scope to both reports. '
+                                        'Current design artifacts are checked separately in '
+                                        'evidence/20261106-design-language-edit/.')
 
 result = {
     'source': {'path': str(SOURCE), 'sha256': sha(SOURCE)},
@@ -126,7 +132,7 @@ result = {
             'bodyPages': len(pages)-body_start, 'embeddedFonts': font_info},
     'figureCount': len(figures), 'tocEntries': toc_entries,
     'initialDesign': protected, 'issues': issues,
-    'visualReview': 'See evidence/20261106/visual-qa-final-*.md and render-final/page-*.png; automated checks do not assess visual quality.'
+    'visualReview': 'See evidence/20261106-language-edit/visual-qa-*.md and render-final/page-*.png; automated checks do not assess visual quality.'
 }
 (EVIDENCE/'final-artifact-check.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf8')
 print(json.dumps({'pages': len(pages), 'bodyPages': len(pages)-body_start,

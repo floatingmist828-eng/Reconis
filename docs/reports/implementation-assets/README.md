@@ -28,6 +28,10 @@ python docs/reports/implementation-assets/build_figures.py
 2. `build_report.py`：生成 `../final/Reconis-系统实现总结报告.docx`。
 3. `finalize_report.ps1`：用 Microsoft Word 更新目录、页码并导出同名 PDF，同时核对初期设计报告未变化。
 4. `render_final_pdf.py`：将最终 PDF 渲染为逐页图片和联系表。
-5. `validate_report.py`：核验目录目标、页码、图表数量、字体嵌入和初期设计文件散列；结果保存于 `../evidence/20261106/final-artifact-check.json`。仓库不包含本机备份ZIP；其他电脑无法复验该历史备份时会明确记录 `ARCHIVE_UNAVAILABLE`，已完成的只读核验记录保存在 `initial-design-preservation.json`。
+5. `validate_report.py`：核验目录目标、页码、图表数量、字体嵌入和初期设计文件散列；结果保存于 `../evidence/20261106-language-edit/final-artifact-check.json`。仓库不包含本机备份ZIP；其他电脑无法复验该历史备份时会明确记录 `ARCHIVE_UNAVAILABLE`，已完成的只读核验记录保存在 `../evidence/20261106/initial-design-preservation.json`。
 
-图像可读性、自然分页及图文关系仍须实际逐页检查，不能由结构检查代替。工作用要求核对表和历史测试在 `../evidence/20261104/`，最终界面回归和逐页核验记录在 `../evidence/20261106/`，不纳入正式报告正文。此流程只生成最终实践报告，不调用会同时覆盖初期设计报告的旧课程打包脚本。
+图像可读性、自然分页及图文关系仍须实际逐页检查，不能由结构检查代替。工作用要求核对表和历史测试在 `../evidence/20261104/`，最终界面回归在 `../evidence/20261106/`，语言编辑定稿的检查记录在 `../evidence/20261106-language-edit/`，不纳入正式报告正文。此流程只生成最终实践报告，不调用会同时覆盖初期设计报告的旧课程打包脚本。
+
+字体规则由 `../typography/report_typography.py` 与构建器共同维护。标题采用黑体/Arial，一级16 pt、二级13 pt；正文宋体/Times New Roman 11 pt，图表题注和表内文字9.5 pt。含长英文标识或多词SQL语句的正文采用左对齐，减少两端对齐造成的中文间距扩张。字号差异仅用于区分标题层级、正文、表格和代码。
+
+字体复核后的报告仍为73页。当前检查可执行 `validate_report.py --evidence-dir docs/reports/evidence/20261106-typography/summary`；双报告字体实测与逐页渲染入口见 `../typography/README.md`。

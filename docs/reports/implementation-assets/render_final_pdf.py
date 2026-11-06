@@ -6,7 +6,7 @@ import pdfplumber
 from PIL import Image,ImageDraw,ImageFont
 B=Path(__file__).resolve().parent
 pdf=B.parent/'final/Reconis-系统实现总结报告.pdf'
-out=B.parent/'evidence/20261106/render-final'
+out=B.parent/'evidence/20261106-language-edit/render-final'
 out.mkdir(parents=True,exist_ok=True)
 doc=pdfium.PdfDocument(str(pdf))
 textdoc=pdfplumber.open(pdf)

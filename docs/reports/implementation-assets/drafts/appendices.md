@@ -2,7 +2,7 @@
 
 本附录列出最终数据库的15张表和207个字段。两套运行数据库结构一致。所有表均以 id 为 BIGINT IDENTITY 主键；字符串长度按字符数列示，NVARCHAR(MAX) 为可变长Unicode文本，ROWVERSION 为8字节自动版本标记。金额单位均为分，DATETIME2(3) 按UTC约定保存。
 
-“非空／可空”对应列的 NULL 属性；PK 表示主键，UQ 表示单列唯一约束，UK 表示组合唯一约束中的一列，FK 表示外键。组合约束须将所列字段一起理解，不能据此认定每列分别唯一。各表下列出完整的唯一约束与外键，全部32个外键的更新和删除动作均为 NO_ACTION。筛选唯一索引另见附录B。
+“非空／可空”对应列的 NULL 属性；PK 表示主键，UQ 表示单列唯一约束，UK 表示组合唯一约束中的一列，FK 表示外键。组合唯一约束要求所列字段的组合值唯一。各表下列出完整的唯一约束与外键，全部32个外键的更新和删除动作均为 NO_ACTION。筛选唯一索引另见附录B。
 
 ## A.1 用户账号（app_user）
 
@@ -280,7 +280,7 @@
 
 外键：acquisition_owner → app_user(id)；baseline_batch_id → reconciliation_batch(id)；created_by → app_user(id)；merchant_id → merchant(id)；statement_source_batch_id → reconciliation_batch(id)。
 
-source_type=AUTO_JOB 时，status 保持任务容器的 IMPORTING，执行进度使用 acquisition_state。普通账单批次的生命周期使用 status。acquisition_owner 是授权执行账号，acquisition_token 是工作者租约，两者含义不同。
+source_type=AUTO_JOB 时，status 保持任务容器的 IMPORTING，执行进度使用 acquisition_state。普通账单批次的生命周期使用 status。acquisition_owner 是授权执行账号，acquisition_token 是工作者租约。
 
 ## A.12 原始账单行（statement_line）
 
@@ -378,7 +378,7 @@ source_type=AUTO_JOB 时，status 保持任务容器的 IMPORTING，执行进度
 
 外键：actor_user_id → app_user(id)；scope_merchant_id → merchant(id)。
 
-object_type 与 object_id 共同定位不同类型的业务对象；object_id 不是指向某一固定表的外键。快照保存当时内容，不代表当前数据行。
+object_type 与 object_id 共同定位不同类型的业务对象，object_id 未设置指向固定业务表的外键。快照保存审计事件发生时的内容。
 
 # 附录B 显式索引与CHECK约束
 
@@ -419,7 +419,7 @@ object_type 与 object_id 共同定位不同类型的业务对象；object_id �
 
 ## B.2 状态与类型CHECK约束
 
-数据库实际共有27个CHECK约束。以下按业务作用编号B-C01至B-C27，编号用于阅读对应，不代替SQL Server中的约束名称。表达式将同列的多个等值OR合并为等价的IN写法，保留原有允许值及空值语义；行列是否允许NULL仍以附录A为准。
+数据库实际共有27个CHECK约束。以下按业务作用使用报告编号B-C01至B-C27，SQL Server中各约束另有名称。表达式将同列的多个等值OR合并为等价的IN写法，保留原有允许值及空值语义；行列是否允许NULL仍以附录A为准。
 
 **表B-3 状态与类型约束（18项）**
 
@@ -497,4 +497,4 @@ CHECK ((source_type<>'AUTO_JOB' AND acquisition_key IS NULL)
         AND acquisition_generation>0))
 ```
 
-acquisition_state=TEMPLATE_ONLY 表示已取得并保存沙箱模板，不等同于真实交易账单核对成功。工单的结案证据、退款申请与审核人分离等规则还依赖存储过程及触发器，未将这些跨行规则虚列为CHECK约束。
+acquisition_state=TEMPLATE_ONLY 表示已取得并保存沙箱模板，该任务未进入真实交易账单核对。工单结案证据、退款申请人与审核人分离等跨行规则由存储过程及触发器校验。

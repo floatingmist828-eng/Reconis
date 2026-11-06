@@ -1,0 +1,148 @@
+{
+  "source": {
+    "path": "D:\\数据库\\Reconis\\docs\\reports\\system-design.md",
+    "sha256": "EEE2870C1F34AE817F7E92AA3386D2FFDBF76288FCB0F4CDA3766BCC917E618A",
+    "checkedTextItems": 254
+  },
+  "docx": {
+    "path": "D:\\数据库\\Reconis\\docs\\reports\\final\\Reconis-系统设计报告.docx",
+    "sha256": "5EFDECC79899033A4ADF6D98DA2993E4BC62E90BADA849FFD09A8BFEF6FA7E53",
+    "tables": 22,
+    "images": 4
+  },
+  "pdf": {
+    "path": "D:\\数据库\\Reconis\\docs\\reports\\final\\Reconis-系统设计报告.pdf",
+    "sha256": "B215F451E1176D8012B528BBFB099A0F0B55CDA9D2089B41C576B4C183D47A42",
+    "pages": 22,
+    "embeddedFonts": {
+      "/BCDEEE+Arial-BoldMT": true,
+      "/BCDFEE+SimSun": true,
+      "/BCDGEE+TimesNewRomanPSMT": true,
+      "/BCDHEE+Calibri-Bold": true,
+      "/BCDIEE+MS-Gothic": true,
+      "/BCDJEE+MicrosoftYaHei-Bold": true,
+      "/BCDKEE+Calibri": true,
+      "/BCDLEE+MS-Gothic": true,
+      "/BCDMEE+MicrosoftYaHei": true,
+      "/BCDNEE+Calibri-Italic": true,
+      "/BCDOEE+Cambria": true,
+      "/BCDPEE+SimSun": true,
+      "/BCEAEE+Calibri-Bold": true,
+      "/BCEBEE+TimesNewRomanPS-BoldMT": true,
+      "/BCECEE+TimesNewRomanPS-BoldMT": true,
+      "/BCEDEE+TimesNewRomanPSMT": true
+    }
+  },
+  "contentChecks": {
+    "wordParagraphsCheckedInPdf": 91,
+    "wordTableRowsCheckedInPdf": 272,
+    "missingTableRows": 0,
+    "frozenDictionaryMatches": true
+  },
+  "tocEntries": [
+    {
+      "title": "1 需求分析",
+      "page": 2,
+      "matches": true
+    },
+    {
+      "title": "2 数据流与功能结构",
+      "page": 4,
+      "matches": true
+    },
+    {
+      "title": "3 数据元素",
+      "page": 5,
+      "matches": true
+    },
+    {
+      "title": "4 概念模式",
+      "page": 6,
+      "matches": true
+    },
+    {
+      "title": "5 逻辑模式与3NF",
+      "page": 7,
+      "matches": true
+    },
+    {
+      "title": "6 完整性与事务设计",
+      "page": 9,
+      "matches": true
+    },
+    {
+      "title": "7 外模式与权限设计",
+      "page": 10,
+      "matches": true
+    },
+    {
+      "title": "8 物理实现与设计验证",
+      "page": 10,
+      "matches": true
+    },
+    {
+      "title": "9 资料依据",
+      "page": 11,
+      "matches": true
+    },
+    {
+      "title": "附录 A 基础表字段字典",
+      "page": 12,
+      "matches": true
+    }
+  ],
+  "diagrams": [
+    {
+      "path": "diagrams/data-flow.png",
+      "matches": true
+    },
+    {
+      "path": "diagrams/data-flow.svg",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-identity.png",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-identity.svg",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-funds.png",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-funds.svg",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-reconciliation.png",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-reconciliation.svg",
+      "matches": true
+    }
+  ],
+  "archive": {
+    "available": true,
+    "archiveSha256": "849233E817C1B89EF70D01EFDFC133402A3E2A22088CC47FA6544FEBED3EBBBC",
+    "archiveHashMatches": true,
+    "headingsUnchanged": true,
+    "codeBlocksUnchanged": true,
+    "dictionaryUnchanged": true
+  },
+  "summaryArtifacts": {
+    "docx": {
+      "sha256": "3258EF06E575D1714422922C50F529EB41A920F43DDB4029FBE5B4DF1F4D802C",
+      "unchanged": true
+    },
+    "pdf": {
+      "sha256": "26D092CEE5D00A0FB980DDB38ADE4DAF1C114C87CD4C22F406392BD35C007081",
+      "unchanged": true
+    }
+  },
+  "issues": [],
+  "visualReview": "See the separate page PNG review record in this evidence folder."
+}

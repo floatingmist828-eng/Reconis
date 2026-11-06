@@ -1,0 +1,142 @@
+{
+  "source": {
+    "path": "D:\\数据库\\Reconis\\docs\\reports\\system-design.md",
+    "sha256": "EEE2870C1F34AE817F7E92AA3386D2FFDBF76288FCB0F4CDA3766BCC917E618A",
+    "checkedTextItems": 254
+  },
+  "docx": {
+    "path": "D:\\数据库\\Reconis\\docs\\reports\\final\\Reconis-系统设计报告.docx",
+    "sha256": "F5584F39BCBCFE4E83E79601A9FD93F26AA95FCCE099A1FFE08A6A6D64F5659C",
+    "tables": 22,
+    "images": 4
+  },
+  "pdf": {
+    "path": "D:\\数据库\\Reconis\\docs\\reports\\final\\Reconis-系统设计报告.pdf",
+    "sha256": "CFA1EE53DC385D080D9DD588734236491B00643FC196028C4151AECA779FBDBB",
+    "pages": 21,
+    "embeddedFonts": {
+      "/BCDEEE+TimesNewRomanPSMT": true,
+      "/BCDFEE+SimSun": true,
+      "/BCDGEE+Arial-BoldMT": true,
+      "/BCDHEE+SimHei": true,
+      "/BCDIEE+SimHei": true,
+      "/BCDJEE+Cambria": true,
+      "/BCDKEE+SimSun": true,
+      "/BCDLEE+TimesNewRomanPS-BoldMT": true,
+      "/BCDMEE+TimesNewRomanPS-BoldMT": true,
+      "/BCDNEE+TimesNewRomanPSMT": true
+    }
+  },
+  "contentChecks": {
+    "wordParagraphsCheckedInPdf": 91,
+    "wordTableRowsCheckedInPdf": 272,
+    "missingTableRows": 0,
+    "frozenDictionaryMatches": true
+  },
+  "tocEntries": [
+    {
+      "title": "1 需求分析",
+      "page": 2,
+      "matches": true
+    },
+    {
+      "title": "2 数据流与功能结构",
+      "page": 3,
+      "matches": true
+    },
+    {
+      "title": "3 数据元素",
+      "page": 4,
+      "matches": true
+    },
+    {
+      "title": "4 概念模式",
+      "page": 5,
+      "matches": true
+    },
+    {
+      "title": "5 逻辑模式与3NF",
+      "page": 7,
+      "matches": true
+    },
+    {
+      "title": "6 完整性与事务设计",
+      "page": 8,
+      "matches": true
+    },
+    {
+      "title": "7 外模式与权限设计",
+      "page": 9,
+      "matches": true
+    },
+    {
+      "title": "8 物理实现与设计验证",
+      "page": 10,
+      "matches": true
+    },
+    {
+      "title": "9 资料依据",
+      "page": 10,
+      "matches": true
+    },
+    {
+      "title": "附录 A 基础表字段字典",
+      "page": 11,
+      "matches": true
+    }
+  ],
+  "diagrams": [
+    {
+      "path": "diagrams/data-flow.png",
+      "matches": true
+    },
+    {
+      "path": "diagrams/data-flow.svg",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-identity.png",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-identity.svg",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-funds.png",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-funds.svg",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-reconciliation.png",
+      "matches": true
+    },
+    {
+      "path": "diagrams/er-reconciliation.svg",
+      "matches": true
+    }
+  ],
+  "archive": {
+    "available": true,
+    "archiveSha256": "849233E817C1B89EF70D01EFDFC133402A3E2A22088CC47FA6544FEBED3EBBBC",
+    "archiveHashMatches": true,
+    "headingsUnchanged": true,
+    "codeBlocksUnchanged": true,
+    "dictionaryUnchanged": true
+  },
+  "summaryArtifacts": {
+    "docx": {
+      "sha256": "DDB59B5D08C098FC1ABA838DF8DA65C402061274EEE9AF34CDE25902F751A3EE",
+      "matchesLanguageEditSnapshot": false
+    },
+    "pdf": {
+      "sha256": "FE9BE5DC73A37F2D8EC4714DCF2C2C4C630395D470C44465F059A3EBC744FB0A",
+      "matchesLanguageEditSnapshot": false
+    }
+  },
+  "issues": [],
+  "visualReview": "See the separate page PNG review record in this evidence folder."
+}

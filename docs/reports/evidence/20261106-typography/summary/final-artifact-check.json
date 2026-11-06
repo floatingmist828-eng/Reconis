@@ -1,0 +1,493 @@
+{
+  "source": {
+    "path": "D:\\数据库\\Reconis\\docs\\reports\\implementation-report.md",
+    "sha256": "87DED292C3FD4D9DE86CB0C53B504AF63BAC572D57037542E5D18FBBB3D1431C"
+  },
+  "docx": {
+    "path": "D:\\数据库\\Reconis\\docs\\reports\\final\\Reconis-系统实现总结报告.docx",
+    "sha256": "DDB59B5D08C098FC1ABA838DF8DA65C402061274EEE9AF34CDE25902F751A3EE",
+    "tables": 38,
+    "images": 30,
+    "sections": 3
+  },
+  "pdf": {
+    "path": "D:\\数据库\\Reconis\\docs\\reports\\final\\Reconis-系统实现总结报告.pdf",
+    "sha256": "FE9BE5DC73A37F2D8EC4714DCF2C2C4C630395D470C44465F059A3EBC744FB0A",
+    "pages": 73,
+    "bodyPages": 68,
+    "embeddedFonts": {
+      "/BCDEEE+TimesNewRomanPSMT": true,
+      "/BCDFEE+Arial-BoldMT": true,
+      "/BCDGEE+SimHei": true,
+      "/BCDHEE+ArialMT": true,
+      "/BCDIEE+SimSun": true,
+      "/BCDJEE+TimesNewRomanPSMT": true,
+      "/BCDKEE+Cambria": true,
+      "/BCDLEE+Consolas": true,
+      "/BCDMEE+TimesNewRomanPS-BoldMT": true
+    }
+  },
+  "figureCount": 30,
+  "tocEntries": [
+    {
+      "title": "1 项目背景与最终范围",
+      "page": 1,
+      "matches": true
+    },
+    {
+      "title": "1.1 业务问题与建设目标",
+      "page": 1,
+      "matches": true
+    },
+    {
+      "title": "1.2 参与主体与业务边界",
+      "page": 1,
+      "matches": true
+    },
+    {
+      "title": "1.3 成果及验证范围",
+      "page": 1,
+      "matches": true
+    },
+    {
+      "title": "2 需求落实与功能结构",
+      "page": 2,
+      "matches": true
+    },
+    {
+      "title": "2.1 功能组织",
+      "page": 2,
+      "matches": true
+    },
+    {
+      "title": "2.2 基本功能与操作结果",
+      "page": 3,
+      "matches": true
+    },
+    {
+      "title": "2.3 高级能力的落点",
+      "page": 5,
+      "matches": true
+    },
+    {
+      "title": "3 实现环境与系统架构",
+      "page": 6,
+      "matches": true
+    },
+    {
+      "title": "3.1 实际环境",
+      "page": 6,
+      "matches": true
+    },
+    {
+      "title": "3.2 模块化单体与数据流",
+      "page": 7,
+      "matches": true
+    },
+    {
+      "title": "3.3 本地部署与环境隔离",
+      "page": 7,
+      "matches": true
+    },
+    {
+      "title": "3.4 源程序组织与运行版本",
+      "page": 8,
+      "matches": true
+    },
+    {
+      "title": "4 最终数据库设计",
+      "page": 8,
+      "matches": true
+    },
+    {
+      "title": "4.1 数据组织原则与总体结构",
+      "page": 8,
+      "matches": true
+    },
+    {
+      "title": "4.2 主要关系模式与实体联系",
+      "page": 10,
+      "matches": true
+    },
+    {
+      "title": "4.3 数据类型与完整性约束",
+      "page": 15,
+      "matches": true
+    },
+    {
+      "title": "4.4 函数依赖与规范化分析",
+      "page": 16,
+      "matches": true
+    },
+    {
+      "title": "4.5 索引与查询组织",
+      "page": 18,
+      "matches": true
+    },
+    {
+      "title": "5 数据库程序与一致性控制",
+      "page": 18,
+      "matches": true
+    },
+    {
+      "title": "5.1 视图形成统一查询口径",
+      "page": 18,
+      "matches": true
+    },
+    {
+      "title": "5.2 存储过程划定业务原子操作",
+      "page": 19,
+      "matches": true
+    },
+    {
+      "title": "5.3 标量函数与幂等控制",
+      "page": 20,
+      "matches": true
+    },
+    {
+      "title": "5.4 对账分类与可追溯结案",
+      "page": 21,
+      "matches": true
+    },
+    {
+      "title": "5.5 触发器维护历史边界",
+      "page": 21,
+      "matches": true
+    },
+    {
+      "title": "5.6 全文查询、权限范围与结果边界",
+      "page": 22,
+      "matches": true
+    },
+    {
+      "title": "6 核心业务流程与运行实例",
+      "page": 23,
+      "matches": true
+    },
+    {
+      "title": "6.1 实例范围与订单建立",
+      "page": 23,
+      "matches": true
+    },
+    {
+      "title": "6.2 收款确认与异常恢复",
+      "page": 24,
+      "matches": true
+    },
+    {
+      "title": "6.3 部分退款、独立审批与额度",
+      "page": 26,
+      "matches": true
+    },
+    {
+      "title": "6.4 账单导入与逐笔核对",
+      "page": 28,
+      "matches": true
+    },
+    {
+      "title": "6.5 修订账单、工单处理与独立复核",
+      "page": 32,
+      "matches": true
+    },
+    {
+      "title": "6.6 证据链与档案",
+      "page": 34,
+      "matches": true
+    },
+    {
+      "title": "7 高级查询、统计分析与数据交换",
+      "page": 36,
+      "matches": true
+    },
+    {
+      "title": "7.1 中文全文检索与相似案例",
+      "page": 36,
+      "matches": true
+    },
+    {
+      "title": "7.2 多粒度统计与逐级钻取",
+      "page": 37,
+      "matches": true
+    },
+    {
+      "title": "7.3 发生时间、获知时间与历史截面",
+      "page": 40,
+      "matches": true
+    },
+    {
+      "title": "7.4 差错关联统计与运营风险",
+      "page": 41,
+      "matches": true
+    },
+    {
+      "title": "7.5 自动获取与可靠任务",
+      "page": 41,
+      "matches": true
+    },
+    {
+      "title": "7.6 Excel、XML 与分析报告",
+      "page": 41,
+      "matches": true
+    },
+    {
+      "title": "8 安全设计、外模式与审计",
+      "page": 42,
+      "matches": true
+    },
+    {
+      "title": "8.1 身份认证与职责划分",
+      "page": 42,
+      "matches": true
+    },
+    {
+      "title": "8.2 外模式与行范围",
+      "page": 43,
+      "matches": true
+    },
+    {
+      "title": "8.3 数据库权限与不可变事实",
+      "page": 43,
+      "matches": true
+    },
+    {
+      "title": "8.4 访问日志、业务审计与文件安全",
+      "page": 44,
+      "matches": true
+    },
+    {
+      "title": "9 测试与结果分析",
+      "page": 45,
+      "matches": true
+    },
+    {
+      "title": "9.1 测试环境与方法",
+      "page": 45,
+      "matches": true
+    },
+    {
+      "title": "9.2 测试统计与代表性用例",
+      "page": 45,
+      "matches": true
+    },
+    {
+      "title": "9.3 规模实验与查询结果分析",
+      "page": 47,
+      "matches": true
+    },
+    {
+      "title": "9.4 支付渠道证据与验证边界",
+      "page": 48,
+      "matches": true
+    },
+    {
+      "title": "9.5 最终界面版本回归",
+      "page": 49,
+      "matches": true
+    },
+    {
+      "title": "10 设计调整与实践总结",
+      "page": 49,
+      "matches": true
+    },
+    {
+      "title": "10.1 从初期方案到最终实现",
+      "page": 49,
+      "matches": true
+    },
+    {
+      "title": "10.2 问题定位、处理与效果",
+      "page": 50,
+      "matches": true
+    },
+    {
+      "title": "10.3 数据库与工程实践收获",
+      "page": 50,
+      "matches": true
+    },
+    {
+      "title": "11 小组分工与系统局限",
+      "page": 51,
+      "matches": true
+    },
+    {
+      "title": "11.1 小组职责与协作",
+      "page": 51,
+      "matches": true
+    },
+    {
+      "title": "11.2 现有限制",
+      "page": 51,
+      "matches": true
+    },
+    {
+      "title": "11.3 后续改进方向",
+      "page": 52,
+      "matches": true
+    },
+    {
+      "title": "参考文献",
+      "page": 52,
+      "matches": true
+    },
+    {
+      "title": "附录A 完整字段字典",
+      "page": 52,
+      "matches": true
+    },
+    {
+      "title": "A.1 用户账号（app_user）",
+      "page": 53,
+      "matches": true
+    },
+    {
+      "title": "A.2 商户（merchant）",
+      "page": 53,
+      "matches": true
+    },
+    {
+      "title": "A.3 商户成员（merchant_member）",
+      "page": 54,
+      "matches": true
+    },
+    {
+      "title": "A.4 门店（store）",
+      "page": 54,
+      "matches": true
+    },
+    {
+      "title": "A.5 业务订单（business_order）",
+      "page": 55,
+      "matches": true
+    },
+    {
+      "title": "A.6 订单明细（order_item）",
+      "page": 56,
+      "matches": true
+    },
+    {
+      "title": "A.7 支付尝试（payment_attempt）",
+      "page": 56,
+      "matches": true
+    },
+    {
+      "title": "A.8 支付通知（payment_notification）",
+      "page": 57,
+      "matches": true
+    },
+    {
+      "title": "A.9 退款申请（refund_request）",
+      "page": 58,
+      "matches": true
+    },
+    {
+      "title": "A.10 资金事实（transaction_entry）",
+      "page": 58,
+      "matches": true
+    },
+    {
+      "title": "A.11 对账批次与获取任务（reconciliation_batch）",
+      "page": 59,
+      "matches": true
+    },
+    {
+      "title": "A.12 原始账单行（statement_line）",
+      "page": 61,
+      "matches": true
+    },
+    {
+      "title": "A.13 对账结果（reconciliation_result）",
+      "page": 61,
+      "matches": true
+    },
+    {
+      "title": "A.14 差错工单（exception_task）",
+      "page": 62,
+      "matches": true
+    },
+    {
+      "title": "A.15 审计日志（audit_log）",
+      "page": 63,
+      "matches": true
+    },
+    {
+      "title": "附录B 显式索引与CHECK约束",
+      "page": 63,
+      "matches": true
+    },
+    {
+      "title": "B.1 显式业务索引",
+      "page": 63,
+      "matches": true
+    },
+    {
+      "title": "B.2 状态与类型CHECK约束",
+      "page": 65,
+      "matches": true
+    },
+    {
+      "title": "B.3 数量、金额与时间CHECK约束",
+      "page": 66,
+      "matches": true
+    },
+    {
+      "title": "B.4 跨字段CHECK约束",
+      "page": 66,
+      "matches": true
+    },
+    {
+      "title": "附录C 运行、复现与证据索引",
+      "page": 67,
+      "matches": true
+    },
+    {
+      "title": "C.1 启动与验证入口",
+      "page": 67,
+      "matches": true
+    },
+    {
+      "title": "C.2 本次运行版本标识",
+      "page": 67,
+      "matches": true
+    },
+    {
+      "title": "C.3 证据文件与报告源文件",
+      "page": 67,
+      "matches": true
+    }
+  ],
+  "initialDesign": {
+    "verificationScope": "Read archived initial-design entries directly from the existing ZIP and compare with the recorded November 4 hashes. No current external initial-design file is assumed unchanged.",
+    "archive": "D:\\数据库\\Reconis-更新前备份-20261105-173f1dd.zip",
+    "entries": [
+      {
+        "archiveEntry": "docs/reports/system-design.md",
+        "expectedSha256": "BD63829156F3DFD241D32B4A1D9F57512BFBAD8D70BB773B9CC64D9A6367F107",
+        "archivedSha256": "BD63829156F3DFD241D32B4A1D9F57512BFBAD8D70BB773B9CC64D9A6367F107",
+        "archiveMatchesHistoricalHash": true,
+        "standaloneRestoredCopyPresent": true,
+        "originalRepoPathPresent": true
+      },
+      {
+        "archiveEntry": "docs/reports/final/Reconis-系统设计报告.docx",
+        "expectedSha256": "89CBDF08790D85D192062316C22952E50124DD437E0E6EA35C0D561D67F39715",
+        "archivedSha256": "89CBDF08790D85D192062316C22952E50124DD437E0E6EA35C0D561D67F39715",
+        "archiveMatchesHistoricalHash": true,
+        "standaloneRestoredCopyPresent": true,
+        "originalRepoPathPresent": true
+      },
+      {
+        "archiveEntry": "docs/reports/final/Reconis-系统设计报告.pdf",
+        "expectedSha256": "E41CF46203B6189BB22EACF0D0DE55888E149000B9AF6D56F10D835FBDDF3933",
+        "archivedSha256": "E41CF46203B6189BB22EACF0D0DE55888E149000B9AF6D56F10D835FBDDF3933",
+        "archiveMatchesHistoricalHash": true,
+        "standaloneRestoredCopyPresent": true,
+        "originalRepoPathPresent": true
+      }
+    ],
+    "archiveSha256": "849233E817C1B89EF70D01EFDFC133402A3E2A22088CC47FA6544FEBED3EBBBC",
+    "status": "ARCHIVED_BASELINE_VERIFIED",
+    "currentDesignScope": "The initial design report was restored for language editing after the user expanded the scope to both reports. Current design artifacts are checked separately in evidence/20261106-design-language-edit/."
+  },
+  "issues": [],
+  "visualReview": "See evidence/20261106-language-edit/visual-qa-*.md and render-final/page-*.png; automated checks do not assess visual quality."
+}
