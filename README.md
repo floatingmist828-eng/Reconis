@@ -28,15 +28,13 @@ SQL Server 管理 15 张关系表。退款额度和对账结果由数据库过�
 .\scripts\start.ps1
 ```
 
-打开 `http://localhost:8080`。首次初始化生成的教学账号和密码位于 `private/demo-accounts.txt`。本机已完成配置后，可双击 `启动Reconis.cmd`。
+打开 `http://localhost:8080`。首次初始化生成的示例账号和密码位于 `private/demo-accounts.txt`。本机已完成配置后，可双击 `启动Reconis.cmd`。
 
 | 目录 | 内容 |
 | --- | --- |
 | `frontend/` | Vue 3 工作台 |
 | `backend/` | Spring Boot 和 MyBatis API |
-| `database/` | SQL Server 建库、迁移与教学种子 |
+| `database/` | SQL Server 建库、迁移与示例数据 |
 | `scripts/` | 安装、构建、运行、备份和验证 |
-| `samples/` | 教学账单 |
-| `docs/` | [运行说明](docs/runbook.md)、[数据库设计](docs/design.md)、[课程功能对照](docs/requirements-matrix.md) |
-
-[最终实践总结报告](docs/reports/README.md)包含 Word、PDF、正文源稿及配套图表。初期系统设计报告单独保存。
+| `samples/` | 账单导入示例 |
+| `docs/` | [运行说明](docs/runbook.md)、[接口说明](docs/api.md) |

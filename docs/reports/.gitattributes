@@ -1,5 +1,0 @@
-# Preserve evidence bytes and SHA256; accept native CRLF line endings.
-evidence/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
-# Raw build logs retain original whitespace.
-evidence/**/*.log -whitespace
-implementation-report.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
