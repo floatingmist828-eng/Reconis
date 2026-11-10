@@ -1,4 +1,6 @@
 * text=auto
+# Keep documentation portable and Windows launchers in their native line format.
+*.md text eol=lf
 backend/mvnw text eol=lf
 *.py text eol=lf
 *.sh text eol=lf
