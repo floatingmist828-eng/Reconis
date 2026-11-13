@@ -1,56 +1,113 @@
 # Reconis 运行说明
 
-## 环境与启动
+## 环境与初始化
 
-Windows10/11、PowerShell7.4+、Node.js24 LTS、SQL Server2022 Developer（引擎和全文）。不使用Express LocalDB代替全文环境。默认数据库只监听本机1433，不开放防火墙。
+使用 Windows 10 / 11、PowerShell 7.4+、Node.js 24 和 SQL Server 2022 Developer（数据库引擎及全文组件）。`bootstrap.ps1` 准备便携 JDK 21、Maven 3.9.11 与 pnpm 依赖，工具保存在 `.tools/`。
 
-1. 仓库根目录运行 `scripts/bootstrap.ps1`、`scripts/build.ps1`，生成包含前端的JAR。工具位于忽略的.tools，Maven Wrapper固定3.9.11，依赖首次下载需网络。
-2. 管理员PowerShell运行 `scripts/install-sqlserver.ps1`，校验Microsoft签名，下载官方ISO，创建RECONIS实例并安装FULLTEXT，启用混合认证，仅启用127.0.0.1:1433。不会修改已有MySQL。
-3. 安装时获得数据库管理员身份的Windows账号运行 `scripts/initialize.ps1`，创建ReconisDemo、启用SNAPSHOT，执行001–004及示例种子。密码经stdin生成BCrypt散列，不作为shell参数输出。
-4. `scripts/start.ps1`，打开 `http://localhost:8080`。初始账号与随机密码在 `private/demo-accounts.txt`，不能提交或截图。
+在仓库根目录运行：
 
-已有 SQL Server 可运行 `scripts/initialize.ps1 -Server '服务器,端口'`，脚本据此生成对应 JDBC 地址。使用命名实例时，运行 `scripts/initialize.ps1 -Server '服务器\实例' -JdbcServer '服务器:TCP端口'`，明确应用使用的 TCP 端口。DEMO 数据库名为 ReconisDemo，文件目录为 data/demo；沙箱使用独立数据库和目录。
+```powershell
+.\scripts\bootstrap.ps1
+.\scripts\build.ps1
+.\scripts\initialize.ps1
+.\scripts\start.ps1
+```
 
-## 开发与部署
+尚未安装 SQL Server 时，先在管理员 PowerShell 中运行 `scripts/install-sqlserver.ps1`。脚本安装 RECONIS 实例和全文组件，配置本机 `127.0.0.1:1433`。初始化由拥有数据库创建权限的 Windows 账号执行。
 
-后端在backend加载 `. ..\private\DEMO.env.ps1` 后运行 `mvnw.cmd spring-boot:run`。前端在frontend运行 `pnpm dev`，Vite将/api代理到8080。
+已有 SQL Server 可指定地址：
 
-`scripts/build.ps1 -DatabaseTests` 在独立目录保存源码快照，构建前端和后端，并运行真实 SQL Server 集成测试。发布包存放于 `artifacts/releases/<ReleaseId>`，附带程序包与源文件 SHA256 清单；构建不会覆盖正在运行的 JAR。使用 `-NoSelect` 可先构建验收，再执行 `scripts/select-release.ps1 -ReleaseId <ReleaseId>` 切换默认版本；已有上一版时可用 `-Rollback` 回退。切换默认版本后须重启进程，健康接口中的 `releaseId` 和 `buildSourceSha256` 用于核对实际运行版本。
+```powershell
+.\scripts\initialize.ps1 -Server '服务器,端口'
+# 命名实例需同时指定应用连接的 TCP 端口
+.\scripts\initialize.ps1 -Server '服务器\实例' -JdbcServer '服务器:端口'
+```
 
-若传递依赖的仓库配置使构建反复访问 snapshot/milestone 地址，可加 `-MavenSettings backend/.mvn/central-settings.xml`，仅从官方 Maven Central 取得相同的固定发行依赖。
+访问 `http://localhost:8080`。教学账号与随机密码保存在 `private/demo-accounts.txt`，环境配置保存在 `private/DEMO.env.ps1`；配置键见 [`.env.example`](../.env.example)。本机配置完成后可双击 `启动Reconis.cmd`。
 
-DEMO 使用 `scripts/start.ps1 -Environment DEMO -Port 8080`，沙箱使用 `scripts/start.ps1 -Environment ALIPAY_SANDBOX -Port 8081`；两者默认读取同一个发布版本，数据库和文件目录分别隔离。`-CheckOnly` 可检查程序包散列与数据库连接。显式 `-JarFile`、`-ReleaseId` 和本地配置中的 `RECONIS_JAR_FILE` 优先于默认版本，统一部署时应移除过期覆盖配置。
+## 开发与构建
 
-单包使用同源 Cookie Session 和 CSRF；HTTPS 部署设置 `COOKIE_SECURE=true`。局域网使用时只对需要的客户端开放应用端口，数据库保持本机访问。
+后端在 `backend/` 执行：
+
+```powershell
+. ..\private\DEMO.env.ps1
+.\mvnw.cmd spring-boot:run
+```
+
+前端在 `frontend/` 执行：
+
+```powershell
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+Vite 在 `5173` 提供页面，将 `/api` 代理到 `8080`。前端页面、公共组件和会话状态分别位于 `src/pages/`、`src/components/`、`src/stores/`；后端业务包位于 `backend/src/main/java/cn/reconis/`。
+
+| 后端模块 | 职责 |
+| --- | --- |
+| `identity`、`merchant` | 账号、角色、商户、门店与成员 |
+| `order`、`payment` | 订单、支付、退款和渠道通知 |
+| `reconciliation`、`casework` | 账单、对账任务、工单和复核证据 |
+| `analytics`、`common` | 分析、报表、文件访问与公共服务 |
+
+`scripts/build.ps1` 构建前端与后端，生成包含静态页面的 JAR。发布版位于 `artifacts/releases/<ReleaseId>/`，附有程序包与源文件 SHA256 清单。使用 `-NoSelect` 构建后，可通过 `scripts/select-release.ps1 -ReleaseId <ReleaseId>` 切换默认版本，`-Rollback` 回退；重启后生效。
+
+需要统一 Maven 下载源时可添加 `-MavenSettings backend/.mvn/central-settings.xml`。单独运行 `pnpm build` 可生成前端产物。
+
+## 数据库与教学账单
+
+| SQL 文件 | 内容 |
+| --- | --- |
+| `database/001_schema.sql` | 15 张关系表 |
+| `database/002_constraints_indexes.sql` | 完整性约束与索引 |
+| `database/003_views_functions_procedures.sql` | 视图、函数与业务过程 |
+| `database/004_triggers_fulltext.sql` | 触发器与中文全文索引 |
+| `database/005_bootstrap_admin.sql` | 初始管理员 |
+| `database/migrations/` | 增量更新 |
+| `database/seed_demo.sql`、`database/demo/` | 校园商户与教学交易 |
+
+`initialize.ps1` 创建 ReconisDemo、执行 SQL 与教学种子；`migrate.ps1` 更新已有数据库。种子包含 7 家营业商户、1 家待审核商户、9 家门店、180 笔日常收款与 1 笔跨日部分退款订单。旧版商户资料可通过 `migrate.ps1 -RefreshCampusData` 刷新。
+
+[`samples/statements/cross-day-demo.xml`](../samples/statements/cross-day-demo.xml) 展示 2026-10-18 收款 100 元、次日退款 30 元。种子按初始化时的相对日期生成；核对当前账套时，可从分析页导出交易 XML 作为输入。
+
+登录后可通过 `/api/v1/templates?kind=statement&format=xlsx` 下载账单模板，`format=xml` 下载 XML；商户模板使用 `kind=merchants`。XLSX 金额使用整数分，标识和时间使用文本。重导同一文件复用输入批次，重新对账生成独立结果。
 
 ## 支付宝沙箱
 
-运行 `initialize.ps1 -Environment ALIPAY_SANDBOX`，建立独立ReconisSandbox，初始管理员密码在private/sandbox-admin.txt；不导入示例交易。private/ALIPAY_SANDBOX.env.ps1追加ALIPAY_APP_ID、ALIPAY_SELLER_ID、ALIPAY_PRIVATE_KEY_FILE、ALIPAY_PUBLIC_KEY_FILE、ALIPAY_NOTIFY_URL。
+```powershell
+.\scripts\initialize.ps1 -Environment ALIPAY_SANDBOX
+.\scripts\start.ps1 -Environment ALIPAY_SANDBOX -Port 8081
+```
 
-私钥是测试应用私钥，公钥是支付宝公钥，支持PEM或纯Base64文件。使用 `start.ps1 -Environment ALIPAY_SANDBOX -Port 8081`。通知地址使用标准 HTTPS 443 入口和有效证书，准确路径为 `/api/v1/callbacks/alipay`，不带查询参数、片段或登录信息。例如在已有 `private/ALIPAY_SANDBOX.env.ps1` 中设置 `$env:ALIPAY_NOTIFY_URL='https://你的公网域名/api/v1/callbacks/alipay'`，将该路径转发至 `http://127.0.0.1:8081/api/v1/callbacks/alipay`，并保持原始 POST 表单、禁止重定向、网页登录或验证码；可以仅开放此路径。远程服务器入口需要与本机之间有效的转发通道。重启后新建支付才会携带新通知地址。支付宝服务器无法访问本机 localhost，通知地址必须能从公网访问。未配置公网入口时仍可通过主动查询确认支付和退款。
+沙箱使用 ReconisSandbox 与独立文件目录，初始管理员密码位于 `private/sandbox-admin.txt`。在 `private/ALIPAY_SANDBOX.env.ps1` 配置 `ALIPAY_APP_ID`、`ALIPAY_SELLER_ID`、`ALIPAY_PRIVATE_KEY_FILE`、`ALIPAY_PUBLIC_KEY_FILE` 和 `ALIPAY_NOTIFY_URL`。私钥为测试应用私钥，公钥为支付宝公钥，支持 PEM 或 Base64 文件。
 
-使用 PowerShell 7.4 或以上执行 `./scripts/test-alipay-callback.ps1 -CallbackUrl 'http://127.0.0.1:8081/api/v1/callbacks/alipay' -DatabaseName ReconisSandbox` 可检查本地入口及对应 SQL 拒绝记录。公网入口准备后，把 `CallbackUrl` 换成准确的 HTTPS 地址。脚本只向明确提供的地址发一次无签名测试表单，保留 TLS 证书验证、不跟随跳转，要求返回纯文本 `failure`；指定 `DatabaseName` 时还会检查该测试未创建支付或收款。真实通知测试需要在配置生效后新建沙箱支付，并检查其有效通知及处理结果。
+通知地址设为公网 HTTPS 的 `/api/v1/callbacks/alipay`，将原始 POST 表单转发到 `http://127.0.0.1:8081/api/v1/callbacks/alipay`。配置后重启并新建支付；主动查询也可恢复支付与退款状态。
 
-## 示例数据与账单
+## 运行、迁移与备份
 
-`seed_demo.sql` 生成 7 家营业商户、1 家待审核商户、9 家门店、180 笔日常收款和 1 笔跨日部分退款订单。已有账套可运行 `scripts/migrate.ps1 -RefreshCampusData` 更新旧版预置文案。
+| 命令 | 用途 |
+| --- | --- |
+| `scripts/start.ps1 -CheckOnly` | 检查程序包与数据库连接 |
+| `scripts/migrate.ps1 -Environment DEMO` | 升级教学数据库 |
+| `scripts/migrate.ps1 -Environment ALIPAY_SANDBOX` | 升级沙箱数据库 |
+| `scripts/backup.ps1 -BackupDirectory '备份目录'` | COPY_ONLY + CHECKSUM 备份及 RESTORE VERIFYONLY |
+| `scripts/select-release.ps1 -List` | 查看本地发布版本 |
+| `scripts/package.ps1` | 从 Git HEAD 打包源码 ZIP |
 
-账单先下载Excel/XML模板；分析页导出交易也会生成相同语义的标准账单。手工声明完整不同于渠道确认完整。错误行不进入匹配集，重复业务键的原始行保留。SHA256重导返回原批次，重跑产生独立结果。
+迁移前备份数据库。备份目录需允许 SQL Server 服务账号写入，沙箱备份添加 `-Environment ALIPAY_SANDBOX`。数据库与 `data/` 中的账单、附件分别保存；恢复后重新映射运行登录并生成本机配置。
 
-## 初始化中断和备份
+`GET /api/v1/health` 返回数据库连接状态、实际发布版本与构建源文件散列。显式 `-JarFile`、`-ReleaseId` 和 `RECONIS_JAR_FILE` 优先于默认发布版。局域网部署开放应用端口；HTTPS 部署设置 `COOKIE_SECURE=true`。
 
-初始化不会删库，也不会重复执行种子。出错时保留报错与SQL日志，确认最后成功的GO批次，用部署账号在现有库继续缺失批次。不要删库掩盖错误。运行账号只属于reconis_runtime，不是db_owner。
+## 按需验证
 
-`/api/v1/health` 返回 UP 表示应用能够连接数据库并完成 `SELECT 1`，同时返回实际发布版本及构建源文件散列。全文索引状态需在检索页面单独检查；健康接口也不表示支付宝公网接口或通知通道可用。
+`frontend/tests/` 保存单元测试，`frontend/e2e/` 保存浏览器流程，后端测试位于 `backend/src/test/`。
 
-`scripts/backup.ps1 -BackupDirectory '已有且SQL服务账号可写目录'` 生成COPY_ONLY+CHECKSUM备份并执行RESTORE VERIFYONLY。沙箱加 `-Environment ALIPAY_SANDBOX`。数据库备份和data目录的原件/证据分别保存，不默认提交GitHub。
+| 命令 | 检查范围 |
+| --- | --- |
+| 在 `frontend/` 运行 `pnpm test` | 前端逻辑 |
+| `scripts/build.ps1 -DatabaseTests` | 构建与真实 SQL Server 集成测试 |
+| `scripts/verify-business-flow.ps1` | DEMO 接口业务链 |
+| `scripts/verify-browser.ps1` | DEMO 页面交互 |
+| `scripts/test-alipay-callback.ps1 -CallbackUrl '准确通知地址'` | 通知入口的无签名请求处理 |
 
-`scripts/package.ps1` 从 Git HEAD 生成源码 ZIP 并输出 SHA256，仅包含已跟踪文件。数据库备份和运行配置需另行安全保存。
-
-恢复到新实例时，先恢复bak及配套data文件，再创建新的运行登录并用`ALTER USER ... WITH LOGIN ...`映射库内运行用户，使用新生成的本机配置。不要沿用另一台电脑的登录密码或假设备份包含文件目录。也可直接从版本SQL和示例种子重建。
-
-## 回归验证
-
-已有数据库升级前先备份，再分别运行 `scripts/migrate.ps1 -Environment DEMO` 和 `scripts/migrate.ps1 -Environment ALIPAY_SANDBOX`。迁移保留原始资金事实与审核历史。
-
-程序启动后，在 PowerShell 7.4 以上运行 `scripts/verify-business-flow.ps1` 验证接口业务链；运行 `scripts/verify-browser.ps1` 验证实际页面。浏览器验证首次需在 frontend 安装 Playwright Chromium（`pnpm exec playwright install chromium`）。两套业务验收仅针对 DEMO，使用独立临时账号与商户，完成后停用测试账号，保留资金流水与审计证据。结果保存于忽略的 `artifacts/validation`。验收账号密码由本机 private 配置读取，不写入测试结果。
+浏览器首次使用需在 `frontend/` 运行 `pnpm exec playwright install chromium`。验证结果保存在 `artifacts/validation/`；渠道支付、通知与账单联调分别按实际渠道结果核对。

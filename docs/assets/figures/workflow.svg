@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="590" viewBox="0 0 1280 590" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Reconis 业务流程与跨日退款</title>
+  <desc id="desc">交易确认、账单核对、差错处理和独立复核；示例为首日收款100元、次日退款30元，合计净收款70元。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="590" gradientUnits="userSpaceOnUse"><stop stop-color="#f1f5fb"/><stop offset="1" stop-color="#fafcfe"/></linearGradient>
+    <linearGradient id="tile" x1="44" y1="136" x2="312" y2="288" gradientUnits="userSpaceOnUse"><stop stop-color="#203956"/><stop offset="1" stop-color="#142337"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="m2 1 5 4-5 4" stroke="#8b9eb7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>text{font-family:'Noto Sans SC','Microsoft YaHei',sans-serif}.title{font-size:28px;font-weight:700;fill:#19314f}.muted{font-size:16px;fill:#657a92}.step{font-size:23px;font-weight:700;fill:#19314f}.body{font-size:16px;fill:#5e728c}.num{font-size:13px;font-weight:700;letter-spacing:2px;fill:#7890ad}.value{font-size:36px;font-weight:700;fill:#203b5b}.line{stroke-linecap:round;stroke-linejoin:round;stroke-width:2}</style>
+  </defs>
+  <rect x="1" y="1" width="1278" height="588" rx="24" fill="url(#bg)" stroke="#dce5ef"/>
+  <text x="44" y="56" class="title">让交易、账单与处理依据连成一条线</text>
+  <text x="44" y="86" class="muted">收退款事实 → 核对结果 → 处理记录 → 复核结论</text>
+  <rect x="44" y="120" width="268" height="178" rx="18" fill="url(#tile)"/>
+  <rect x="352" y="120" width="268" height="178" rx="18" fill="white" stroke="#dce5ef"/>
+  <rect x="660" y="120" width="268" height="178" rx="18" fill="white" stroke="#dce5ef"/>
+  <rect x="968" y="120" width="268" height="178" rx="18" fill="white" stroke="#dce5ef"/>
+  <g stroke="#8b9eb7" stroke-width="2" marker-end="url(#arrow)"><path d="M319 209h25"/><path d="M627 209h25"/><path d="M935 209h25"/></g>
+  <g class="line" stroke="#b6d0f3"><rect x="68" y="147" width="32" height="24" rx="5"/><path d="M68 155h32m-24 9h8m9-22 5-5 8 8"/></g>
+  <g class="line" stroke="#5f7fa9"><path d="M380 141h23v34l-6-4-6 4-6-4-5 4zm6 9h11m-11 7h8m-8 7h11"/></g>
+  <g class="line" stroke="#5f7fa9"><path d="M687 145h14l5 7h14v23h-33zM695 160h17m-17 7h11"/></g>
+  <g class="line" stroke="#408c85"><path d="m1010 141 15 6v11c0 9-6 15-15 19-9-4-15-10-15-19v-11zm-8 17 5 5 10-11"/></g>
+  <text x="282" y="157" text-anchor="end" class="num">01</text>
+  <text x="590" y="157" text-anchor="end" class="num">02</text>
+  <text x="898" y="157" text-anchor="end" class="num">03</text>
+  <text x="1206" y="157" text-anchor="end" class="num">04</text>
+  <text x="68" y="211" font-family="'Noto Sans SC','Microsoft YaHei',sans-serif" font-size="23" font-weight="700" fill="white">交易确认</text>
+  <text x="68" y="245" font-family="'Noto Sans SC','Microsoft YaHei',sans-serif" font-size="16" fill="#b9cbe0">开单 · 收款 · 退款 · 状态恢复</text>
+  <text x="376" y="211" class="step">账单核对</text>
+  <text x="376" y="245" class="body">导入原件 · 事件匹配 · 批次比较</text>
+  <text x="684" y="211" class="step">差错处理</text>
+  <text x="684" y="245" class="body">定位来源 · 分派 · 提交证据</text>
+  <text x="992" y="211" class="step">独立复核</text>
+  <text x="992" y="245" class="body">核验依据 · 通过或退回 · 留痕</text>
+  <path d="M44 330h1192" stroke="#dce5ef"/>
+  <text x="44" y="370" font-family="'Noto Sans SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="700" fill="#19314f">跨日部分退款</text>
+  <text x="1236" y="370" text-anchor="end" class="muted">示例 · 金额 / 元</text>
+  <rect x="44" y="394" width="358" height="134" rx="16" fill="white" stroke="#dce5ef"/>
+  <rect x="460" y="394" width="358" height="134" rx="16" fill="white" stroke="#dce5ef"/>
+  <rect x="876" y="394" width="360" height="134" rx="16" fill="#eaf4f1" stroke="#cce1d9"/>
+  <text x="68" y="427" class="muted">D 日 · 成功收款</text><text x="68" y="481" class="value">+100.00</text>
+  <text x="377" y="498" text-anchor="end" class="muted">原订单</text>
+  <text x="484" y="427" class="muted">D+1 日 · 部分退款</text><text x="484" y="481" class="value">−30.00</text>
+  <text x="793" y="498" text-anchor="end" class="muted">关联原支付</text>
+  <text x="900" y="427" class="muted">两日合计 · 净收款</text><text x="900" y="481" font-family="'Noto Sans SC','Microsoft YaHei',sans-serif" font-size="36" font-weight="700" fill="#2c736b">70.00</text>
+  <g stroke="#8b9eb7" stroke-width="2" marker-end="url(#arrow)"><path d="M414 459h33"/><path d="M830 459h33"/></g>
+  <text x="44" y="561" class="muted">每笔收退款独立记录发生时间，通过原支付关系串联完整交易。</text>
+</svg>
